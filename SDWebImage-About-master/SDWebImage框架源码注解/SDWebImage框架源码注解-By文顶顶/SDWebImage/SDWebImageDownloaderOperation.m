@@ -2,7 +2,7 @@
 
 #import "SDWebImageDecoder.h"   // 解码
 #import "UIImage+MultiFormat.h"  //
-#import <ImageIO/ImageIO.h>
+#import <ImageIO/ImageIO.h> 
 #import "SDWebImageManager.h"
 
 //开始下载

@@ -1,11 +1,3 @@
-/*
- * This file is part of the SDWebImage package.
- * (c) Olivier Poitrey <rs@dailymotion.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 #import "SDWebImageDownloader.h"
 #import "SDWebImageDownloaderOperation.h"
 #import <ImageIO/ImageIO.h>
@@ -20,11 +12,11 @@ static NSString *const kCompletedCallbackKey = @"completed";
 @property (assign, nonatomic) Class operationClass;             //操作类
 @property (strong, nonatomic) NSMutableDictionary *URLCallbacks;    //该url对应的URLCallbacks字典
 @property (strong, nonatomic) NSMutableDictionary *HTTPHeaders;     //请求头信息
-// This queue is used to serialize the handling of the network responses of all the download operation in a single queue
+
 // barrierQueue是一个串行队列，在一个单一队列中顺序处理所有下载操作的网络响应
 @property (SDDispatchQueueSetterSementics, nonatomic) dispatch_queue_t barrierQueue;
 
-// The session in which data tasks will run
+
 @property (strong, nonatomic) NSURLSession *session;    //会话对象
 
 @end
@@ -34,11 +26,11 @@ static NSString *const kCompletedCallbackKey = @"completed";
 #pragma mark --------------------
 #pragma mark Life Cycle
 + (void)initialize {
-    // Bind SDNetworkActivityIndicator if available (download it here: http://github.com/rs/SDNetworkActivityIndicator )
-    // To use it, just add #import "SDNetworkActivityIndicator.h" in addition to the SDWebImage import
-
-    //如果可用，则结合SDNetworkActivityIndicator，附下载地址
+    //如果可用，则结合SDNetworkActivityIndicator，附下载地址: http://github.com/rs/SDNetworkActivityIndicator
     //使用它只需要#import "SDNetworkActivityIndicator.h"
+    
+    
+    // 注意这里实际上一般没有什么用图
     if (NSClassFromString(@"SDNetworkActivityIndicator")) {
 
         //消除SDNetworkActivityIndicator方法不存在的警告
@@ -74,9 +66,10 @@ static NSString *const kCompletedCallbackKey = @"completed";
 //异步下载器初始化方法
 - (id)init {
     if ((self = [super init])) {
+        // 下载操作operation
         _operationClass = [SDWebImageDownloaderOperation class];    //获得类型
-        _shouldDecompressImages = YES;                              //是否解码，默认为YES(以空间换取时间）
-        _executionOrder = SDWebImageDownloaderFIFOExecutionOrder;   //下载任务的执行方式：默认为先进先出
+        _shouldDecompressImages = YES;                              //是否解码，默认为YES(以空间换取时间） // 占用内存比较大
+        _executionOrder = SDWebImageDownloaderFIFOExecutionOrder;   //下载任务的执行方式：默认为先进先出   // 先进先出fifo
         _downloadQueue = [NSOperationQueue new];                    //创建下载队列：非主队列（在该队列中的任务在子线程中异步执行）
         _downloadQueue.maxConcurrentOperationCount = 6;             //设置下载队列的最大并发数：默认为6
         _URLCallbacks = [NSMutableDictionary new];                  //初始化URLCallbacks字典
@@ -94,12 +87,7 @@ static NSString *const kCompletedCallbackKey = @"completed";
         //设置配置对象请求超时时间为15m
         sessionConfig.timeoutIntervalForRequest = _downloadTimeout;
 
-        /**
-         *  Create the session for this task
-         *  We send nil as delegate queue so that the session creates a serial operation queue for performing all delegate
-         *  method calls and completion handler calls.
-         */
-        //根据默认的配置信息生成一个会话对象，并设置代理，所有的代理方法均在子线程中执行
+              //根据默认的配置信息生成一个会话对象，并设置代理，所有的代理方法均在子线程中执行
         self.session = [NSURLSession sessionWithConfiguration:sessionConfig
                                                      delegate:self
                                                 delegateQueue:nil];
@@ -115,6 +103,7 @@ static NSString *const kCompletedCallbackKey = @"completed";
 
     //取消当前所有的操作
     [self.downloadQueue cancelAllOperations];
+    // 释放栅栏函数
     SDDispatchQueueRelease(_barrierQueue);
 }
 
@@ -168,7 +157,7 @@ static NSString *const kCompletedCallbackKey = @"completed";
             timeoutInterval = 15.0;
         }
 
-        // In order to prevent from potential duplicate caching (NSURLCache + SDImageCache) we disable the cache for image requests if told otherwise
+       
         //根据给定的URL和缓存策略创建可变的请求对象，设置请求超时
         //请求策略：如果是SDWebImageDownloaderUseNSURLCache则使用NSURLRequestUseProtocolCachePolicy，否则使用NSURLRequestReloadIgnoringLocalCacheData
         /*
@@ -203,7 +192,7 @@ static NSString *const kCompletedCallbackKey = @"completed";
                                                         inSession:self.session
                                                           options:options
                                                          progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-                                                             
+                                                             // 注意这里是异步线程子线程
                                                              SDWebImageDownloader *sself = wself;
                                                              if (!sself) return;
                                                              __block NSArray *callbacksForURL;
@@ -287,10 +276,11 @@ static NSString *const kCompletedCallbackKey = @"completed";
     return operation;
 }
 
+
 //处理SDWebImageDownloaderProgressBlock和SDWebImageDownloaderCompletedBlock
 //主要处理对象为self.URLCallbacks字典
 - (void)addProgressCallback:(SDWebImageDownloaderProgressBlock)progressBlock completedBlock:(SDWebImageDownloaderCompletedBlock)completedBlock forURL:(NSURL *)url createCallback:(SDWebImageNoParamsBlock)createCallback {
-    // The URL will be used as the key to the callbacks dictionary so it cannot be nil. If it is nil immediately call the completed block with no image or data.
+
     //如果URL为空，则执行completedBlock回调，并直接返回
     if (url == nil) {
         if (completedBlock != nil) {
@@ -309,7 +299,7 @@ static NSString *const kCompletedCallbackKey = @"completed";
             first = YES;
         }
 
-        // Handle single download of simultaneous download request for the same URL
+
         // 保证如果同一个URL有多个下载请求，那么只下载一次
 
         //得到URLCallbacks字典中url对应的数组
@@ -323,6 +313,7 @@ static NSString *const kCompletedCallbackKey = @"completed";
         self.URLCallbacks[url] = callbacksForURL;
 
         //如果URLCallbacks字典中url对应的数组不存在,那么就调用createCallback（）
+        // 如果是url的第一次下载的话， 就创建回调
         if (first) {
             createCallback();
         }
@@ -359,7 +350,6 @@ static NSString *const kCompletedCallbackKey = @"completed";
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler {
 
-    // Identify the operation that runs this task and pass it the delegate method
     //得到下载的操作
     SDWebImageDownloaderOperation *dataOperation = [self operationWithTask:dataTask];
 
