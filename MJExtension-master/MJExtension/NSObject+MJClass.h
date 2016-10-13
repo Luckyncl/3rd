@@ -23,12 +23,14 @@ typedef NSArray * (^MJIgnoredPropertyNames)();
 /** 这个数组中的属性名将会被忽略：不进行归档 */
 typedef NSArray * (^MJIgnoredCodingPropertyNames)();
 
+
+
 /**
  * 类相关的扩展
  */
 @interface NSObject (MJClass)
 /**
- *  遍历所有的类
+ *  遍历所有的类 执行 enumeration 操作
  */
 + (void)mj_enumerateClasses:(MJClassesEnumeration)enumeration;
 + (void)mj_enumerateAllClasses:(MJClassesEnumeration)enumeration;

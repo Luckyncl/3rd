@@ -2,8 +2,6 @@
 //  NSObject+MJKeyValue.m
 //  MJExtension
 //
-//  Created by mj on 13-8-24.
-//  Copyright (c) 2013年 小码哥. All rights reserved.
 //
 
 #import "NSObject+MJKeyValue.h"
@@ -14,35 +12,50 @@
 #import "MJExtensionConst.h"
 #import "MJFoundation.h"
 #import "NSString+MJExtension.h"
+
+
 #import "NSObject+MJClass.h"
+
+
+
 
 @implementation NSObject (MJKeyValue)
 
+
 #pragma mark - 错误
+
 static const char MJErrorKey = '\0';
 + (NSError *)mj_error
 {
+    //  取关联
     return objc_getAssociatedObject(self, &MJErrorKey);
 }
 
+
 + (void)setMj_error:(NSError *)error
 {
+    //   设置关联
     objc_setAssociatedObject(self, &MJErrorKey, error, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
+
 #pragma mark - 模型 -> 字典时的参考
-/** 模型转字典时，字典的key是否参考replacedKeyFromPropertyName等方法（父类设置了，子类也会继承下来） */
-static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
+/**  模型转字典时，字典的key是否参考replacedKeyFromPropertyName等方法（父类设置了，子类也会继承下来） */
+static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';   //  用作一个标识符
 
 + (void)mj_referenceReplacedKeyWhenCreatingKeyValues:(BOOL)reference
 {
     objc_setAssociatedObject(self, &MJReferenceReplacedKeyWhenCreatingKeyValuesKey, @(reference), OBJC_ASSOCIATION_ASSIGN);
 }
 
+//  主要是 看看  父类 或者 子类  是否 设置了replacedKeyFromPropertyName等方法
 + (BOOL)mj_isReferenceReplacedKeyWhenCreatingKeyValues
 {
+    //
     __block id value = objc_getAssociatedObject(self, &MJReferenceReplacedKeyWhenCreatingKeyValuesKey);
     if (!value) {
+        
+        //    遍历 self 和 self 的父类，执行 传过去的 block
         [self mj_enumerateAllClasses:^(__unsafe_unretained Class c, BOOL *stop) {
             value = objc_getAssociatedObject(c, &MJReferenceReplacedKeyWhenCreatingKeyValuesKey);
             
@@ -52,13 +65,16 @@ static const char MJReferenceReplacedKeyWhenCreatingKeyValuesKey = '\0';
     return [value boolValue];
 }
 
+
+
 #pragma mark - --常用的对象--
-static NSNumberFormatter *numberFormatter_;
+
+static NSNumberFormatter *numberFormatter_;   //  NSNumberFormatter  用于设置NSNumberFormatter的输出格式
+
 + (void)load
 {
     numberFormatter_ = [[NSNumberFormatter alloc] init];
-    
-    // 默认设置
+    // 默认设置  使用了 keyValue 代替标识
     [self mj_referenceReplacedKeyWhenCreatingKeyValues:YES];
 }
 
@@ -69,9 +85,9 @@ static NSNumberFormatter *numberFormatter_;
     return [self mj_setKeyValues:keyValues context:nil];
 }
 
-/**
- 核心代码：
- */
+    /**
+     核心代码：
+     */
 - (instancetype)mj_setKeyValues:(id)keyValues context:(NSManagedObjectContext *)context
 {
     // 获得JSON对象
@@ -92,7 +108,7 @@ static NSNumberFormatter *numberFormatter_;
             
             // 1.取出属性值
             id value;
-            NSArray *propertyKeyses = [property propertyKeysForClass:clazz];
+            NSArray *propertyKeyses = [property propertyKeysForClass:clazz]; // 这里 数组里面 还包着数组？？
             for (NSArray *propertyKeys in propertyKeyses) {
                 value = keyValues;
                 for (MJPropertyKey *propertyKey in propertyKeys) {
@@ -281,6 +297,7 @@ static NSNumberFormatter *numberFormatter_;
 }
 
 #pragma mark - 模型 -> 字典
+
 - (NSMutableDictionary *)mj_keyValues
 {
     return [self mj_keyValuesWithKeys:nil ignoredKeys:nil];
@@ -296,9 +313,11 @@ static NSNumberFormatter *numberFormatter_;
     return [self mj_keyValuesWithKeys:nil ignoredKeys:ignoredKeys];
 }
 
+
+
 - (NSMutableDictionary *)mj_keyValuesWithKeys:(NSArray *)keys ignoredKeys:(NSArray *)ignoredKeys
 {
-    // 如果自己不是模型类, 那就返回自己
+    // 如果自己不是模型类, 那就返回自己，， 如果是 nsobject 类型的   那么 就 返回自己  
     MJExtensionAssertError(![MJFoundation isClassFromFoundation:[self class]], (NSMutableDictionary *)self, [self class], @"不是自定义的模型类")
     
     id keyValues = [NSMutableDictionary dictionary];
@@ -309,7 +328,7 @@ static NSNumberFormatter *numberFormatter_;
     
     [clazz mj_enumerateProperties:^(MJProperty *property, BOOL *stop) {
         @try {
-            // 0.检测是否被忽略
+            // 0.检测是否被忽略   注意这里有忽略的属性  也有 忽略的key
             if (allowedPropertyNames.count && ![allowedPropertyNames containsObject:property.name]) return;
             if ([ignoredPropertyNames containsObject:property.name]) return;
             if (keys.count && ![keys containsObject:property.name]) return;
@@ -327,7 +346,7 @@ static NSNumberFormatter *numberFormatter_;
             } else if ([value isKindOfClass:[NSArray class]]) {
                 // 3.处理数组里面有模型的情况
                 value = [NSObject mj_keyValuesArrayWithObjectArray:value];
-            } else if (propertyClass == [NSURL class]) {
+            } else if (propertyClass == [NSURL class]) {  // 这个 有点吊 也就是说  在简历模型的时候 我们可以 使用 NSURL 来作为 属性
                 value = [value absoluteString];
             }
             
@@ -347,6 +366,8 @@ static NSNumberFormatter *numberFormatter_;
                     if (nextPropertyKey) { // 不是最后一个key
                         // 当前propertyKey对应的字典或者数组
                         id tempInnerContainer = [propertyKey valueInObject:innerContainer];
+                        
+                        //      这里进行了空值判断  NSNull 判断
                         if (tempInnerContainer == nil || [tempInnerContainer isKindOfClass:[NSNull class]]) {
                             if (nextPropertyKey.type == MJPropertyKeyTypeDictionary) {
                                 tempInnerContainer = [NSMutableDictionary dictionary];
@@ -359,6 +380,7 @@ static NSNumberFormatter *numberFormatter_;
                                 innerContainer[propertyKey.name.intValue] = tempInnerContainer;
                             }
                         }
+                        
                         
                         if ([tempInnerContainer isKindOfClass:[NSMutableArray class]]) {
                             NSMutableArray *tempInnerContainerArray = tempInnerContainer;
@@ -438,9 +460,12 @@ static NSNumberFormatter *numberFormatter_;
     return [NSJSONSerialization dataWithJSONObject:[self mj_JSONObject] options:kNilOptions error:nil];
 }
 
+
+// 返回的都是字典
 - (id)mj_JSONObject
 {
     if ([self isKindOfClass:[NSString class]]) {
+        
         return [NSJSONSerialization JSONObjectWithData:[((NSString *)self) dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:nil];
     } else if ([self isKindOfClass:[NSData class]]) {
         return [NSJSONSerialization JSONObjectWithData:(NSData *)self options:kNilOptions error:nil];
@@ -458,252 +483,5 @@ static NSNumberFormatter *numberFormatter_;
     }
     
     return [[NSString alloc] initWithData:[self mj_JSONData] encoding:NSUTF8StringEncoding];
-}
-@end
-
-@implementation NSObject (MJKeyValueDeprecated_v_2_5_16)
-- (instancetype)setKeyValues:(id)keyValues
-{
-    return [self mj_setKeyValues:keyValues];
-}
-
-- (instancetype)setKeyValues:(id)keyValues error:(NSError **)error
-{
-    id value = [self mj_setKeyValues:keyValues];
-    if (error != NULL) {
-    *error = [self.class mj_error];
-    }
-    return value;
-    
-}
-
-- (instancetype)setKeyValues:(id)keyValues context:(NSManagedObjectContext *)context
-{
-    return [self mj_setKeyValues:keyValues context:context];
-}
-
-- (instancetype)setKeyValues:(id)keyValues context:(NSManagedObjectContext *)context error:(NSError **)error
-{
-    id value = [self mj_setKeyValues:keyValues context:context];
-    if (error != NULL) {
-    *error = [self.class mj_error];
-    }
-    return value;
-}
-
-+ (void)referenceReplacedKeyWhenCreatingKeyValues:(BOOL)reference
-{
-    [self mj_referenceReplacedKeyWhenCreatingKeyValues:reference];
-}
-
-- (NSMutableDictionary *)keyValues
-{
-    return [self mj_keyValues];
-}
-
-- (NSMutableDictionary *)keyValuesWithError:(NSError **)error
-{
-    id value = [self mj_keyValues];
-    if (error != NULL) {
-    *error = [self.class mj_error];
-    }
-    return value;
-}
-
-- (NSMutableDictionary *)keyValuesWithKeys:(NSArray *)keys
-{
-    return [self mj_keyValuesWithKeys:keys];
-}
-
-- (NSMutableDictionary *)keyValuesWithKeys:(NSArray *)keys error:(NSError **)error
-{
-    id value = [self mj_keyValuesWithKeys:keys];
-    if (error != NULL) {
-    *error = [self.class mj_error];
-    }
-    return value;
-}
-
-- (NSMutableDictionary *)keyValuesWithIgnoredKeys:(NSArray *)ignoredKeys
-{
-    return [self mj_keyValuesWithIgnoredKeys:ignoredKeys];
-}
-
-- (NSMutableDictionary *)keyValuesWithIgnoredKeys:(NSArray *)ignoredKeys error:(NSError **)error
-{
-    id value = [self mj_keyValuesWithIgnoredKeys:ignoredKeys];
-    if (error != NULL) {
-    *error = [self.class mj_error];
-    }
-    return value;
-}
-
-+ (NSMutableArray *)keyValuesArrayWithObjectArray:(NSArray *)objectArray
-{
-    return [self mj_keyValuesArrayWithObjectArray:objectArray];
-}
-
-+ (NSMutableArray *)keyValuesArrayWithObjectArray:(NSArray *)objectArray error:(NSError **)error
-{
-    id value = [self mj_keyValuesArrayWithObjectArray:objectArray];
-    if (error != NULL) {
-    *error = [self mj_error];
-    }
-    return value;
-}
-
-+ (NSMutableArray *)keyValuesArrayWithObjectArray:(NSArray *)objectArray keys:(NSArray *)keys
-{
-    return [self mj_keyValuesArrayWithObjectArray:objectArray keys:keys];
-}
-
-+ (NSMutableArray *)keyValuesArrayWithObjectArray:(NSArray *)objectArray keys:(NSArray *)keys error:(NSError **)error
-{
-    id value = [self mj_keyValuesArrayWithObjectArray:objectArray keys:keys];
-    if (error != NULL) {
-    *error = [self mj_error];
-    }
-    return value;
-}
-
-+ (NSMutableArray *)keyValuesArrayWithObjectArray:(NSArray *)objectArray ignoredKeys:(NSArray *)ignoredKeys
-{
-    return [self mj_keyValuesArrayWithObjectArray:objectArray ignoredKeys:ignoredKeys];
-}
-
-+ (NSMutableArray *)keyValuesArrayWithObjectArray:(NSArray *)objectArray ignoredKeys:(NSArray *)ignoredKeys error:(NSError **)error
-{
-    id value = [self mj_keyValuesArrayWithObjectArray:objectArray ignoredKeys:ignoredKeys];
-    if (error != NULL) {
-    *error = [self mj_error];
-    }
-    return value;
-}
-
-+ (instancetype)objectWithKeyValues:(id)keyValues
-{
-    return [self mj_objectWithKeyValues:keyValues];
-}
-
-+ (instancetype)objectWithKeyValues:(id)keyValues error:(NSError **)error
-{
-    id value = [self mj_objectWithKeyValues:keyValues];
-    if (error != NULL) {
-    *error = [self mj_error];
-    }
-    return value;
-}
-
-+ (instancetype)objectWithKeyValues:(id)keyValues context:(NSManagedObjectContext *)context
-{
-    return [self mj_objectWithKeyValues:keyValues context:context];
-}
-
-+ (instancetype)objectWithKeyValues:(id)keyValues context:(NSManagedObjectContext *)context error:(NSError **)error
-{
-    id value = [self mj_objectWithKeyValues:keyValues context:context];
-    if (error != NULL) {
-    *error = [self mj_error];
-    }
-    return value;
-}
-
-+ (instancetype)objectWithFilename:(NSString *)filename
-{
-    return [self mj_objectWithFilename:filename];
-}
-
-+ (instancetype)objectWithFilename:(NSString *)filename error:(NSError **)error
-{
-    id value = [self mj_objectWithFilename:filename];
-    if (error != NULL) {
-    *error = [self mj_error];
-    }
-    return value;
-}
-
-+ (instancetype)objectWithFile:(NSString *)file
-{
-    return [self mj_objectWithFile:file];
-}
-
-+ (instancetype)objectWithFile:(NSString *)file error:(NSError **)error
-{
-    id value = [self mj_objectWithFile:file];
-    if (error != NULL) {
-    *error = [self mj_error];
-    }
-    return value;
-}
-
-+ (NSMutableArray *)objectArrayWithKeyValuesArray:(id)keyValuesArray
-{
-    return [self mj_objectArrayWithKeyValuesArray:keyValuesArray];
-}
-
-+ (NSMutableArray *)objectArrayWithKeyValuesArray:(id)keyValuesArray error:(NSError **)error
-{
-    id value = [self mj_objectArrayWithKeyValuesArray:keyValuesArray];
-    if (error != NULL) {
-    *error = [self mj_error];
-    }
-    return value;
-}
-
-+ (NSMutableArray *)objectArrayWithKeyValuesArray:(id)keyValuesArray context:(NSManagedObjectContext *)context
-{
-    return [self mj_objectArrayWithKeyValuesArray:keyValuesArray context:context];
-}
-
-+ (NSMutableArray *)objectArrayWithKeyValuesArray:(id)keyValuesArray context:(NSManagedObjectContext *)context error:(NSError **)error
-{
-    id value = [self mj_objectArrayWithKeyValuesArray:keyValuesArray context:context];
-    if (error != NULL) {
-    *error = [self mj_error];
-    }
-    return value;
-}
-
-+ (NSMutableArray *)objectArrayWithFilename:(NSString *)filename
-{
-    return [self mj_objectArrayWithFilename:filename];
-}
-
-+ (NSMutableArray *)objectArrayWithFilename:(NSString *)filename error:(NSError **)error
-{
-    id value = [self mj_objectArrayWithFilename:filename];
-    if (error != NULL) {
-    *error = [self mj_error];
-    }
-    return value;
-}
-
-+ (NSMutableArray *)objectArrayWithFile:(NSString *)file
-{
-    return [self mj_objectArrayWithFile:file];
-}
-
-+ (NSMutableArray *)objectArrayWithFile:(NSString *)file error:(NSError **)error
-{
-    id value = [self mj_objectArrayWithFile:file];
-    if (error != NULL) {
-    *error = [self mj_error];
-    }
-    return value;
-}
-
-- (NSData *)JSONData
-{
-    return [self mj_JSONData];
-}
-
-- (id)JSONObject
-{
-    return [self mj_JSONObject];
-}
-
-- (NSString *)JSONString
-{
-    return [self mj_JSONString];
 }
 @end

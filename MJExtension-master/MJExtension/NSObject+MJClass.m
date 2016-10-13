@@ -24,6 +24,9 @@ static NSMutableDictionary *ignoredCodingPropertyNamesDict_;
 
 @implementation NSObject (MJClass)
 
+
+
+// 只执行一次   应该
 + (void)load
 {
     allowedPropertyNamesDict_ = [NSMutableDictionary dictionary];
@@ -66,6 +69,8 @@ static NSMutableDictionary *ignoredCodingPropertyNamesDict_;
     }
 }
 
+
+    
 + (void)mj_enumerateAllClasses:(MJClassesEnumeration)enumeration
 {
     // 1.没有block就直接返回
@@ -79,6 +84,7 @@ static NSMutableDictionary *ignoredCodingPropertyNamesDict_;
     
     // 4.开始遍历每一个类
     while (c && !stop) {
+        
         // 4.1.执行操作
         enumeration(c, &stop);
         
