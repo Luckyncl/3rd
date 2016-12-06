@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+
+//   音乐列表player
 #import "MusicListViewController.h"
 #import <MediaPlayer/MediaPlayer.h>
 #import "MusicViewController.h"
@@ -33,6 +35,7 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
     
+    // 设置导航栏 的颜色
     [[UINavigationBar appearance] setBarTintColor:[UIColor whiteColor]];
     
     if (!_musicListVC){
@@ -45,7 +48,9 @@
 
 
 - (void)basicSetup {
-    // Remove control
+    // Remote control
+    
+    // 开始接受推送的通知 称为第一响应者
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
     [self becomeFirstResponder];
 }
@@ -56,6 +61,15 @@
 
 # pragma mark - Remote control
 
+
+//在iOS中事件分为三类：
+//
+//触摸事件：通过触摸、手势进行触发（例如手指点击、缩放）
+//运动事件：通过加速器进行触发（例如手机晃动）
+//远程控制事件：通过其他远程设备触发（例如耳机控制按钮）
+
+// 设置远程控制时间
+// http://www.cnblogs.com/kenshincui/p/3950646.html
 - (void)remoteControlReceivedWithEvent:(UIEvent *)receivedEvent {
     if (receivedEvent.type == UIEventTypeRemoteControl) {
         switch (receivedEvent.subtype) {
