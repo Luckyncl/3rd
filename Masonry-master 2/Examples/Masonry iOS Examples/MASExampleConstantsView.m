@@ -42,11 +42,11 @@
     
     // auto-boxing macros allow you to simply use scalars and structs, they will be wrapped automatically
     
-    [orangeView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.center.equalTo(CGPointMake(0, 50));
-        make.size.equalTo(CGSizeMake(200, 100));
-    }];
-    
+//    [orangeView mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.center.equalTo(CGPointMake(0, 50));
+//        make.size.equalTo(CGSizeMake(200, 100));
+//    }];
+//    
 
     
     return self;

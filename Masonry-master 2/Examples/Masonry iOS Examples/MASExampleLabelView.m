@@ -8,7 +8,7 @@
 
 #import "MASExampleLabelView.h"
 
-static UIEdgeInsets const kPadding = {10, 10, 10, 10};
+static UIEdgeInsets const kPadding = {50, 50, 50,50 };
 
 @interface MASExampleLabelView ()
 
@@ -38,7 +38,7 @@ static UIEdgeInsets const kPadding = {10, 10, 10, 10};
     self.longLabel.numberOfLines = 0;
     self.longLabel.textColor = [UIColor darkGrayColor];
     self.longLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-    self.longLabel.text = @"Bacon ipsum dolor sit amet spare ribs fatback kielbasa salami, tri-tip jowl pastrami flank short loin rump sirloin. Tenderloin frankfurter chicken biltong rump chuck filet mignon pork t-bone flank ham hock.";
+  
     [self addSubview:self.longLabel];
     
     UIView *superView = self;
@@ -46,17 +46,20 @@ static UIEdgeInsets const kPadding = {10, 10, 10, 10};
     [self.longLabel makeConstraints:^(MASConstraintMaker *make) {
         
         //  注意能不能
-        make.width.lessThanOrEqualTo(superView);
-        make.width.priorityLow();
+//        make.width.lessThanOrEqualTo(superView);
+//        make.width.priorityLow();
         make.left.equalTo(self.left).insets(kPadding);
         make.top.equalTo(self.top).insets(kPadding);
+        make.right.equalTo(self.right).insets(kPadding);
     }];
 
     [self.shortLabel makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.longLabel.lastBaseline);
+        make.top.equalTo(self.longLabel.bottom);
         make.right.equalTo(self.right).insets(kPadding);
     }];
     
+    
+      self.longLabel.text = @"Bacon ipsum dolor sit amet spare ribs fatback kielbasa salami, tri-tip jowl pastrami flank short loin rump sirloin. Tenderloin frankfurter chicken biltong rump chuck filet mignon pork t-bone flank ham hock.";
     // stay tuned for new easier way todo this coming soon to Masonry
   
 //    self.longLabel.preferredMaxLayoutWidth = width;
