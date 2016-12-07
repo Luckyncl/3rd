@@ -13,6 +13,7 @@
 
 @interface BaseEntity : MTLModel <MTLJSONSerializing>
 #pragma mark - Class Methods to create Entity
+// 类方法去创建 模型
 
 + (NSDateFormatter *)dateFormatter;
 

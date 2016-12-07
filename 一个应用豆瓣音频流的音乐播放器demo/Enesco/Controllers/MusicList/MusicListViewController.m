@@ -1,20 +1,16 @@
-//
-//  MusicListViewController.m
-//  Enesco
-//
-//  Created by Aufree on 11/30/15.
-//  Copyright © 2015 The EST Group. All rights reserved.
-//
+
 
 #import "MusicListViewController.h"
 #import "MusicViewController.h"
 #import "MusicListCell.h"
+
 #import "MusicIndicator.h"
 #import "MBProgressHUD.h"
 
 @interface MusicListViewController () <MusicViewControllerDelegate, MusicListCellDelegate>
-@property (nonatomic, strong) NSMutableArray *musicEntities;
-@property (nonatomic, assign) NSInteger currentIndex;
+
+@property (nonatomic, strong) NSMutableArray *musicEntities;// 音乐模型数组
+@property (nonatomic, assign) NSInteger currentIndex;       // 用于播放的游标
 @end
 
 @implementation MusicListViewController
@@ -22,20 +18,24 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    self.navigationItem.title = @"Music List";
+    self.navigationItem.title = @"音乐列表";
     [self headerRefreshing];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    // 创建指示器view
     [self createIndicatorView];
 }
 
 # pragma mark - Custom right bar button item
 
+// 右上角的指示器
 - (void)createIndicatorView {
+    // 注意这里使用的是单例
     MusicIndicator *indicator = [MusicIndicator sharedInstance];
-    indicator.hidesWhenStopped = NO;
+    indicator.hidesWhenStopped = NO;            // 挺值得时候不隐藏
     indicator.tintColor = [UIColor redColor];
     
     if (indicator.state != NAKPlaybackIndicatorViewStatePlaying) {
@@ -66,6 +66,7 @@
 
 - (void)headerRefreshing {
     NSDictionary *musicsDict = [self dictionaryWithContentsOfJSONString:@"music_list.json"];
+    // 数据源
     self.musicEntities = [MusicEntity arrayOfEntitiesFromArray:musicsDict[@"data"]].mutableCopy;
     [self.tableView reloadData];
 }
@@ -90,23 +91,31 @@
     musicVC.delegate = self;
     [self presentToMusicViewWithMusicVC:musicVC];
 
+    // 更新指示器的状态
     [self updatePlaybackIndicatorWithIndexPath:indexPath];
+    // 这样就不需要 消除 非选中的状态了
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 # pragma mark - Jump to music view
 
 - (void)presentToMusicViewWithMusicVC:(MusicViewController *)musicVC {
+    
+    // 模态弹出 导航器
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:musicVC];
     [self.navigationController presentViewController:navigationController animated:YES completion:nil];
+    
 }
 
 # pragma mark - Update music indicator state
 
 - (void)updatePlaybackIndicatorWithIndexPath:(NSIndexPath *)indexPath {
+    
+    // 停止所有的指示器
     for (MusicListCell *cell in self.tableView.visibleCells) {
         cell.state = NAKPlaybackIndicatorViewStateStopped;
     }
+    // 让当前的指示器 开动
     MusicListCell *musicsCell = [self.tableView cellForRowAtIndexPath:indexPath];
     musicsCell.state = NAKPlaybackIndicatorViewStatePlaying;
 }
@@ -114,7 +123,7 @@
 - (void)updatePlaybackIndicatorOfCell:(MusicListCell *)cell {
     MusicEntity *music = cell.musicEntity;
     if (music.musicId == [[MusicViewController sharedInstance] currentPlayingMusic].musicId) {
-        cell.state = NAKPlaybackIndicatorViewStateStopped;
+//        cell.state = NAKPlaybackIndicatorViewStateStopped;
         cell.state = [MusicIndicator sharedInstance].state;
     } else {
         cell.state = NAKPlaybackIndicatorViewStateStopped;

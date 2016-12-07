@@ -12,12 +12,12 @@
 
 #import "Track.h"
 #import "MusicIndicator.h"
-#include <stdlib.h>
 
 #import "UIView+Animations.h"
 #import "NSString+Additions.h"
 #import "MBProgressHUD.h"
 
+// 几个状态值
 static void *kStatusKVOKey = &kStatusKVOKey;
 static void *kDurationKVOKey = &kDurationKVOKey;
 static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
@@ -69,19 +69,29 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     [self adapterIphone4];
+    
+    // 开启定时器 按进度 刷新 slider的值
     _musicDurationTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateSliderValue:) userInfo:nil repeats:YES];
+    
     _currentIndex = 0;
     _musicIndicator = [MusicIndicator sharedInstance];
-    _originArray = @[].mutableCopy;
+    
+    _originArray = @[].mutableCopy; // 创建一个可变数组
     _randomArray = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    // 添加拖拽手势
     [self addPanRecognizer];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    
     self.navigationController.navigationBarHidden = YES;
     
+    // 取出存贮的类型
     _musicCycleType = [GVUserDefaults standardUserDefaults].musicCycleType;
     [self setupRadioMusicIfNeeded];
     
@@ -116,6 +126,7 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
 
 # pragma mark - Basic setup
 
+// 适配 ios4
 - (void)adapterIphone4 {
     if (IS_IPHONE_4_OR_LESS) {
         CGFloat margin = 65;
@@ -197,6 +208,8 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
 }
 
 - (void)addPanRecognizer {
+    
+    // 添加 轻扫手势
     UISwipeGestureRecognizer *swipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didTouchDismissButton:)];
     swipeRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
     [self.view addGestureRecognizer:swipeRecognizer];
@@ -215,7 +228,8 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
 - (IBAction)didTouchDismissButton:(id)sender {
     __weak typeof(self) weakSelf = self;
     [self.navigationController dismissViewControllerAnimated:YES completion:^{
-        weakSelf.dontReloadMusic = NO;
+        weakSelf.dontReloadMusic = NO;   //不重新加载数据
+        //也不会怎么样
         weakSelf.lastMusicUrl = [weakSelf currentPlayingMusic].musicUrl.mutableCopy;
     }];
 }
@@ -547,6 +561,15 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
     }
     
     return _musicEntities[_currentIndex];
+}
+
+
+
+// 没有进行销毁
+#pragma waring : - 由于是单例 所以这里是 没有销毁的
+- (void)dealloc
+{
+    
 }
 
 @end
