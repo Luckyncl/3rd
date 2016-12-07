@@ -8,7 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+// 动画
 @interface UIView (Animations)
+
+// 开始一个震颤动画
 - (void)startDuangAnimation;
 - (void)startTransitionAnimation;
 @end

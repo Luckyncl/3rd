@@ -25,11 +25,12 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
 @interface MusicViewController ()
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *albumImageLeftConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *albumImageRightConstraint;
-@property (weak, nonatomic) IBOutlet UIButton *musicMenuButton;
+@property (weak, nonatomic) IBOutlet UIButton *musicMenuButton;  // 音乐菜单按钮
 @property (weak, nonatomic) IBOutlet MusicSlider *musicSlider;
-@property (weak, nonatomic) IBOutlet UIImageView *backgroudImageView;
+@property (weak, nonatomic) IBOutlet UIImageView *backgroudImageView; // 背景图片
+
 @property (weak, nonatomic) IBOutlet UIView *backgroudView;
-@property (weak, nonatomic) IBOutlet UIImageView *albumImageView;
+@property (weak, nonatomic) IBOutlet UIImageView *albumImageView;       // 相册图片
 @property (weak, nonatomic) IBOutlet UILabel *musicNameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *singerLabel;
 @property (weak, nonatomic) IBOutlet UIButton *favoriteButton;
@@ -41,14 +42,16 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
 @property (weak, nonatomic) IBOutlet UIButton *musicToggleButton;
 @property (weak, nonatomic) IBOutlet UIButton *musicCycleButton;
 @property (strong, nonatomic) MusicEntity *musicEntity;
+
+// 用于创建 毛玻璃等效果
 @property (strong, nonatomic) UIVisualEffectView *visualEffectView;
 @property (strong, nonatomic) MusicIndicator *musicIndicator;
 @property (strong, nonatomic) NSMutableArray *originArray;
 @property (strong, nonatomic) NSMutableArray *randomArray;
 @property (strong, nonatomic) NSMutableString *lastMusicUrl;
 
-@property (nonatomic) NSTimer *musicDurationTimer;
-@property (nonatomic) BOOL musicIsPlaying;
+@property (nonatomic) NSTimer *musicDurationTimer;      // 定时器
+@property (nonatomic) BOOL musicIsPlaying;             // 是否播放
 @property (nonatomic) NSInteger currentIndex;
 @end
 
@@ -70,6 +73,7 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // 适配 iphone4
     [self adapterIphone4];
     
     // 开启定时器 按进度 刷新 slider的值
@@ -91,10 +95,12 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
     
     self.navigationController.navigationBarHidden = YES;
     
-    // 取出存贮的类型
+    // 取出音乐 播放类型
     _musicCycleType = [GVUserDefaults standardUserDefaults].musicCycleType;
+    //
     [self setupRadioMusicIfNeeded];
     
+    // 看是否进行刷新音乐
     if (_dontReloadMusic && _streamer) {
         return;
     }
@@ -109,6 +115,8 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.navigationController.navigationBarHidden = NO;
+    
+    // 不刷新 音乐
     _dontReloadMusic = YES;
 }
 
@@ -154,6 +162,7 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
     [self updateMusicCycleButton];
 }
 
+// 更新 播放类型 按钮的图片
 - (void)updateMusicCycleButton {
     switch (_musicCycleType) {
         case MusicCycleTypeLoopAll:
@@ -171,12 +180,15 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
     }
 }
 
+//
 - (void)setupRadioMusicIfNeeded {
     _musicMenuButton.hidden = NO;
     [self updateMusicCycleButton];
+    // 看数组 是否  越界了
     [self checkCurrentIndex];
 }
 
+// 检测是否是喜欢的动画
 - (void)checkMusicFavoritedIcon {
     if ([self hasBeenFavoriteMusic]) {
         [_favoriteButton setImage:[UIImage imageNamed:@"red_heart"] forState:UIControlStateNormal];
@@ -186,6 +198,7 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
 }
 
 - (void)setupBackgroudImage {
+    // 圆角
     _albumImageView.layer.cornerRadius = 7;
     _albumImageView.layer.masksToBounds = YES;
     
@@ -418,18 +431,21 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
         _specialIndex = 0;
     }
     
+    // 创建播放流
     [self setupMusicViewWithMusicEntity:_musicEntities[_currentIndex]];
     [self loadPreviousAndNextMusicImage];
     [MusicHandler configNowPlayingInfoCenter];
     
     Track *track = [[Track alloc] init];
     
+    // 这里启用本地的东西
     NSString *soundFilePath = [[NSBundle mainBundle] pathForResource:_musicEntity.fileName ofType: @"mp3"];
     NSURL *fileURL = [[NSURL alloc] initFileURLWithPath:soundFilePath];
     
 //    track.audioFileURL = [NSURL URLWithString:_musicEntity.musicUrl];
     track.audioFileURL = fileURL;
     
+    // 首先先 去除监听  然后 添加监听 再播放
     @try {
         [self removeStreamerObserver];
     } @catch(id anException){
@@ -454,6 +470,8 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;
     [_streamer addObserver:self forKeyPath:@"bufferingRatio" options:NSKeyValueObservingOptionNew context:kBufferingRatioKVOKey];
 }
 
+
+// 这里使用了 demo中的 监听方法
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if (context == kStatusKVOKey) {
         [self performSelector:@selector(updateStatus)

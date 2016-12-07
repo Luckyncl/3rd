@@ -18,9 +18,9 @@
 #import "DOUAudioFile.h"
 
 @interface Track : NSObject <DOUAudioFile>
-@property (nonatomic, strong) NSURL *audioFileURL;
-@property (nonatomic, strong) NSURL *tempFileURL;
-@property (nonatomic, strong) NSURL *cacheFileURL;
+@property (nonatomic, strong) NSURL *audioFileURL;  // 音乐播放地址
+@property (nonatomic, strong) NSURL *tempFileURL;   // 临时文件地址
+@property (nonatomic, strong) NSURL *cacheFileURL;  // 缓存文件地址
 
 
 @end

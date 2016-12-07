@@ -11,6 +11,8 @@
 @implementation UIView (Animations)
 
 - (void)startDuangAnimation {
+    
+    // 通过uiview动画 开控制的时间  这样有些不好吧
     UIViewAnimationOptions op = UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState;
     [UIView animateWithDuration:0.15 delay:0 options:op animations:^{
         [self.layer setValue:@(0.80) forKeyPath:@"transform.scale"];
@@ -23,6 +25,25 @@
             } completion:NULL];
         }];
     }];
+    
+    
+//    
+//    - (void)shakeToShow:(UIView *)aView
+//    {
+//        CAKeyframeAnimation * popAnimation = [CAKeyframeAnimation animationWithKeyPath:@"transform"];
+//        popAnimation.duration = 0.35;
+//        popAnimation.values = @[[NSValue valueWithCATransform3D:CATransform3DMakeScale(0.01f, 0.01f, 1.0f)],
+//                                [NSValue valueWithCATransform3D:CATransform3DMakeScale(1.05f, 1.05f, 1.0f)],
+//                                [NSValue valueWithCATransform3D:CATransform3DMakeScale(0.9f, 0.9f, 1.0f)],
+//                                [NSValue valueWithCATransform3D:CATransform3DIdentity]];
+//        popAnimation.keyTimes = @[@0.0f, @0.5f, @0.75f, @0.8f];
+//        popAnimation.timingFunctions = @[[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut],
+//                                         [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut],
+//                                         [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+//        [aView.layer addAnimation:popAnimation forKey:nil];
+//    }
+    
+
 }
 
 - (void)startTransitionAnimation {
@@ -32,5 +53,7 @@
     transition.type = kCATransitionFade;
     [self.layer addAnimation:transition forKey:nil];
 }
+
+
 
 @end

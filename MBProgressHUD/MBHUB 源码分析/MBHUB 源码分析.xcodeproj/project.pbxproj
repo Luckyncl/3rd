@@ -1,0 +1,536 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		18DB10571DF80BBC008B62EF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DB10561DF80BBC008B62EF /* main.m */; };
+		18DB105A1DF80BBC008B62EF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DB10591DF80BBC008B62EF /* AppDelegate.m */; };
+		18DB105D1DF80BBC008B62EF /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DB105C1DF80BBC008B62EF /* ViewController.m */; };
+		18DB10601DF80BBC008B62EF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18DB105E1DF80BBC008B62EF /* Main.storyboard */; };
+		18DB10621DF80BBC008B62EF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 18DB10611DF80BBC008B62EF /* Assets.xcassets */; };
+		18DB10651DF80BBC008B62EF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18DB10631DF80BBC008B62EF /* LaunchScreen.storyboard */; };
+		18DB10701DF80BBC008B62EF /* MBHUB_____Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DB106F1DF80BBC008B62EF /* MBHUB_____Tests.m */; };
+		18DB107B1DF80BBC008B62EF /* MBHUB_____UITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DB107A1DF80BBC008B62EF /* MBHUB_____UITests.m */; };
+		18DB108A1DF80BC7008B62EF /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DB10891DF80BC7008B62EF /* MBProgressHUD.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		18DB106C1DF80BBC008B62EF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 18DB104A1DF80BBC008B62EF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 18DB10511DF80BBC008B62EF;
+			remoteInfo = "MBHUB 源码分析";
+		};
+		18DB10771DF80BBC008B62EF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 18DB104A1DF80BBC008B62EF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 18DB10511DF80BBC008B62EF;
+			remoteInfo = "MBHUB 源码分析";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		18DB10521DF80BBC008B62EF /* MBHUB 源码分析.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MBHUB 源码分析.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		18DB10561DF80BBC008B62EF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		18DB10581DF80BBC008B62EF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		18DB10591DF80BBC008B62EF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		18DB105B1DF80BBC008B62EF /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		18DB105C1DF80BBC008B62EF /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		18DB105F1DF80BBC008B62EF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		18DB10611DF80BBC008B62EF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		18DB10641DF80BBC008B62EF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		18DB10661DF80BBC008B62EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		18DB106B1DF80BBC008B62EF /* MBHUB 源码分析Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "MBHUB 源码分析Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		18DB106F1DF80BBC008B62EF /* MBHUB_____Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MBHUB_____Tests.m"; sourceTree = "<group>"; };
+		18DB10711DF80BBC008B62EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		18DB10761DF80BBC008B62EF /* MBHUB 源码分析UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "MBHUB 源码分析UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		18DB107A1DF80BBC008B62EF /* MBHUB_____UITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MBHUB_____UITests.m"; sourceTree = "<group>"; };
+		18DB107C1DF80BBC008B62EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		18DB10881DF80BC7008B62EF /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
+		18DB10891DF80BC7008B62EF /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		18DB104F1DF80BBC008B62EF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		18DB10681DF80BBC008B62EF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		18DB10731DF80BBC008B62EF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		18DB10491DF80BBC008B62EF = {
+			isa = PBXGroup;
+			children = (
+				18DB10541DF80BBC008B62EF /* MBHUB 源码分析 */,
+				18DB106E1DF80BBC008B62EF /* MBHUB 源码分析Tests */,
+				18DB10791DF80BBC008B62EF /* MBHUB 源码分析UITests */,
+				18DB10531DF80BBC008B62EF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		18DB10531DF80BBC008B62EF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				18DB10521DF80BBC008B62EF /* MBHUB 源码分析.app */,
+				18DB106B1DF80BBC008B62EF /* MBHUB 源码分析Tests.xctest */,
+				18DB10761DF80BBC008B62EF /* MBHUB 源码分析UITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		18DB10541DF80BBC008B62EF /* MBHUB 源码分析 */ = {
+			isa = PBXGroup;
+			children = (
+				18DB10881DF80BC7008B62EF /* MBProgressHUD.h */,
+				18DB10891DF80BC7008B62EF /* MBProgressHUD.m */,
+				18DB10581DF80BBC008B62EF /* AppDelegate.h */,
+				18DB10591DF80BBC008B62EF /* AppDelegate.m */,
+				18DB105B1DF80BBC008B62EF /* ViewController.h */,
+				18DB105C1DF80BBC008B62EF /* ViewController.m */,
+				18DB105E1DF80BBC008B62EF /* Main.storyboard */,
+				18DB10611DF80BBC008B62EF /* Assets.xcassets */,
+				18DB10631DF80BBC008B62EF /* LaunchScreen.storyboard */,
+				18DB10661DF80BBC008B62EF /* Info.plist */,
+				18DB10551DF80BBC008B62EF /* Supporting Files */,
+			);
+			path = "MBHUB 源码分析";
+			sourceTree = "<group>";
+		};
+		18DB10551DF80BBC008B62EF /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				18DB10561DF80BBC008B62EF /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		18DB106E1DF80BBC008B62EF /* MBHUB 源码分析Tests */ = {
+			isa = PBXGroup;
+			children = (
+				18DB106F1DF80BBC008B62EF /* MBHUB_____Tests.m */,
+				18DB10711DF80BBC008B62EF /* Info.plist */,
+			);
+			path = "MBHUB 源码分析Tests";
+			sourceTree = "<group>";
+		};
+		18DB10791DF80BBC008B62EF /* MBHUB 源码分析UITests */ = {
+			isa = PBXGroup;
+			children = (
+				18DB107A1DF80BBC008B62EF /* MBHUB_____UITests.m */,
+				18DB107C1DF80BBC008B62EF /* Info.plist */,
+			);
+			path = "MBHUB 源码分析UITests";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		18DB10511DF80BBC008B62EF /* MBHUB 源码分析 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 18DB107F1DF80BBC008B62EF /* Build configuration list for PBXNativeTarget "MBHUB 源码分析" */;
+			buildPhases = (
+				18DB104E1DF80BBC008B62EF /* Sources */,
+				18DB104F1DF80BBC008B62EF /* Frameworks */,
+				18DB10501DF80BBC008B62EF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MBHUB 源码分析";
+			productName = "MBHUB 源码分析";
+			productReference = 18DB10521DF80BBC008B62EF /* MBHUB 源码分析.app */;
+			productType = "com.apple.product-type.application";
+		};
+		18DB106A1DF80BBC008B62EF /* MBHUB 源码分析Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 18DB10821DF80BBC008B62EF /* Build configuration list for PBXNativeTarget "MBHUB 源码分析Tests" */;
+			buildPhases = (
+				18DB10671DF80BBC008B62EF /* Sources */,
+				18DB10681DF80BBC008B62EF /* Frameworks */,
+				18DB10691DF80BBC008B62EF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				18DB106D1DF80BBC008B62EF /* PBXTargetDependency */,
+			);
+			name = "MBHUB 源码分析Tests";
+			productName = "MBHUB 源码分析Tests";
+			productReference = 18DB106B1DF80BBC008B62EF /* MBHUB 源码分析Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		18DB10751DF80BBC008B62EF /* MBHUB 源码分析UITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 18DB10851DF80BBC008B62EF /* Build configuration list for PBXNativeTarget "MBHUB 源码分析UITests" */;
+			buildPhases = (
+				18DB10721DF80BBC008B62EF /* Sources */,
+				18DB10731DF80BBC008B62EF /* Frameworks */,
+				18DB10741DF80BBC008B62EF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				18DB10781DF80BBC008B62EF /* PBXTargetDependency */,
+			);
+			name = "MBHUB 源码分析UITests";
+			productName = "MBHUB 源码分析UITests";
+			productReference = 18DB10761DF80BBC008B62EF /* MBHUB 源码分析UITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		18DB104A1DF80BBC008B62EF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0810;
+				ORGANIZATIONNAME = Apple;
+				TargetAttributes = {
+					18DB10511DF80BBC008B62EF = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+					};
+					18DB106A1DF80BBC008B62EF = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 18DB10511DF80BBC008B62EF;
+					};
+					18DB10751DF80BBC008B62EF = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 18DB10511DF80BBC008B62EF;
+					};
+				};
+			};
+			buildConfigurationList = 18DB104D1DF80BBC008B62EF /* Build configuration list for PBXProject "MBHUB 源码分析" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 18DB10491DF80BBC008B62EF;
+			productRefGroup = 18DB10531DF80BBC008B62EF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				18DB10511DF80BBC008B62EF /* MBHUB 源码分析 */,
+				18DB106A1DF80BBC008B62EF /* MBHUB 源码分析Tests */,
+				18DB10751DF80BBC008B62EF /* MBHUB 源码分析UITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		18DB10501DF80BBC008B62EF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				18DB10651DF80BBC008B62EF /* LaunchScreen.storyboard in Resources */,
+				18DB10621DF80BBC008B62EF /* Assets.xcassets in Resources */,
+				18DB10601DF80BBC008B62EF /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		18DB10691DF80BBC008B62EF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		18DB10741DF80BBC008B62EF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		18DB104E1DF80BBC008B62EF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				18DB105D1DF80BBC008B62EF /* ViewController.m in Sources */,
+				18DB105A1DF80BBC008B62EF /* AppDelegate.m in Sources */,
+				18DB10571DF80BBC008B62EF /* main.m in Sources */,
+				18DB108A1DF80BC7008B62EF /* MBProgressHUD.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		18DB10671DF80BBC008B62EF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				18DB10701DF80BBC008B62EF /* MBHUB_____Tests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		18DB10721DF80BBC008B62EF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				18DB107B1DF80BBC008B62EF /* MBHUB_____UITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		18DB106D1DF80BBC008B62EF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 18DB10511DF80BBC008B62EF /* MBHUB 源码分析 */;
+			targetProxy = 18DB106C1DF80BBC008B62EF /* PBXContainerItemProxy */;
+		};
+		18DB10781DF80BBC008B62EF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 18DB10511DF80BBC008B62EF /* MBHUB 源码分析 */;
+			targetProxy = 18DB10771DF80BBC008B62EF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		18DB105E1DF80BBC008B62EF /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				18DB105F1DF80BBC008B62EF /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		18DB10631DF80BBC008B62EF /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				18DB10641DF80BBC008B62EF /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		18DB107D1DF80BBC008B62EF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		18DB107E1DF80BBC008B62EF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		18DB10801DF80BBC008B62EF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "MBHUB 源码分析/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jinnuojiayin.MBHUB-----";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		18DB10811DF80BBC008B62EF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "MBHUB 源码分析/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jinnuojiayin.MBHUB-----";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		18DB10831DF80BBC008B62EF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = "MBHUB 源码分析Tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jinnuojiayin.MBHUB-----Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MBHUB 源码分析.app/MBHUB 源码分析";
+			};
+			name = Debug;
+		};
+		18DB10841DF80BBC008B62EF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = "MBHUB 源码分析Tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jinnuojiayin.MBHUB-----Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MBHUB 源码分析.app/MBHUB 源码分析";
+			};
+			name = Release;
+		};
+		18DB10861DF80BBC008B62EF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "MBHUB 源码分析UITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jinnuojiayin.MBHUB-----UITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = "MBHUB 源码分析";
+			};
+			name = Debug;
+		};
+		18DB10871DF80BBC008B62EF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "MBHUB 源码分析UITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jinnuojiayin.MBHUB-----UITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = "MBHUB 源码分析";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		18DB104D1DF80BBC008B62EF /* Build configuration list for PBXProject "MBHUB 源码分析" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				18DB107D1DF80BBC008B62EF /* Debug */,
+				18DB107E1DF80BBC008B62EF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		18DB107F1DF80BBC008B62EF /* Build configuration list for PBXNativeTarget "MBHUB 源码分析" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				18DB10801DF80BBC008B62EF /* Debug */,
+				18DB10811DF80BBC008B62EF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		18DB10821DF80BBC008B62EF /* Build configuration list for PBXNativeTarget "MBHUB 源码分析Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				18DB10831DF80BBC008B62EF /* Debug */,
+				18DB10841DF80BBC008B62EF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		18DB10851DF80BBC008B62EF /* Build configuration list for PBXNativeTarget "MBHUB 源码分析UITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				18DB10861DF80BBC008B62EF /* Debug */,
+				18DB10871DF80BBC008B62EF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 18DB104A1DF80BBC008B62EF /* Project object */;
+}

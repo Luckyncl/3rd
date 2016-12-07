@@ -35,7 +35,7 @@
 - (void)createIndicatorView {
     // 注意这里使用的是单例
     MusicIndicator *indicator = [MusicIndicator sharedInstance];
-    indicator.hidesWhenStopped = NO;            // 挺值得时候不隐藏
+    indicator.hidesWhenStopped = NO;            // 停止的时候不隐藏
     indicator.tintColor = [UIColor redColor];
     
     if (indicator.state != NAKPlaybackIndicatorViewStatePlaying) {
@@ -109,6 +109,10 @@
 
 # pragma mark - Update music indicator state
 
+
+/**
+    更新确定 index 上的指示器
+ */
 - (void)updatePlaybackIndicatorWithIndexPath:(NSIndexPath *)indexPath {
     
     // 停止所有的指示器
@@ -120,6 +124,10 @@
     musicsCell.state = NAKPlaybackIndicatorViewStatePlaying;
 }
 
+
+/**
+        跟新cell上的指示器
+ */
 - (void)updatePlaybackIndicatorOfCell:(MusicListCell *)cell {
     MusicEntity *music = cell.musicEntity;
     if (music.musicId == [[MusicViewController sharedInstance] currentPlayingMusic].musicId) {

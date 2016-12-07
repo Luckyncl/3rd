@@ -13,6 +13,7 @@
 
 @implementation MusicHandler
 
+// 缓存图片
 + (void)cacheMusicCoverWithMusicEntities:(NSArray *)musicEntities currentIndex:(NSInteger)currentIndex {
     NSInteger previoudsIndex = currentIndex-1;
     NSInteger nextIndex = currentIndex+1;
@@ -25,13 +26,19 @@
         NSString *imageWidth = [NSString stringWithFormat:@"%.f", (SCREEN_WIDTH - 70) * 2];
         MusicEntity *music = musicEntities[indexNum.integerValue];
         NSURL *imageUrl = [BaseHelper qiniuImageCenter:music.cover withWidth:imageWidth withHeight:imageWidth];
+        // 首先查询图片  从磁盘
         UIImage *image = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:imageUrl.absoluteString];
         if (!image) {
+            // 没有的话就下载 （实际上这里是提前进行接连两个音乐图片的下载  这样可以使体验更佳）
             [[SDWebImageDownloader sharedDownloader] downloadImageWithURL:imageUrl options:SDWebImageDownloaderUseNSURLCache progress:nil completed:nil];
         }
     }
 }
 
+
+/**
+     设置锁屏 信息
+ */
 + (void)configNowPlayingInfoCenter {
     if (NSClassFromString(@"MPNowPlayingInfoCenter")) {
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
@@ -40,6 +47,7 @@
         AVURLAsset *audioAsset = [AVURLAsset URLAssetWithURL:[NSURL URLWithString:music.musicUrl] options:nil];
         CMTime audioDuration = audioAsset.duration;
         float audioDurationSeconds = CMTimeGetSeconds(audioDuration);
+        
         
         [dict setObject:music.name forKey:MPMediaItemPropertyTitle];
         [dict setObject:music.artistName forKey:MPMediaItemPropertyArtist];
