@@ -1,11 +1,3 @@
-//
-//  ViewController.m
-//  kxmenu
-//
-//  Created by Kolyvan on 17.05.13.
-//  Copyright (c) 2013 Konstantin Bukreev. All rights reserved.
-//
-
 #import "ViewController.h"
 #import "KxMenu.h"
 
@@ -146,9 +138,11 @@
       ];
     
     KxMenuItem *first = menuItems[0];
-    first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
-    first.alignment = NSTextAlignmentCenter;
+//    first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
+//    first.alignment = NSTextAlignmentCenter;
     
+    
+    // pysearch
     [KxMenu showMenuInView:self.view
                   fromRect:sender.frame
                  menuItems:menuItems];

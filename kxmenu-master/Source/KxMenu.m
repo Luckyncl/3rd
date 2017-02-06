@@ -13,6 +13,7 @@ const CGFloat kArrowSize = 12.f;
 @interface KxMenuOverlay : UIView
 @end
 
+/*   菜单的遮罩图层      */
 @implementation KxMenuOverlay
 
 // - (void) dealloc { NSLog(@"dealloc %@", self); }
@@ -21,9 +22,11 @@ const CGFloat kArrowSize = 12.f;
 {
     self = [super initWithFrame:frame];
     if (self) {
+        // 设置 为透明
         self.backgroundColor = [UIColor clearColor];
         self.opaque = NO;
         
+        // 添加点击手势
         UITapGestureRecognizer *gestureRecognizer;
         gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                     action:@selector(singleTap:)];
@@ -47,6 +50,10 @@ const CGFloat kArrowSize = 12.f;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+
+/**
+    
+ */
 @implementation KxMenuItem
 
 + (instancetype) menuItem:(NSString *) title
@@ -65,11 +72,11 @@ const CGFloat kArrowSize = 12.f;
      target:(id)target
      action:(SEL) action
 {
+    // 使用断言
     NSParameterAssert(title.length || image);
     
     self = [super init];
     if (self) {
-        
         _title = title;
         _image = image;
         _target = target;
@@ -83,17 +90,26 @@ const CGFloat kArrowSize = 12.f;
     return _target != nil && _action != NULL;
 }
 
+
+/**
+        执行存储的那个方法
+ */
 - (void) performAction
 {
     __strong id target = self.target;
     
     if (target && [target respondsToSelector:_action]) {
         
+        // 在主线程里面 执行UI  直到执行完毕以后 如果比较耗时的话，可能会影响 主线程
         [target performSelectorOnMainThread:_action withObject:self waitUntilDone:YES];
     }
 }
 
-- (NSString *) description
+
+/**
+    重写description  方便打印调试
+ */
+- (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@ #%p %@>", [self class], self, _title];
 }
@@ -103,6 +119,7 @@ const CGFloat kArrowSize = 12.f;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+// 定义箭头展示的方向 上，下，左，右，
 typedef enum {
   
     KxMenuViewArrowDirectionNone,
@@ -113,19 +130,18 @@ typedef enum {
     
 } KxMenuViewArrowDirection;
 
-@implementation KxMenuView {
-    
+@implementation KxMenuView{
     KxMenuViewArrowDirection    _arrowDirection;            // 箭头的方向
-    CGFloat                     _arrowPosition;
-    UIView                      *_contentView;
-    NSArray                     *_menuItems;
+    CGFloat                     _arrowPosition;         // 箭头的位置
+    UIView                      *_contentView;          // 内容视图
+    NSArray                     *_menuItems;            // 数据
 }
 
 - (id)init
 {
     self = [super initWithFrame:CGRectZero];    
     if(self) {
-
+        // 初始化设置
         self.backgroundColor = [UIColor clearColor];
         self.opaque = YES;
         self.alpha = 0;
@@ -138,7 +154,8 @@ typedef enum {
     return self;
 }
 
-// - (void) dealloc { NSLog(@"dealloc %@", self); }
+// 当下一次 显示的时候， 会删除 前一个
+//- (void) dealloc { NSLog(@"dealloc %@", self); }
 
 - (void) setupFrameInView:(UIView *)view
                  fromRect:(CGRect)fromRect
@@ -148,12 +165,14 @@ typedef enum {
     const CGFloat outerWidth = view.bounds.size.width;
     const CGFloat outerHeight = view.bounds.size.height;
     
+     /*    锚点相关的位置     */
     const CGFloat rectX0 = fromRect.origin.x;
     const CGFloat rectX1 = fromRect.origin.x + fromRect.size.width;
     const CGFloat rectXM = fromRect.origin.x + fromRect.size.width * 0.5f;
     const CGFloat rectY0 = fromRect.origin.y;
     const CGFloat rectY1 = fromRect.origin.y + fromRect.size.height;
     const CGFloat rectYM = fromRect.origin.y + fromRect.size.height * 0.5f;;
+    
     
     const CGFloat widthPlusArrow = contentSize.width + kArrowSize;
     const CGFloat heightPlusArrow = contentSize.height + kArrowSize;
@@ -162,6 +181,7 @@ typedef enum {
     
     const CGFloat kMargin = 5.f;
     
+    // 处理frame 来判断箭头方向
     if (heightPlusArrow < (outerHeight - rectY1)) {
     
         _arrowDirection = KxMenuViewArrowDirectionUp;
@@ -272,17 +292,25 @@ typedef enum {
     }    
 }
 
+
+
+/**
+     用于展示页面
+ */
 - (void)showMenuInView:(UIView *)view
               fromRect:(CGRect)rect
              menuItems:(NSArray *)menuItems
 {
+    //
     _menuItems = menuItems;
     
     _contentView = [self mkContentView];
     [self addSubview:_contentView];
     
+    //  确定视图位置
     [self setupFrameInView:view fromRect:rect];
-        
+    
+    // 遮罩view
     KxMenuOverlay *overlay = [[KxMenuOverlay alloc] initWithFrame:view.bounds];
     [overlay addSubview:self];
     [view addSubview:overlay];
@@ -328,6 +356,7 @@ typedef enum {
         } else {
             
             if ([self.superview isKindOfClass:[KxMenuOverlay class]])
+                
                 [self.superview removeFromSuperview];
             [self removeFromSuperview];
         }
@@ -336,27 +365,34 @@ typedef enum {
 
 - (void)performAction:(id)sender
 {
+    // 首先去隐藏
     [self dismissMenu:YES];
     
+    // 然后再执行任务
     UIButton *button = (UIButton *)sender;
     KxMenuItem *menuItem = _menuItems[button.tag];
     [menuItem performAction];
 }
 
+/*         创建内容view                 */
 - (UIView *) mkContentView
 {
+    // 首先删除所有的view
     for (UIView *v in self.subviews) {
         [v removeFromSuperview];
     }
     
+    // 如果items的个数为空
     if (!_menuItems.count)
         return nil;
  
+    // 设置间距值
     const CGFloat kMinMenuItemHeight = 32.f;
     const CGFloat kMinMenuItemWidth = 32.f;
     const CGFloat kMarginX = 10.f;
-    const CGFloat kMarginY = 5.f;
+    const CGFloat kMarginY = 5.f; // Y 方向的最大值
     
+    // 设置字体
     UIFont *titleFont = [KxMenu titleFont];
     if (!titleFont) titleFont = [UIFont boldSystemFontOfSize:16];
     
@@ -364,12 +400,14 @@ typedef enum {
     CGFloat maxItemHeight = 0;
     CGFloat maxItemWidth = 0;
     
+    // 遍历 数据
     for (KxMenuItem *menuItem in _menuItems) {
-        
+        // 获取图片的大小
         const CGSize imageSize = menuItem.image.size;        
         if (imageSize.width > maxImageWidth)
             maxImageWidth = imageSize.width;        
     }
+    
     
     if (maxImageWidth) {
         maxImageWidth += kMarginX;
@@ -389,18 +427,21 @@ typedef enum {
         if (itemWidth > maxItemWidth)
             maxItemWidth = itemWidth;
     }
-       
+    
+    // 取两个的最大值
     maxItemWidth  = MAX(maxItemWidth, kMinMenuItemWidth);
     maxItemHeight = MAX(maxItemHeight, kMinMenuItemHeight);
 
     const CGFloat titleX = kMarginX * 2 + maxImageWidth;
     const CGFloat titleWidth = maxItemWidth - titleX - kMarginX * 2;
     
+    // 点击item的时候 高亮显示的图片
     UIImage *selectedImage = [KxMenuView selectedImage:(CGSize){maxItemWidth, maxItemHeight + 2}];
     UIImage *gradientLine = [KxMenuView gradientLine: (CGSize){maxItemWidth - kMarginX * 4, 1}];
     
     UIView *contentView = [[UIView alloc] initWithFrame:CGRectZero];
     contentView.autoresizingMask = UIViewAutoresizingNone;
+    // 内容视图
     contentView.backgroundColor = [UIColor clearColor];
     contentView.opaque = NO;
     
@@ -432,7 +473,7 @@ typedef enum {
                        action:@selector(performAction:)
              forControlEvents:UIControlEventTouchUpInside];
             
-            [button setBackgroundImage:selectedImage forState:UIControlStateHighlighted];
+//            [button setBackgroundImage:selectedImage forState:UIControlStateHighlighted];
             
             [itemView addSubview:button];
         }
@@ -484,6 +525,7 @@ typedef enum {
         
         if (itemNum < _menuItems.count - 1) {
             
+            // 添加分割线
             UIImageView *gradientView = [[UIImageView alloc] initWithImage:gradientLine];
             gradientView.frame = (CGRect){kMarginX * 2, maxItemHeight + 1, gradientLine.size};
             gradientView.contentMode = UIViewContentModeLeft;
@@ -562,13 +604,23 @@ typedef enum {
                          components:(const CGFloat []) components
                               count:(NSUInteger)count
 {
+    // 
     UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    // 获取上下文
     CGContextRef context = UIGraphicsGetCurrentContext();
     
+    // 创建一个 rgb 的 颜色空间
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    // 创建一个 渐变对象
     CGGradientRef colorGradient = CGGradientCreateWithColorComponents(colorSpace, components, locations, 2);
+    
+    // 释放 颜色空间
     CGColorSpaceRelease(colorSpace);
+    // 画一个渐变的线条
     CGContextDrawLinearGradient(context, colorGradient, (CGPoint){0, 0}, (CGPoint){size.width, 0}, 0);
+    
+    //释放渐变对象
     CGGradientRelease(colorGradient);
     
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -576,11 +628,13 @@ typedef enum {
     return image;
 }
 
+
 - (void) drawRect:(CGRect)rect
 {
     [self drawBackground:self.bounds
                inContext:UIGraphicsGetCurrentContext()];
 }
+
 
 - (void)drawBackground:(CGRect)frame
              inContext:(CGContextRef) context
@@ -716,7 +770,6 @@ typedef enum {
     }
     
     CGContextDrawLinearGradient(context, gradient, start, end, 0);
-    
     CGGradientRelease(gradient);    
 }
 
@@ -769,6 +822,7 @@ static UIFont *gTitleFont;
     NSParameterAssert(view);
     NSParameterAssert(menuItems.count);
     
+    // 删掉菜单view
     if (_menuView) {
         
         [_menuView dismissMenu:NO];

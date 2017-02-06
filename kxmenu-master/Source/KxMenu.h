@@ -1,5 +1,11 @@
 #import <Foundation/Foundation.h>
 
+// 实际上这就是模型而已
+
+
+/**
+    模型用于记录数据
+ */
 @interface KxMenuItem : NSObject
 
 @property (readwrite, nonatomic, strong) UIImage *image;
@@ -16,9 +22,11 @@
 
 @end
 
+
+// kxMenu 继承于NSObject 适用于管理展示菜单的
 @interface KxMenu : NSObject
 
-// 动画效果相关
+// 展示相关
 + (void) showMenuInView:(UIView *)view
                fromRect:(CGRect)rect
               menuItems:(NSArray *)menuItems;
