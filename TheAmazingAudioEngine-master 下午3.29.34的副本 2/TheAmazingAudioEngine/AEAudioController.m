@@ -46,7 +46,7 @@
 static const int kMaximumChannelsPerGroup              = 100;
 static const int kMaximumCallbacksPerSource            = 15;
 static const int kMessageBufferLength                  = 8192;
-static const UInt32 kMaxFramesPerSlice                 = 4096;
+static const UInt32 kMaxFramesPerSlice                 = 4096;    // 每片最大的帧数
 static const int kScratchBufferFrames                  = kMaxFramesPerSlice;
 static const int kInputAudioBufferFrames               = kMaxFramesPerSlice;
 static const int kLevelMonitorScratchBufferSize        = kMaxFramesPerSlice;
@@ -105,7 +105,7 @@ enum {
 };
 
 /*!
- * Callback
+ * Callback 定义回调
  */
 typedef struct __callback_t {
     void *callback;
@@ -165,7 +165,7 @@ typedef enum {
 } ChannelType;
 
 /*!
- * Channel
+ * Channel  通道描述
  */
 typedef struct __channel_t {
     ChannelType      type;
@@ -189,7 +189,7 @@ typedef struct __channel_t {
 } channel_t, *AEChannelRef;
 
 /*!
- * Channel group
+ * Channel group  通道组
  */
 typedef struct _channel_group_t {
     AEChannelRef        channel;
@@ -217,8 +217,8 @@ typedef struct _channel_group_t {
 @end
 
 @interface AEAudioController () {
-    AUGraph             _audioGraph;
-    AUNode              _ioNode;
+    AUGraph             _audioGraph;   // 音频上下文
+    AUNode              _ioNode;    // 音频结点
     AudioUnit           _ioAudioUnit;
     BOOL                _started;
     BOOL                _interrupted;
@@ -234,7 +234,7 @@ typedef struct _channel_group_t {
     callback_table_t    _timingCallbacks;
     
     input_table_t      *_inputTable;
-    AudioStreamBasicDescription _rawInputAudioDescription;
+    AudioStreamBasicDescription _rawInputAudioDescription; //描述
     AudioBufferList    *_inputAudioBufferList;
 #if TARGET_OS_IPHONE
     AudioBufferList    *_inputAudioScratchBufferList;
@@ -313,7 +313,7 @@ static OSStatus channelAudioProducer(void *userInfo, AudioBufferList *audio, UIn
     
     OSStatus status = noErr;
     
-    // See if there's another filter
+    // See if there's another filter  查看是否有另一个过滤器
     for ( int i=channel->callbacks.count-1, filterIndex=0; i>=0; i-- ) {
         callback_t *callback = &channel->callbacks.callbacks[i];
         if ( callback->flags & kFilterFlag ) {
@@ -341,7 +341,7 @@ static OSStatus channelAudioProducer(void *userInfo, AudioBufferList *audio, UIn
     } else if ( channel->type == kChannelTypeGroup ) {
         AEChannelGroupRef group = (AEChannelGroupRef)channel->ptr;
         
-        // Tell mixer/mixer's converter unit to render into audio
+        // Tell mixer/mixer's converter unit to render into audio  渲染音频数据
         status = AudioUnitRender(group->converterUnit ? group->converterUnit : group->mixerAudioUnit, arg->ioActionFlags, &arg->originalTimeStamp, 0, *frames, audio);
         if ( !AECheckOSStatus(status, "AudioUnitRender") ) return status;
         
@@ -430,7 +430,7 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
     }
     
     if ( channel->audiobusSenderPort && ABSenderPortIsMuted((__bridge id)channel->audiobusSenderPort) && !upstreamChannelsConnectedToAudiobus(channel) ) {
-        // Silence output
+        // Silence output  静音输出
         *ioActionFlags |= kAudioUnitRenderAction_OutputIsSilence;
         for ( int i=0; i<ioData->mNumberBuffers; i++ ) memset(ioData->mBuffers[i].mData, 0, ioData->mBuffers[i].mDataByteSize);
     }
@@ -2708,7 +2708,7 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
     // Initialise group
     [self configureChannelsInRange:NSMakeRange(0, 1) forGroup:NULL];
     
-    // Register a callback to be notified when the main mixer unit renders
+    // Register a callback to be notified when the main mixer unit renders  注册混音单元
     AECheckOSStatus(AudioUnitAddRenderNotify(_topGroup->mixerAudioUnit, &topRenderNotifyCallback, (__bridge void*)self), "AudioUnitAddRenderNotify");
     
     // Set the master volume

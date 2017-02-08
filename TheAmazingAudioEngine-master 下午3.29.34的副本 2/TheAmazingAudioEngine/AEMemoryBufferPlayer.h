@@ -80,7 +80,7 @@ extern "C" {
  */
 - (void)playAtTime:(uint64_t)time;
 
-@property (nonatomic, readonly) AudioBufferList * buffer;   //!< The audio buffer
+@property (nonatomic, readonly) AudioBufferList * buffer;   //!< The audio buffer  数据缓冲区
 @property (nonatomic, readonly) NSTimeInterval duration;    //!< Length of audio, in seconds
 @property (nonatomic, assign) NSTimeInterval currentTime;   //!< Current playback position, in seconds
 @property (nonatomic, readonly) AudioStreamBasicDescription audioDescription; //!< The client audio format

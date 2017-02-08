@@ -55,7 +55,7 @@ NSString * kAERecorderErrorKey = @"error";
 - (id)initWithAudioController:(AEAudioController*)audioController {
     if ( !(self = [super init]) ) return nil;
     
-    // 创建混音器
+    // 创建混音器 
     self.mixer = [[AEMixerBuffer alloc] initWithClientFormat:audioController.audioDescription];
     // 创建文件写入对象
     self.writer = [[AEAudioFileWriter alloc] initWithAudioDescription:audioController.audioDescription];
@@ -153,7 +153,7 @@ static void audioCallback(__unsafe_unretained AERecorder *THIS,
     if ( !THIS->_recording ) return;
     
     
-    
+    //  添加混音节点
     AEMixerBufferEnqueue(THIS->_mixer, source, audio, frames, time);
     
       NSLog(@"正在记录中。。。。。。。。。。。。。。。。。。。。。。");
