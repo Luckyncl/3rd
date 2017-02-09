@@ -1045,7 +1045,7 @@ self.filter = [AEBlockFilter filterWithBlock:^(AEAudioFilterProducer producer,
  ...
  
  AEFloatConverterToFloatBufferList(THIS->_floatConverter, audio, THIS->_scratchBufferList, frames);
- // Now process the floating-point audio in 'scratchBufferList'.
+ // Now process the floating-point audio in 'scratchBufferList'.  处理这个 音频在scratchBufferList这个缓冲区内
  @endcode
  
  

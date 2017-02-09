@@ -1211,7 +1211,7 @@ static OSStatus sourceInputCallback(void *inRefCon, AudioUnitRenderActionFlags *
 	OSStatus result = NewAUGraph(&_graph);
     if ( !AECheckOSStatus(result, "NewAUGraph") ) return;
     
-    // Multichannel mixer unit
+    // Multichannel mixer unit  多通道混音单元
     AudioComponentDescription mixer_desc = {
         .componentType = kAudioUnitType_Mixer,
         .componentSubType = kAudioUnitSubType_MultiChannelMixer,

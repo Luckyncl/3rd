@@ -61,6 +61,8 @@ NSString * kAERecorderErrorKey = @"error";
     self.writer = [[AEAudioFileWriter alloc] initWithAudioDescription:audioController.audioDescription];
     
     if ( audioController.inputEnabled && audioController.audioInputAvailable && audioController.inputAudioDescription.mChannelsPerFrame != audioController.audioDescription.mChannelsPerFrame ) {
+        
+        // 设置
         [_mixer setAudioDescription:*AEAudioControllerInputAudioDescription(audioController) forSource:AEAudioSourceInput];
     }
     
@@ -103,10 +105,12 @@ NSString * kAERecorderErrorKey = @"error";
 - (BOOL)prepareRecordingToFileAtPath:(NSString*)path fileType:(AudioFileTypeID)fileType bitDepth:(UInt32)bits channels:(UInt32)channels error:(NSError**)error
 {
     _currentTime = 0.0;
+    
+    // 设置 转码器
     BOOL result = [_writer beginWritingToFileAtPath:path fileType:fileType bitDepth:bits channels:channels error:error];
     
     if ( result ) {
-        // Initialize async writing  开始添加音频文件
+        // Initialize async writing   添加一个空的数据到文件中
         AECheckOSStatus(AEAudioFileWriterAddAudio(_writer, NULL, 0), "AEAudioFileWriterAddAudio");
     }
             /*  如果是有音频文件的话我们是不是可以直接打开然后添加呢  */
@@ -143,7 +147,9 @@ static void reportError(void *userInfo, int length) {
 }
 
 
-// 接收音频的回调
+/*
+     接收音频的回调
+ */
 static void audioCallback(__unsafe_unretained AERecorder *THIS,
                           __unsafe_unretained AEAudioController *audioController,
                           void                     *source,
@@ -153,22 +159,23 @@ static void audioCallback(__unsafe_unretained AERecorder *THIS,
     if ( !THIS->_recording ) return;
     
     
-    //  添加混音节点
+    //  添加混音节点  记录音频需要添加混音节点
     AEMixerBufferEnqueue(THIS->_mixer, source, audio, frames, time);
-    
-      NSLog(@"正在记录中。。。。。。。。。。。。。。。。。。。。。。");
-    
+
     // Let the mixer buffer provide the audio buffer    让混音器缓冲区提供音频缓冲区
-    UInt32 bufferLength = kProcessChunkSize;
+    UInt32 bufferLength = kProcessChunkSize;   // 8192
     for ( int i=0; i<THIS->_buffer->mNumberBuffers; i++ ) {
-        THIS->_buffer->mBuffers[i].mData = NULL;
+        THIS->_buffer->mBuffers[i].mData = NULL;              //  首先清空录音的音频缓冲区
         THIS->_buffer->mBuffers[i].mDataByteSize = 0;
     }
     
-    AEMixerBufferDequeue(THIS->_mixer, THIS->_buffer, &bufferLength, NULL);
-    NSLog(@"changdu -====== bufferLength === %u",(unsigned int)bufferLength);
+    AEMixerBufferDequeue(THIS->_mixer, THIS->_buffer, &bufferLength, NULL);  // 填充录音缓冲区
+    NSLog(@"记录中 -===  frames == %u === bufferLength === %u",frames,(unsigned int)bufferLength);
     if ( bufferLength > 0 ) {
+        
+        // 给当前的时间赋值
         THIS->_currentTime += AEConvertFramesToSeconds(audioController, bufferLength);
+        // 将混音缓冲器的混音数据  写入文件中
         OSStatus status = AEAudioFileWriterAddAudio(THIS->_writer, THIS->_buffer, bufferLength);
         if ( status != noErr ) {
             THIS->_recording = NO;
