@@ -84,41 +84,22 @@ typedef void (^MBProgressHUDCompletionBlock)();
 @interface MBProgressHUD : UIView
 
 /**
-
+        一个主要使用的方法
  */
 + (MB_INSTANCETYPE)showHUDAddedTo:(UIView *)view animated:(BOOL)animated;
 
 /**
- * Finds the top-most HUD subview and hides it. The counterpart to this method is showHUDAddedTo:animated:.
- *
- * @param view The view that is going to be searched for a HUD subview.
- * @param animated If set to YES the HUD will disappear using the current animationType. If set to NO the HUD will not use
- * animations while disappearing.
- * @return YES if a HUD was found and removed, NO otherwise. 
- *
- * @see showHUDAddedTo:animated:
- * @see animationType
+ 
  */
 + (BOOL)hideHUDForView:(UIView *)view animated:(BOOL)animated;
 
 /**
- * Finds all the HUD subviews and hides them. 
- *
- * @param view The view that is going to be searched for HUD subviews.
- * @param animated If set to YES the HUDs will disappear using the current animationType. If set to NO the HUDs will not use
- * animations while disappearing.
- * @return the number of HUDs found and removed.
- *
- * @see hideHUDForView:animated:
- * @see animationType
+    //隐藏所有的指示器
  */
 + (NSUInteger)hideAllHUDsForView:(UIView *)view animated:(BOOL)animated;
 
 /**
- * Finds the top-most HUD subview and returns it. 
- *
- * @param view The view that is going to be searched.
- * @return A reference to the last HUD subview discovered.
+.
  */
 + (MB_INSTANCETYPE)HUDForView:(UIView *)view;
 
@@ -131,11 +112,7 @@ typedef void (^MBProgressHUDCompletionBlock)();
 + (NSArray *)allHUDsForView:(UIView *)view;
 
 /**
- * A convenience constructor that initializes the HUD with the window's bounds. Calls the designated constructor with
- * window.bounds as the parameter.
- *
- * @param window The window instance that will provide the bounds for the HUD. Should be the same instance as
- * the HUD's superview (i.e., the window that the HUD will be added to).
+      使用window 来生成 hub
  */
 - (id)initWithWindow:(UIWindow *)window;
 
@@ -172,14 +149,7 @@ typedef void (^MBProgressHUDCompletionBlock)();
 - (void)hide:(BOOL)animated;
 
 /** 
- * Hide the HUD after a delay. This still calls the hudWasHidden: delegate. This is the counterpart of the show: method. Use it to
- * hide the HUD when your task completes.
- *
- * @param animated If set to YES the HUD will disappear using the current animationType. If set to NO the HUD will not use
- * animations while disappearing.
- * @param delay Delay in seconds until the HUD is hidden.
- *
- * @see animationType
+        几秒之后隐藏
  */
 - (void)hide:(BOOL)animated afterDelay:(NSTimeInterval)delay;
 
