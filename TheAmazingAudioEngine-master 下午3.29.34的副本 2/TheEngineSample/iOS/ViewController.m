@@ -111,7 +111,8 @@ static const int kInputChannelsChangedContext;
          _loop1 = play;
          [_loop1 playAtTime:0];
 //         _loop1.loop = YES;
-         [_audioController addChannels:@[_loop1] ];
+//         [_audioController addChannels:@[_loop1] ];
+         
         }];
         
   
@@ -513,33 +514,35 @@ static const int kInputChannelsChangedContext;
         
         
         [_audioController addFilter:_reverb];
-//        [_audioController setPan:0 forChannelGroup:_group]; // 这里是设置立体声
-//        self.recorder = [[AERecorder alloc] initWithAudioController:_audioController];
-//        NSArray *documentsFolders = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//        NSString *path = [documentsFolders[0] stringByAppendingPathComponent:@"RecordingTest.m4a"];
-//        NSError *error = nil;
-//        if ( ![_recorder beginRecordingToFileAtPath:path fileType:kAudioFileM4AType error:&error] ) {
-//            [[[UIAlertView alloc] initWithTitle:@"Error"
-//                                        message:[NSString stringWithFormat:@"Couldn't start recording: %@", [error localizedDescription]]
-//                                       delegate:nil
-//                              cancelButtonTitle:nil
-//                              otherButtonTitles:@"OK", nil] show];
-//            self.recorder = nil;
+        self.recorder = [[AERecorder alloc] initWithAudioController:_audioController];
+        NSArray *documentsFolders = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *path = [documentsFolders[0] stringByAppendingPathComponent:@"RecordingTest.m4a"];
+        NSError *error = nil;
+        if ( ![_recorder beginRecordingToFileAtPath:path fileType:kAudioFileM4AType error:&error] ) {
+            [[[UIAlertView alloc] initWithTitle:@"Error"
+                                        message:[NSString stringWithFormat:@"Couldn't start recording: %@", [error localizedDescription]]
+                                       delegate:nil
+                              cancelButtonTitle:nil
+                              otherButtonTitles:@"OK", nil] show];
+            self.recorder = nil;
             return;
-//        }
-        
-//        [_audioController addOutputReceiver:_recorder];
+        }
+    
+        [_audioController addOutputReceiver:_recorder];
     
     } else {
-//        [_audioController removeFilter:_reverb];
-//        self.reverb = nil;
-//        [_recorder finishRecording];
-//        [_audioController removeOutputReceiver:_recorder];
-//        self.recorder = nil;
+        [_audioController removeFilter:_reverb];
+        self.reverb = nil;
+        [_recorder finishRecording];
+        [_audioController removeOutputReceiver:_recorder];
+        self.recorder = nil;
 
     }
-
 }
+
+
+
+
 
 - (void) pitchSwitchChanged:(UISwitch *)sender
 {

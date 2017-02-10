@@ -194,7 +194,7 @@ NSString * const AEAudioFileWriterErrorDomain = @"com.theamazingaudioengine.AEAu
         }
     }
     
-    // Set up the converter     开始转码
+    // Set up the converter     开始转码  启动转码
     status = ExtAudioFileSetProperty(_audioFile, kExtAudioFileProperty_ClientDataFormat, sizeof(AudioStreamBasicDescription), &_audioDescription);
     if ( !AECheckOSStatus(status, "ExtAudioFileSetProperty(kExtAudioFileProperty_ClientDataFormat") ) {
         int fourCC = CFSwapInt32HostToBig(status);
