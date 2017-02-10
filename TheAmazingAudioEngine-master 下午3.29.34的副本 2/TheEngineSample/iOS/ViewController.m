@@ -111,7 +111,7 @@ static const int kInputChannelsChangedContext;
          _loop1 = play;
          [_loop1 playAtTime:0];
 //         _loop1.loop = YES;
-         [_audioController addChannels:@[_loop1] ];
+//         [_audioController addChannels:@[_loop1] ];
          
         }];
         

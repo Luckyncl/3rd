@@ -180,7 +180,7 @@ typedef struct __channel_t {
     callback_table_t callbacks;
     AudioTimeStamp   timeStamp;
     
-    BOOL             setRenderNotification;
+    BOOL             setRenderNotification;    // 设置了渲染通知
     
     void             *audioController;
     void             *audiobusSenderPort;
@@ -193,11 +193,11 @@ typedef struct __channel_t {
  */
 typedef struct _channel_group_t {
     AEChannelRef        channel;
-    AUNode              mixerNode;
-    AudioUnit           mixerAudioUnit;
-    AEChannelRef        channels[kMaximumChannelsPerGroup];
+    AUNode              mixerNode;       // 混音节点
+    AudioUnit           mixerAudioUnit;   // 混音单元
+    AEChannelRef        channels[kMaximumChannelsPerGroup];  // 最后的一个音轨
     int                 channelCount;
-    AUNode              converterNode;
+    AUNode              converterNode;    //转化节点
     AudioUnit           converterUnit;
     audio_level_monitor_t level_monitor_data;
 } channel_group_t;
@@ -307,6 +307,8 @@ typedef struct __channel_producer_arg_t {
     int nextFilterIndex;
 } channel_producer_arg_t;
 
+
+/*     用于产生各种声音等效果          */
 static OSStatus channelAudioProducer(void *userInfo, AudioBufferList *audio, UInt32 *frames) {
     channel_producer_arg_t *arg = (channel_producer_arg_t*)userInfo;
     AEChannelRef channel = arg->channel;
@@ -318,7 +320,7 @@ static OSStatus channelAudioProducer(void *userInfo, AudioBufferList *audio, UIn
         callback_t *callback = &channel->callbacks.callbacks[i];
         if ( callback->flags & kFilterFlag ) {
             if ( filterIndex == arg->nextFilterIndex ) {
-                // Run this filter
+                // Run this filter    运行效果器
                 channel_producer_arg_t filterArg = *arg;
                 filterArg.nextFilterIndex = filterIndex+1;
                 return ((AEAudioFilterCallback)callback->callback)((__bridge id)callback->userInfo, (__bridge AEAudioController *)channel->audioController, &channelAudioProducer, (void*)&filterArg, &arg->timeStamp, *frames, audio);
@@ -332,6 +334,7 @@ static OSStatus channelAudioProducer(void *userInfo, AudioBufferList *audio, UIn
     }
     
     if ( channel->type == kChannelTypeChannel ) {
+        // 应请渲染回调
         AEAudioRenderCallback callback = (AEAudioRenderCallback) channel->ptr;
         __unsafe_unretained id<AEAudioPlayable> channelObj = (__bridge id<AEAudioPlayable>) channel->object;
         
@@ -357,12 +360,12 @@ static OSStatus channelAudioProducer(void *userInfo, AudioBufferList *audio, UIn
     return status;
 }
 
-/*    渲染block         */
+/*   引擎的渲染回调        */
 static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData) {
     AEChannelRef channel = (AEChannelRef)inRefCon;
     
     __unsafe_unretained AEAudioController * THIS = (__bridge AEAudioController*)channel->audioController;
-
+    NSLog(@"   引擎的渲染回调  ");
     if ( channel == NULL || channel->ptr == NULL || !channel->playing ) {
         *ioActionFlags |= kAudioUnitRenderAction_OutputIsSilence;
         for ( int i=0; i<ioData->mNumberBuffers; i++ ) memset(ioData->mBuffers[i].mData, 0, ioData->mBuffers[i].mDataByteSize);
@@ -393,8 +396,11 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
     
     THIS->_channelBeingRendered = channel;
     
+    
+#warning mark: - 产生声音的各种效果
     OSStatus result = channelAudioProducer((void*)&arg, ioData, &inNumberFrames);
     
+    // 处理接收音频回调
     handleCallbacksForChannel(channel, &timestamp, inNumberFrames, ioData);
     
     THIS->_channelBeingRendered = NULL;
@@ -512,6 +518,7 @@ static OSStatus inputAvailableCallback(void *inRefCon, AudioUnitRenderActionFlag
     return noErr;
 }
 
+// 组渲染通知回调
 static OSStatus groupRenderNotifyCallback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData) {
     AEChannelRef channel = (AEChannelRef)inRefCon;
     AEChannelGroupRef group = (AEChannelGroupRef)channel->ptr;
@@ -579,6 +586,7 @@ static OSStatus topRenderNotifyCallback(void *inRefCon, AudioUnitRenderActionFla
     return noErr;
 }
 
+/*    音频总线输入服务        */
 static void serviceAudioInput(__unsafe_unretained AEAudioController * THIS, const AudioTimeStamp *outputBusTimeStamp, const AudioTimeStamp *inputBusTimeStamp, UInt32 inNumberFrames) {
     
     if ( !THIS->_inputAudioBufferList ) {
@@ -3443,15 +3451,17 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
     }
 }
 
+
+/*      配置在通道存取数组中配置通道信息  并且设置渲染回调      */
 - (void)configureChannelsInRange:(NSRange)range forGroup:(AEChannelGroupRef)group {
     
     if ( group ) {
-        // Ensure that we have enough input buses in the mixer
+        // Ensure that we have enough input buses in the mixer  如果有通道组的话，确认在混音中是否有足够多的 输入总线
         UInt32 busCount = group->channelCount;
         AECheckOSStatus(AudioUnitSetProperty(group->mixerAudioUnit, kAudioUnitProperty_ElementCount, kAudioUnitScope_Input, 0, &busCount, sizeof(busCount)), "AudioUnitSetProperty(kAudioUnitProperty_ElementCount)");
     }
     
-    // Load existing interactions       ->      添加
+    // Load existing interactions       ->     加载存在的 音频交互 音频  AUNodeInteraction  用于描述两个音频节点之间的交互
     UInt32 numInteractions = kMaximumChannelsPerGroup*2;
     AUNodeInteraction interactions[numInteractions];
     AECheckOSStatus(AUGraphGetNodeInteractions(_audioGraph, group ? group->mixerNode : _ioNode, &numInteractions, interactions), "AUGraphGetNodeInteractions");
@@ -3459,7 +3469,7 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
     for ( int i = (int)range.location; i < range.location+range.length; i++ ) {
         AEChannelRef channel = group ? group->channels[i] : _topChannel;
         
-        // Find the existing upstream connection
+        // Find the existing upstream connection   发现存在的上游链接
         BOOL hasUpstreamInteraction = NO;
         AUNodeInteraction upstreamInteraction;
         for ( int j=0; j<numInteractions; j++ ) {
@@ -3472,7 +3482,7 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
         }
         
         
-        // 取节点  取混音单元
+        // 如果有组的话就取混音节点，如果没有组的话就取I/O 节点
         AUNode targetNode = group ? group->mixerNode : _ioNode;
         AudioUnit targetUnit = group ? group->mixerAudioUnit : _ioAudioUnit;
         int targetBus = i;
@@ -3486,7 +3496,7 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
         }
         
         if ( channel->type == kChannelTypeChannel ) {
-            // Setup render callback struct  -->  开启渲染的block
+            // Setup render callback struct  -->  开启渲染的block  注意这里是设置
             AURenderCallbackStruct rcbs = { .inputProc = &renderCallback, .inputProcRefCon = channel };
             if ( hasUpstreamInteraction ) {
                 AECheckOSStatus(AUGraphDisconnectNodeInput(_audioGraph, targetNode, targetBus), "AUGraphDisconnectNodeInput");
@@ -3497,7 +3507,7 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
         } else if ( channel->type == kChannelTypeGroup ) {
             AEChannelGroupRef subgroup = (AEChannelGroupRef)channel->ptr;
             
-            // Determine if we have filters or receivers
+            // Determine if we have filters or receivers  确认是否有过滤器或者接收器
             BOOL hasReceivers=NO, hasFilters=NO;
             for ( int i=0; i<channel->callbacks.count && (!hasReceivers || !hasFilters); i++ ) {
                 if ( channel->callbacks.callbacks[i].flags & kFilterFlag ) {
@@ -3508,7 +3518,7 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
             }
             
             
-            // 添加混音节点
+            // 添加混音节点 如果
             if ( !subgroup->mixerNode ) {
                 // Create mixer node if necessary   添加混音节点  添加一个混音节点
                 AudioComponentDescription mixer_desc = {
@@ -3519,7 +3529,7 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
                     .componentFlagsMask = 0
                 };
                 
-                // Add mixer node to graph    添加音频节点到上下森张去
+                // Add mixer node to graph    添加混音节点
                 if ( !AECheckOSStatus(AUGraphAddNode(_audioGraph, &mixer_desc, &subgroup->mixerNode), "AUGraphAddNode mixer") ||
                      !AECheckOSStatus(AUGraphNodeInfo(_audioGraph, subgroup->mixerNode, NULL, &subgroup->mixerAudioUnit), "AUGraphNodeInfo") ) {
                     continue;
@@ -3527,36 +3537,37 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
                 
                 // Set the mixer unit to handle up to 4096 frames per slice to keep rendering during screen lock
                 
-                // 设置音频单元
+                //  设置混音单元去处理 每片 4096帧的数据，保持屏幕锁屏也在渲染
                 AudioUnitSetProperty(subgroup->mixerAudioUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &kMaxFramesPerSlice, sizeof(kMaxFramesPerSlice));
 
 #if !TARGET_OS_IPHONE
-                // Set output volume
+                // Set output volume 设置输出音量
                 // see http://stackoverflow.com/questions/9904369/silence-when-adding-kaudiounitsubtype-multichannelmixer-to-augraph
                 AECheckOSStatus(AudioUnitSetParameter(subgroup->mixerAudioUnit, kMultiChannelMixerParam_Volume, kAudioUnitScope_Output, 0, 1, 0),
                     "AudioUnitSetParameter(kMultiChannelMixerParam_Volume)");
 #endif
             }
             
-            // Set bus count
+            // Set bus count  设置总线数量
             UInt32 busCount = subgroup->channelCount;
             if ( !AECheckOSStatus(AudioUnitSetProperty(subgroup->mixerAudioUnit, kAudioUnitProperty_ElementCount, kAudioUnitScope_Input, 0, &busCount, sizeof(busCount)), "AudioUnitSetProperty(kAudioUnitProperty_ElementCount)") ) continue;
 
-            // Get current mixer's output format  设置混音输出格式
+            // Get current mixer's output format    获取当前混音输出格式
             AudioStreamBasicDescription currentMixerOutputDescription;
             UInt32 size = sizeof(currentMixerOutputDescription);
             AECheckOSStatus(AudioUnitGetProperty(subgroup->mixerAudioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &currentMixerOutputDescription, &size), "AudioUnitGetProperty(kAudioUnitProperty_StreamFormat)");
             
-            // Determine what the output format should be (use TAAE's audio description if client code will see the audio)   确定输入的格式
+            // Determine what the output format should be (use TAAE's audio description if client code will see the audio)   确定输出的格式
             AudioStreamBasicDescription mixerOutputDescription = !subgroup->converterNode ? _audioDescription : currentMixerOutputDescription;
-            mixerOutputDescription.mSampleRate = _audioDescription.mSampleRate;
+            mixerOutputDescription.mSampleRate = _audioDescription.mSampleRate;  // 设置采样率
             
+            // 比较 内存中 前n个字节  如果当前的混音输出 和 默认混音输出不一致的话  设置输出的格式
             if ( memcmp(&currentMixerOutputDescription, &mixerOutputDescription, sizeof(mixerOutputDescription)) != 0 ) {
                 // Assign the output format if necessary
                 OSStatus result = AudioUnitSetProperty(subgroup->mixerAudioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &mixerOutputDescription, sizeof(mixerOutputDescription));
                 
                 if ( hasUpstreamInteraction ) {
-                    // Disconnect node to force reconnection, in order to apply new audio format
+                    // Disconnect node to force reconnection, in order to apply new audio format  如果有上游链接的话,断开输入节点
                     AECheckOSStatus(AUGraphDisconnectNodeInput(_audioGraph, targetNode, targetBus), "AUGraphDisconnectNodeInput");
                     hasUpstreamInteraction = NO;
                 }
@@ -3585,6 +3596,7 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
                                     "AudioUnitSetProperty(kAudioUnitProperty_MaximumFramesPerSlice)");
                         
                         if ( channel->setRenderNotification ) {
+                            // 去掉渲染通知
                             AECheckOSStatus(AudioUnitRemoveRenderNotify(subgroup->mixerAudioUnit, &groupRenderNotifyCallback, channel), "AudioUnitRemoveRenderNotify");
                             channel->setRenderNotification = NO;
                         }
@@ -3597,7 +3609,7 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
             }
             
             if ( subgroup->converterNode ) {
-                // Set the audio converter stream format
+                // Set the audio converter stream format  设置转换格式
                 AECheckOSStatus(AudioUnitSetProperty(subgroup->converterUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &currentMixerOutputDescription, sizeof(AudioStreamBasicDescription)), "AudioUnitSetProperty(kAudioUnitProperty_StreamFormat)");
                 AECheckOSStatus(AudioUnitSetProperty(subgroup->converterUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &_audioDescription, sizeof(AudioStreamBasicDescription)), "AudioUnitSetProperty(kAudioUnitProperty_StreamFormat)");
                 channel->audioDescription = _audioDescription;
@@ -3631,6 +3643,7 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
             AudioUnit sourceUnit = subgroup->converterUnit ? subgroup->converterUnit : subgroup->mixerAudioUnit;
             
             if ( hasFilters || channel->audiobusSenderPort ) {
+                
                 // We need to use our own render callback, because we're either filtering, or sending via Audiobus (and we may need to adjust timestamp)
                 
                 if ( channel->setRenderNotification ) {
@@ -3643,9 +3656,11 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
                 AECheckOSStatus(AudioUnitSetProperty(targetUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, targetBus, &channel->audioDescription, sizeof(channel->audioDescription)), "AudioUnitSetProperty(kAudioUnitProperty_StreamFormat)");
                 
                 // Set render callback      设置渲染的回调
-                AURenderCallbackStruct rcbs;
+                AURenderCallbackStruct rcbs;   // AURenderCallbackStruct 被主机注册用于渲染音频单元
+                
+#warning mark: - 设置渲染回调
                 rcbs.inputProc = &renderCallback;
-                rcbs.inputProcRefCon = channel;
+                rcbs.inputProcRefCon = channel;   // 输入的通道
                 if ( !hasUpstreamInteraction || upstreamInteraction.nodeInteractionType != kAUNodeInteraction_InputCallback || memcmp(&upstreamInteraction.nodeInteraction.inputCallback.cback, &rcbs, sizeof(rcbs)) != 0 ) {
                     if ( hasUpstreamInteraction ) {
                         AECheckOSStatus(AUGraphDisconnectNodeInput(_audioGraph, targetNode, targetBus), "AUGraphDisconnectNodeInput");
@@ -3655,7 +3670,7 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
                 }
                 
             } else {
-                // Connect output of mixer/converter directly to the upstream node
+                // Connect output of mixer/converter directly to the upstream node  连接输出节点
                 if ( !hasUpstreamInteraction || upstreamInteraction.nodeInteractionType != kAUNodeInteraction_Connection || upstreamInteraction.nodeInteraction.connection.sourceNode != sourceNode ) {
                     if ( hasUpstreamInteraction ) {
                         AECheckOSStatus(AUGraphDisconnectNodeInput(_audioGraph, targetNode, targetBus), "AUGraphDisconnectNodeInput");
@@ -4024,23 +4039,29 @@ static void removeCallbackFromTable(__unsafe_unretained AEAudioController *THIS,
     return YES;
 }
 
+
+/* 添加接收音频的默认回调   */
 - (BOOL)addCallback:(void*)callback userInfo:(void*)userInfo flags:(uint8_t)flags forChannelGroup:(AEChannelGroupRef)group {
+    /*     默认回调最大数量为15个         */
     if ( group->channel->callbacks.count == kMaximumCallbacksPerSource ) {
         NSLog(@"TAAE: Warning: Maximum number of callbacks reached");
         return NO;
     }
     
     [self performAsynchronousMessageExchangeWithBlock:^{
+        // 将回调添加到回调列表v 实际上就是将回调保存下来
         addCallbackToTable(self, &group->channel->callbacks, callback, userInfo, flags);
     } responseBlock:^{
         AEChannelGroupRef parentGroup = NULL;
         int index=0;
-        if ( group != _topGroup ) {
+        if ( group != _topGroup ) { // 如果不是默认通道组的话 首先实例化一个通道组
             parentGroup = [self searchForGroupContainingChannelMatchingPtr:group userInfo:NULL index:&index];
             NSAssert(parentGroup != NULL, @"Channel group not found");
         }
         
         [self configureChannelsInRange:NSMakeRange(index, 1) forGroup:parentGroup];
+        
+        // 更新 上下文
         AECheckOSStatus([self updateGraph], "Update graph");
     }];
     
@@ -4151,11 +4172,13 @@ static void removeCallbackFromTable(__unsafe_unretained AEAudioController *THIS,
     return [self associatedObjectsFromTable:&group->channel->callbacks matchingFlag:flags];
 }
 
+/*     处理回调       */
 static void handleCallbacksForChannel(AEChannelRef channel, const AudioTimeStamp *inTimeStamp, UInt32 inNumberFrames, AudioBufferList *ioData) {
-    // Pass audio to output callbacks
+    // Pass audio to output callbacks  处理音频数据到输出回调   遍历所有的回调去处理回调
     for ( int i=0; i<channel->callbacks.count; i++ ) {
         callback_t *callback = &channel->callbacks.callbacks[i];
         if ( callback->flags & kReceiverFlag ) {
+#warning mark: - 用于手机的音频
             ((AEAudioReceiverCallback)callback->callback)((__bridge id)callback->userInfo, (__bridge AEAudioController*)channel->audioController, channel->ptr, inTimeStamp, inNumberFrames, ioData);
         }
     }
