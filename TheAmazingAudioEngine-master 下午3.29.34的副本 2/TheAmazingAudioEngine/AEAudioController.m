@@ -2661,6 +2661,8 @@ static void audioUnitStreamFormatChanged(void *inRefCon, AudioUnit inUnit, Audio
 
 #ifdef DEBUG
     // Add a render notify to the top audio unit, for the purposes of performance profiling
+    
+    
     AECheckOSStatus(AudioUnitAddRenderNotify(_ioAudioUnit, &ioUnitRenderNotifyCallback, (__bridge void*)self), "AudioUnitAddRenderNotify");
 #endif
     
