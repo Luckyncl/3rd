@@ -51,6 +51,8 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     AERenderer * renderer = [AERenderer new];
     AERenderer * subrenderer = [AERenderer new];
     
+    
+    //
     self.output = [[AEAudioUnitOutput alloc] initWithRenderer:renderer];
     
     NSMutableArray * players = [NSMutableArray array];
@@ -72,7 +74,7 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     
     url = [[NSBundle mainBundle] URLForResource:@"piano" withExtension:@"m4a"];
     AEAudioFilePlayerModule * piano = [[AEAudioFilePlayerModule alloc] initWithRenderer:subrenderer URL:url error:NULL];
-    piano.loop = YES;
+//    piano.loop = YES;
     piano.microfadeFrames = 32;
     self.piano = piano;
     [players addObject:piano];
@@ -109,7 +111,7 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     AEMixerModule * mixer = [[AEMixerModule alloc] initWithRenderer:renderer];
     mixer.modules = players;
     
-    [mixer setVolume:0 balance:0 forModule:self.piano];
+//    [mixer setVolume:0 balance:0 forModule:self.piano];
     // Setup mic input (we'll draw from the output's IO audio unit, on iOS; on the Mac, this has its own IO unit).
 //    AEAudioUnitInputModule * input = self.output.inputModule;
 //    self.input = input;
@@ -133,6 +135,7 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     subrenderer.block = ^(const AERenderContext * _Nonnull context) {
         // Run all the players, though the mixer  让所有的播放器，都进行混音
         AEModuleProcess(mixer, context);
+        AEModuleProcess(micDelay, context);
         
         // Put the resulting buffer on the output
         AERenderContextOutput(context, 1);
@@ -263,7 +266,9 @@ static const double kMicBandpassCenterFrequency = 2000.0;
 #endif
     
     // Start the output and input
-    return [self.output start:error] && (!self.inputEnabled || [self.input start:error]);
+//    return [self.output start:error] && (!self.inputEnabled || [self.input start:error]);
+    
+    return YES;
 }
 
 - (void)stop {

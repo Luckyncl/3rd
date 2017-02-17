@@ -15,7 +15,7 @@
 @end
 
 @implementation ViewController
-static const NSTimeInterval kTestFileLength = 10;
+static const NSTimeInterval kTestFileLength = 4;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
@@ -26,7 +26,7 @@ static const NSTimeInterval kTestFileLength = 10;
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     
-    [self.audio.piano playAtTime:AETimeStampNone];
+
 //    [self.audio.piano playAtTime:AETimeStampNone beginBlock:^{
 //        NSLog(@"     开始播放了     ");
 //    }];
@@ -65,20 +65,20 @@ static const NSTimeInterval kTestFileLength = 10;
     
 
 //    player setParameterValue:<#(double)#> forId:(AudioUnitParameterID)
-    AEAudioFileOutput * output = [[AEAudioFileOutput alloc] initWithRenderer:renderer URL:self.fileURL type:AEAudioFileTypeM4A sampleRate:44100.0 channelCount:2 error:&error];
+    AEAudioFileOutput * output = [[AEAudioFileOutput alloc] initWithRenderer:self.audio.sample1.renderer URL:self.fileURL type:AEAudioFileTypeM4A sampleRate:44100.0 channelCount:2 error:&error];
     
-
+//    [self.audio.sample1 playAtTime:AETimeStampNone];
     if ( !output ) {
         return error;
     }
     AEMixerModule * mixer = [[AEMixerModule alloc] initWithRenderer:renderer];
     
-    [mixer setVolume:1 balance:0 forModule:self.audio.piano];
+
     AEDelayModule * micDelay = [[AEDelayModule alloc] initWithRenderer:renderer];
     micDelay.delayTime = 0.5;
     renderer.block = ^(const AERenderContext * context) {
-//        AEModuleProcess(micDelay, context);
-        AEModuleProcess(mixer, context);
+        AEModuleProcess(micDelay, context);
+//        AEModuleProcess(mixer, context);
         AERenderContextOutput(context, 1);
     };
 //
@@ -93,8 +93,9 @@ static const NSTimeInterval kTestFileLength = 10;
     while ( !done ) {
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
     }
-   
+    
     [output finishWriting];
+
     
     return error;
 }

@@ -118,6 +118,7 @@ static const UInt32 kNoValue = -1;
     _startTime = time;
     
     if ( !_playing ) {
+        // 没有播放的话存储值
         self.beginBlock = block;
         _anchorTime = 0;
         _playing = YES;
