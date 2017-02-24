@@ -44,6 +44,8 @@
     
     if ( !(_audioFile = AEExtAudioFileCreate(url, type, self.renderer.sampleRate, numberOfChannels, error)) ) return nil;
     
+    
+    // 首先填充一个 空的数据
     // Prime async recording
     ExtAudioFileWriteAsync(_audioFile, 0, NULL);
     
@@ -163,6 +165,7 @@ static void AEAudioFileRecorderModuleProcess(__unsafe_unretained AEAudioFileReco
         frames -= truncateFrames;
     }
     
+    // 异步写入文件
     AECheckOSStatus(ExtAudioFileWriteAsync(THIS->_audioFile, frames, buffer), "ExtAudioFileWriteAsync");
     THIS->_recordedFrames += frames;
     

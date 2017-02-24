@@ -26,13 +26,10 @@ extern NSString * _Nonnull const AEAudioControllerInputPermissionErrorNotificati
 
 - (AEHostTicks)nextSyncTimeForPlayer:(AEAudioFilePlayerModule * _Nonnull)player;
 
-@property (nonatomic, strong, readonly) AEVarispeedModule * _Nonnull varispeed;
-@property (nonatomic, strong, readonly) AEAudioFilePlayerModule * _Nonnull drums;
-@property (nonatomic, strong, readonly) AEAudioFilePlayerModule * _Nonnull bass;
-@property (nonatomic, strong, readonly) AEAudioFilePlayerModule * _Nonnull piano;
+@property (nonatomic, strong, readonly) AEVarispeedModule * _Nonnull varispeed;    // 变速模块
+
 @property (nonatomic, strong, readonly) AEAudioFilePlayerModule * _Nonnull sample1;
-@property (nonatomic, strong, readonly) AEAudioFilePlayerModule * _Nonnull sample2;
-@property (nonatomic, strong, readonly) AEAudioFilePlayerModule * _Nonnull sample3;
+
 @property (nonatomic, strong, readonly) AEAudioFilePlayerModule * _Nonnull sweep;
 @property (nonatomic, strong, readonly) AEAudioFilePlayerModule * _Nonnull hit;
 @property (nonatomic) double bandpassCenterFrequency;

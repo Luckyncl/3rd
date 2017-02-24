@@ -507,7 +507,7 @@ static const double kMicBandpassCenterFrequency = 2000.0;
 }
 
 - (BOOL)setAudioSessionCategory:(NSError **)error {
-    NSError * e;
+    NSError * e;                 
     AVAudioSession * session = [AVAudioSession sharedInstance];
     if ( ![session setCategory:self.inputEnabled ? AVAudioSessionCategoryPlayAndRecord : AVAudioSessionCategoryPlayback
                    withOptions:(self.inputEnabled ? AVAudioSessionCategoryOptionDefaultToSpeaker : 0)

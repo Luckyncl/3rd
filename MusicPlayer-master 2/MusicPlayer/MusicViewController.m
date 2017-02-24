@@ -39,6 +39,8 @@
         self.timer = nil;
     }
 }
+
+
 #pragma mark--默认值的设置
 -(void)userDefault{
 
@@ -70,13 +72,15 @@
     [musicArray addObject:music1];
      dlog();
 }
-#pragma mark--初始化歌词
+#pragma mark--初始化歌词 获取所有的歌词时间
 -(void)initLRC{
     NSString * pathLRC = [[NSBundle mainBundle]pathForResource:[musicArray[musicArrayNumber] name] ofType:@"lrc"];
     DoModel * mo = [DoModel initSingleModel];
     NSDictionary * dic = [mo LRCWithName:pathLRC];
     LRCDictionary = [NSMutableDictionary dictionaryWithDictionary:[dic  objectForKey:@"LRCDictionary"]];
+    // 获取所有的歌词时间
     timeArray = [NSMutableArray arrayWithArray:[dic objectForKey:@"timeArray"]];
+    
     dlog();
 }
 
@@ -85,7 +89,7 @@
 -(void)showTime{
     
     DoModel * mo = [DoModel initSingleModel];
-    _currentLabel.text = [mo timeWithIntival:(int)audioPlayer.currentTime];
+    _currentLabel.text = [mo timeWithIntival:(int)audioPlayer.currentTime];  // 设置当前的播放时间
     _totalLabel.text = [mo timeWithIntival:(int)audioPlayer.duration];
     
     [self displayWord];
@@ -96,7 +100,7 @@
         isPlay = YES;
     }
 }
-#pragma mark ---显示唱到的那一句
+#pragma mark ---显示唱到的那一句  （核心展示方法）
 -(void)displayWord{
     DoModel * mo = [DoModel initSingleModel];
     int num =[timeArray count ];
@@ -105,14 +109,16 @@
         if (i + 1< [timeArray count ]) {
             NSUInteger currentTime1 = [mo changeTime:timeArray[i+1]];
             if (audioPlayer.currentTime > currentTime && audioPlayer.currentTime < currentTime1) {
+                
+                // 歌词在两个时间间隔之间
                 [self updateLrcTableView:i];
-                [_tableView reloadData];
+//                [_tableView reloadData];
                 break;
             }
 
         }else if (audioPlayer.currentTime > currentTime){//最后一行
             [self updateLrcTableView:i];
-            [_tableView reloadData];
+//            [_tableView reloadData];
             break;
         
         }
@@ -157,20 +163,19 @@
     if (!cell) {
         cell = [[MyCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
+    
+    
        cell.textLabel.text = LRCDictionary[timeArray[indexPath.row]];
     if (indexPath.row == lrcLineNumber) {
         cell.textLabel.textColor = kRGBA(255, 255, 0, 1);
         cell.textLabel.font = kFontSize(15);
-    [_tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];//移动到中心位置
+//    [_tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];//移动到中心位置
 
     }else{
         cell.textLabel.textColor = kRGBA(0, 0, 0, 0.5f);
         cell.textLabel.font = kFontSize(13);
     
     }
-  
-
-    
     return cell;
    
 
