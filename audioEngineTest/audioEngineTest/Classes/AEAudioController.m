@@ -18,19 +18,18 @@ static const AESeconds kCountInThreshold = 0.2;
 static const double kMicBandpassCenterFrequency = 2000.0;
 
 @interface AEAudioController ()
+
+
 @property (nonatomic, strong, readwrite) AEAudioUnitInputModule * input;
 @property (nonatomic, strong, readwrite) AEAudioUnitOutput * output;
-@property (nonatomic, strong, readwrite) AEVarispeedModule * varispeed;
-@property (nonatomic, strong, readwrite) AEAudioFilePlayerModule * drums;
-@property (nonatomic, strong, readwrite) AEAudioFilePlayerModule * bass;
-@property (nonatomic, strong, readwrite) AEAudioFilePlayerModule * piano;
-@property (nonatomic, strong, readwrite) AEAudioFilePlayerModule * sample1;
-@property (nonatomic, strong, readwrite) AEAudioFilePlayerModule * sample2;
-@property (nonatomic, strong, readwrite) AEAudioFilePlayerModule * sample3;
-@property (nonatomic, strong, readwrite) AEAudioFilePlayerModule * sweep;
-@property (nonatomic, strong, readwrite) AEAudioFilePlayerModule * hit;
-@property (nonatomic, strong, readwrite) AEBandpassModule * bandpass;
-@property (nonatomic, strong, readwrite) AEBandpassModule * micBandpass;
+
+@property (nonatomic, strong) AEDelayModule *delay;             // 延迟模块
+@property (nonatomic, strong) AEReverbModule *reverb;           // 混响
+@property (nonatomic, strong) AENewTimePitchModule *pitch;        // 变声模块
+
+
+@property (nonatomic, strong) AEMixerModule *mixer;
+
 @property (nonatomic, readwrite) BOOL recording;
 @property (nonatomic, readwrite) BOOL playingRecording;
 @property (nonatomic, strong) AEManagedValue * recorderValue;
@@ -45,99 +44,39 @@ static const double kMicBandpassCenterFrequency = 2000.0;
 
 #pragma mark - Life-cycle
 
+
 - (instancetype)init {
     if ( !(self = [super init]) ) return nil;
     
     AERenderer * renderer = [AERenderer new];
-    AERenderer * subrenderer = [AERenderer new];
-    
+
+    // 设置输出节点
     self.output = [[AEAudioUnitOutput alloc] initWithRenderer:renderer];
     
-    NSMutableArray * players = [NSMutableArray array];
-    
-    // Setup loops
-    NSURL * url = [[NSBundle mainBundle] URLForResource:@"amen" withExtension:@"m4a"];
-    AEAudioFilePlayerModule * drums = [[AEAudioFilePlayerModule alloc] initWithRenderer:subrenderer URL:url error:NULL];
-    drums.loop = YES;
-    drums.microfadeFrames = 32; // Microfade a little, to avoid clicks when turning on/off in the middle
-    self.drums = drums;
-    [players addObject:drums];
-    
-    url = [[NSBundle mainBundle] URLForResource:@"bass" withExtension:@"m4a"];
-    AEAudioFilePlayerModule * bass = [[AEAudioFilePlayerModule alloc] initWithRenderer:subrenderer URL:url error:NULL];
-    bass.loop = YES;
-    bass.microfadeFrames = 32;
-    self.bass = bass;
-    [players addObject:bass];
-    
-    url = [[NSBundle mainBundle] URLForResource:@"piano" withExtension:@"m4a"];
-    AEAudioFilePlayerModule * piano = [[AEAudioFilePlayerModule alloc] initWithRenderer:subrenderer URL:url error:NULL];
-    piano.loop = YES;
-    piano.microfadeFrames = 32;
-    self.piano = piano;
-    [players addObject:piano];
-    
-    // Setup one-shots
-    url = [[NSBundle mainBundle] URLForResource:@"sample1" withExtension:@"m4a"];
-    AEAudioFilePlayerModule * oneshot = [[AEAudioFilePlayerModule alloc] initWithRenderer:subrenderer URL:url error:NULL];
-    self.sample1 = oneshot;
-    [players addObject:oneshot];
-    
-    url = [[NSBundle mainBundle] URLForResource:@"sample2" withExtension:@"m4a"];
-    oneshot = [[AEAudioFilePlayerModule alloc] initWithRenderer:subrenderer URL:url error:NULL];
-    self.sample2 = oneshot;
-    [players addObject:oneshot];
-    
-    oneshot = [[AEAudioFilePlayerModule alloc] initWithRenderer:subrenderer URL:url error:NULL];
-    oneshot.regionStartTime = 1.832;
-    self.sample3 = oneshot;
-    [players addObject:oneshot];
-    
-    url = [[NSBundle mainBundle] URLForResource:@"sweep" withExtension:@"m4a"];
-    oneshot = [[AEAudioFilePlayerModule alloc] initWithRenderer:subrenderer URL:url error:NULL];
-    self.sweep = oneshot;
-    [players addObject:oneshot];
-    
-    url = [[NSBundle mainBundle] URLForResource:@"amen" withExtension:@"m4a"];
-    oneshot = [[AEAudioFilePlayerModule alloc] initWithRenderer:subrenderer URL:url error:NULL];
-    oneshot.regionDuration = drums.regionDuration / 32;
-    oneshot.loop = YES;
-    self.hit = oneshot;
-    [players addObject:oneshot];
-    
-    // Create a mixer module to run the players
-    AEMixerModule * mixer = [[AEMixerModule alloc] initWithRenderer:subrenderer];
-    mixer.modules = players;
-    
-    // Setup mic input (we'll draw from the output's IO audio unit, on iOS; on the Mac, this has its own IO unit).
+    // 设置输入节点
     AEAudioUnitInputModule * input = self.output.inputModule;
-    
     self.input = input;
     
-    // Setup effects
-    AEBandpassModule * bandpass = [[AEBandpassModule alloc] initWithRenderer:renderer];
-    bandpass.wetDry = 0.0;
-    self.bandpass = bandpass;
-    __block float balanceLfo = 1.0;
-    __block float currentBalalance = 0.0;
     
+    // ****************   设置音效模块    *********************
+    /*      延迟模块        */
     AEDelayModule * micDelay = [[AEDelayModule alloc] initWithRenderer:renderer];
-    micDelay.delayTime = 0.5;
-    AEBandpassModule * micBandpass = [[AEBandpassModule alloc] initWithRenderer:renderer];
-    micBandpass.centerFrequency = kMicBandpassCenterFrequency;
-    self.micBandpass = micBandpass;
+    micDelay.delayTime = 0.5f;
+    self.delay = micDelay;
     
-    // Setup varispeed renderer. This is all performed on the audio thread, so the usual
-    // rules apply: No holding locks, no memory allocation, no Objective-C/Swift code.
-    AEVarispeedModule * varispeed = [[AEVarispeedModule alloc] initWithRenderer:renderer subrenderer:subrenderer];
+    AEReverbModule *micReverb = [[AEReverbModule alloc] initWithRenderer:renderer];
+    self.reverb = micReverb;
+    
+    
+    AERenderer * subrenderer = [AERenderer new];
+    AENewTimePitchModule *pitch = [[AENewTimePitchModule alloc] initWithRenderer:renderer subrenderer:subrenderer];
+    
     subrenderer.block = ^(const AERenderContext * _Nonnull context) {
-        // Run all the players, though the mixer
-        AEModuleProcess(mixer, context);
-        
-        // Put the resulting buffer on the output
         AERenderContextOutput(context, 1);
     };
-    self.varispeed = varispeed;
+    pitch.pitch = 1200;
+    self.pitch = pitch;
+    
     
     // Setup recorder placeholder
     AEManagedValue * recorderValue = [AEManagedValue new];
@@ -146,6 +85,14 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     // Setup recording player placeholder
     AEManagedValue * playerValue = [AEManagedValue new];
     self.playerValue = playerValue;
+    
+    
+//    AEAudioFilePlayerModule *samp = [[AEAudioFilePlayerModule alloc] initWithRenderer:self.output.renderer URL:self.recordingPath error:NULL];
+//    self.sample1 = samp;
+//    
+//    self.playerValue.objectValue = samp;
+    
+
     
     // Setup top-level renderer. This is all performed on the audio thread, so the usual
     // rules apply: No holding locks, no memory allocation, no Objective-C/Swift code.
@@ -160,27 +107,14 @@ static const double kMicBandpassCenterFrequency = 2000.0;
         __unsafe_unretained AEAudioFilePlayerModule * player
         = (__bridge AEAudioFilePlayerModule *)AEManagedValueGetValue(playerValue);
         
-        // Run varispeed unit, which will run its own render loop, above
-        AEModuleProcess(varispeed, context);
-        
-        // Run through bandpass effect
-        AEModuleProcess(bandpass, context);
-        
-        AEModuleProcess(micDelay, context);
-        
-        // Sweep balance
-        float bal = 0.0;
-        if ( THIS->_balanceSweepRate > 0 ) {
-            bal = AEDSPGenerateOscillator((1.0/THIS->_balanceSweepRate)
-                                          / (context->sampleRate/context->frames), &balanceLfo) * 2 - 1;
-        } else {
-            balanceLfo = 0.5;
-        }
-        AEBufferStackApplyFaders(context->stack, 1, NULL, bal, &currentBalalance);
-        
+       
+
         if ( player ) {
             // If we're playing a recording, duck other output
-            AEDSPApplyGain(AEBufferStackGet(context->stack, 0), 0.1, context->frames);
+//            AEDSPApplyGain(AEBufferStackGet(context->stack, 0), 0.1, context->frames);
+//             AEModuleProcess(micDelay, context);
+//            AEModuleProcess(pitch, context);
+//            AEModuleProcess(micReverb, context);
         }
         
         // Put on output
@@ -191,9 +125,7 @@ static const double kMicBandpassCenterFrequency = 2000.0;
             AEModuleProcess(input, context);
             
             // Add effects to input, and amplify by a factor of 2x to recover lost gain from bandpass
-            AEModuleProcess(micDelay, context);
-            AEModuleProcess(micBandpass, context);
-            AEDSPApplyGain(AEBufferStackGet(context->stack, 0), 2.0, context->frames);
+
             
             // If it's safe to do so, put this on the output
             if ( !THIS->_playingThroughSpeaker ) {
@@ -212,7 +144,6 @@ static const double kMicBandpassCenterFrequency = 2000.0;
                 // We have a buffer from input to mix in
                 AEBufferStackMix(context->stack, 2);
             }
-            
             // Run through recorder
             AEModuleProcess(recorder, context);
         }
@@ -222,11 +153,14 @@ static const double kMicBandpassCenterFrequency = 2000.0;
             // Play
             AEModuleProcess(player, context);
             
+            
+            AEModuleProcess(micDelay, context);
+//            AEModuleProcess(pitch, context);
+            AEModuleProcess(micReverb, context);;
             // Put on output
             AERenderContextOutput(context, 1);
         }
     };
-    
     return self;
 }
 
@@ -237,6 +171,8 @@ static const double kMicBandpassCenterFrequency = 2000.0;
 - (BOOL)start:(NSError *__autoreleasing *)error {
     return [self start:error registerObservers:YES];
 }
+
+#pragma mark: - 音效模块
 
 - (BOOL)start:(NSError *__autoreleasing *)error registerObservers:(BOOL)registerObservers {
     
@@ -324,11 +260,17 @@ static const double kMicBandpassCenterFrequency = 2000.0;
 
 - (void)playRecordingWithCompletionBlock:(void (^)())block {
     NSURL * url = self.recordingPath;
+    
     if ( [[NSFileManager defaultManager] fileExistsAtPath:url.path] ) {
         
+//        AERenderer * subrenderer = [AERenderer new];
         // Start player
         AEAudioFilePlayerModule * player =
         [[AEAudioFilePlayerModule alloc] initWithRenderer:self.output.renderer URL:url error:NULL];
+      
+      
+        
+        
         if ( !player ) return;
         
         // Make player available to audio renderer
@@ -353,68 +295,7 @@ static const double kMicBandpassCenterFrequency = 2000.0;
 
 #pragma mark - Timing
 
-- (AEHostTicks)nextSyncTimeForPlayer:(AEAudioFilePlayerModule *)player {
-    AEHostTicks now = AECurrentTimeInHostTicks();
-    
-    if ( player == self.sweep ) {
-        // Instant play for this oneshot
-        return 0;
-    }
-    
-    // Identify time-keeper
-    AEAudioFilePlayerModule * timekeeper =
-    // Use the longest playing loop as the timekeeper - the following are in order of duration
-    self.piano.playing ? self.piano :
-    self.bass.playing ? self.bass :
-    self.drums.playing ? self.drums :
-    self.hit.playing ? self.hit :
-    nil;
-    
-    if ( timekeeper ) {
-        // Determine sync interval
-        AESeconds intervalLength =
-        // If the hit's the only loop playing, quantize with a beat
-        timekeeper == self.hit ? self.drums.duration / 32 :
-        // Quantize the first two samples with the drums
-        player == self.sample1 || player == self.sample2 ? self.drums.duration :
-        // Quantize the hit with its own duration
-        player == self.hit ? self.hit.regionDuration :
-        // Bringing in the bass? Time it to the piano so the chord progressions match
-        player == self.bass && timekeeper == self.piano ? self.piano.duration :
-        // Ditto with the piano
-        player == self.piano ? self.bass.duration :
-        // Otherwise, time to a quarter of the drums' duration
-        self.drums.duration / 4.0;
-        
-        // Work out how far into this interal the timekeeper is
-        AESeconds timeIntoInterval = fmod(AEAudioFilePlayerModuleGetPlayhead(timekeeper, now), intervalLength);
-        
-        // Calculate time to next interval
-        AEHostTicks nextIntervalTime
-        = now + AEHostTicksFromSeconds((intervalLength - timeIntoInterval)) / self.varispeed.playbackRate;
-        
-        // Offset, for the one-shots (for aesthetic reasons!)
-        if ( player == self.sample1 ) {
-            nextIntervalTime -= AEHostTicksFromSeconds(0.96 / self.varispeed.playbackRate);
-        } else if ( player == self.sample2 ) {
-            nextIntervalTime -= AEHostTicksFromSeconds(2.2 / self.varispeed.playbackRate);
-        } else if ( player == self.sample3 ) {
-            nextIntervalTime -= AEHostTicksFromSeconds(0.4 / self.varispeed.playbackRate);
-        }
-        
-        // Defer or bring back the interval, with some tolerance
-        AEHostTicks intervalLengthTicks = AEHostTicksFromSeconds(intervalLength);
-        if ( nextIntervalTime < now-AEHostTicksFromSeconds(kCountInThreshold) ) {
-            nextIntervalTime += intervalLengthTicks;
-        } else if ( nextIntervalTime - intervalLengthTicks > now-AEHostTicksFromSeconds(kCountInThreshold) ) {
-            nextIntervalTime -= intervalLengthTicks;
-        }
-        
-        return nextIntervalTime;
-    }
-    
-    return 0;
-}
+
 
 #pragma mark - Accessors
 
@@ -463,19 +344,29 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     [[NSNotificationCenter defaultCenter] postNotificationName:AEAudioControllerInputEnabledChangedNotification object:self];
 }
 
-- (void)setBandpassWetDry:(double)bandpassWetDry {
-    _bandpassWetDry = bandpassWetDry;
-    self.bandpass.wetDry = bandpassWetDry;
-    self.micBandpass.centerFrequency =
-    (self.bandpassCenterFrequency * bandpassWetDry) + (kMicBandpassCenterFrequency * (1.0 - bandpassWetDry));
+
+- (void)setReverbRoom:(double)reverbRoom
+{
+    self.reverb.randomizeReflections = reverbRoom;
 }
 
-- (void)setBandpassCenterFrequency:(double)bandpassCenterFrequency {
-    _bandpassCenterFrequency = bandpassCenterFrequency;
-    self.bandpass.centerFrequency = bandpassCenterFrequency;
-    self.micBandpass.centerFrequency =
-    (self.bandpassCenterFrequency * self.bandpassWetDry) + (kMicBandpassCenterFrequency * (1.0 - self.bandpassWetDry));
+- (void)setReverbValue:(double)reverbValue
+{
+    self.reverb.dryWetMix = reverbValue;
 }
+
+- (void)setDelayValue:(double)delayValue
+{
+    self.delay.delayTime = delayValue;
+}
+
+
+- (void)setPitchValue:(double)pitchValue
+{
+    self.pitch.pitch = pitchValue;
+}
+
+
 
 - (NSURL *)recordingPath {
     NSURL * docs = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;

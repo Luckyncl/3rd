@@ -39,6 +39,9 @@
                             </button>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="UPx-Qf-YIh">
                                 <rect key="frame" x="31" y="259" width="302" height="31"/>
+                                <connections>
+                                    <action selector="reverb:" destination="BYZ-38-t0r" eventType="valueChanged" id="4Vu-98-17y"/>
+                                </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="混响" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aBC-2q-paz">
                                 <rect key="frame" x="43" y="241" width="42" height="21"/>
@@ -54,9 +57,15 @@
                             </label>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="d3N-ET-2X3">
                                 <rect key="frame" x="41" y="318" width="292" height="31"/>
+                                <connections>
+                                    <action selector="pitch:" destination="BYZ-38-t0r" eventType="valueChanged" id="6Wl-Q6-yNN"/>
+                                </connections>
                             </slider>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="8ic-t5-Lck">
                                 <rect key="frame" x="41" y="465" width="292" height="31"/>
+                                <connections>
+                                    <action selector="room:" destination="BYZ-38-t0r" eventType="valueChanged" id="EhG-Rv-j9t"/>
+                                </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="变调" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6UW-bm-Ipp">
                                 <rect key="frame" x="43" y="304" width="42" height="21"/>
@@ -64,14 +73,38 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VOD-Hi-hoA">
+                                <rect key="frame" x="25" y="568" width="62" height="30"/>
+                                <state key="normal" title="输出音频"/>
+                                <connections>
+                                    <action selector="export:" destination="BYZ-38-t0r" eventType="touchUpInside" id="EjF-53-Qv4"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fRQ-Nm-lGE">
+                                <rect key="frame" x="186" y="574" width="92" height="30"/>
+                                <state key="normal" title="播放音效音频"/>
+                                <connections>
+                                    <action selector="playExport:" destination="BYZ-38-t0r" eventType="touchUpInside" id="cX3-L2-1KP"/>
+                                </connections>
+                            </button>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="OHe-yZ-Umo">
+                                <rect key="frame" x="47" y="374" width="286" height="31"/>
+                                <connections>
+                                    <action selector="delay:" destination="BYZ-38-t0r" eventType="valueChanged" id="tgd-C7-eKv"/>
+                                </connections>
+                            </slider>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="8ic-t5-Lck" firstAttribute="top" secondItem="qHw-sd-X3f" secondAttribute="bottom" constant="8" id="5fS-Yz-Jq0"/>
                             <constraint firstItem="V4l-8J-MqX" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="90" id="7ya-Cw-iUU"/>
+                            <constraint firstItem="qHw-sd-X3f" firstAttribute="top" secondItem="OHe-yZ-Umo" secondAttribute="bottom" constant="32" id="8S5-hr-Xwx"/>
+                            <constraint firstAttribute="trailing" secondItem="fRQ-Nm-lGE" secondAttribute="trailing" constant="97" id="8gZ-j5-6ED"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="V4l-8J-MqX" secondAttribute="bottom" constant="527" id="AeI-pN-gDP"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="fRQ-Nm-lGE" secondAttribute="bottom" constant="63" id="Bsr-ci-xJE"/>
                             <constraint firstItem="qHw-sd-X3f" firstAttribute="top" secondItem="d3N-ET-2X3" secondAttribute="bottom" constant="88" id="CAG-z1-SDV"/>
                             <constraint firstItem="d3N-ET-2X3" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="43" id="Evq-Ip-5Be"/>
+                            <constraint firstItem="VOD-Hi-hoA" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="25" id="Fqr-mz-sXP"/>
                             <constraint firstItem="k46-xQ-GhM" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="90" id="FsH-Bt-qTf"/>
                             <constraint firstItem="qHw-sd-X3f" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="43" id="HMw-I8-6fc"/>
                             <constraint firstItem="8ic-t5-Lck" firstAttribute="top" secondItem="qHw-sd-X3f" secondAttribute="bottom" constant="8" id="HhL-cB-M2t"/>
@@ -80,9 +113,11 @@
                             <constraint firstItem="k46-xQ-GhM" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="33" id="Pd9-0C-TBL"/>
                             <constraint firstAttribute="trailing" secondItem="UPx-Qf-YIh" secondAttribute="trailing" constant="44" id="RQz-oL-48j"/>
                             <constraint firstItem="UPx-Qf-YIh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="33" id="SNv-Ma-fn7"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="VOD-Hi-hoA" secondAttribute="bottom" constant="69" id="VUf-Kb-0XR"/>
                             <constraint firstItem="UPx-Qf-YIh" firstAttribute="top" secondItem="V4l-8J-MqX" secondAttribute="bottom" constant="119" id="YLC-Xg-JTV"/>
                             <constraint firstItem="qHw-sd-X3f" firstAttribute="top" secondItem="6UW-bm-Ipp" secondAttribute="bottom" constant="111" id="cHl-ue-gy4"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="8ic-t5-Lck" secondAttribute="bottom" constant="172" id="csq-tf-0OJ"/>
+                            <constraint firstItem="OHe-yZ-Umo" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="49" id="d8M-eS-BjZ"/>
                             <constraint firstAttribute="trailing" secondItem="d3N-ET-2X3" secondAttribute="trailing" constant="44" id="dGa-nK-uOn"/>
                             <constraint firstAttribute="trailing" secondItem="6UW-bm-Ipp" secondAttribute="trailing" constant="290" id="dkj-vz-qGP"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="k46-xQ-GhM" secondAttribute="bottom" constant="527" id="eHY-VZ-kQE"/>
@@ -93,16 +128,26 @@
                             <constraint firstItem="6UW-bm-Ipp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="43" id="qNs-Oz-WLH"/>
                             <constraint firstAttribute="trailing" secondItem="aBC-2q-paz" secondAttribute="trailing" constant="290" id="qaR-3E-Xt7"/>
                             <constraint firstItem="aBC-2q-paz" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="43" id="qn8-Yw-ADX"/>
+                            <constraint firstItem="VOD-Hi-hoA" firstAttribute="top" secondItem="8ic-t5-Lck" secondAttribute="bottom" constant="73" id="uFY-ef-rIs"/>
+                            <constraint firstItem="fRQ-Nm-lGE" firstAttribute="top" secondItem="8ic-t5-Lck" secondAttribute="bottom" constant="79" id="vZ4-kH-adk"/>
                             <constraint firstAttribute="trailing" secondItem="8ic-t5-Lck" secondAttribute="trailing" constant="44" id="wIx-48-sZM"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="UPx-Qf-YIh" secondAttribute="bottom" constant="378" id="wTQ-fZ-vB4"/>
                             <constraint firstItem="6UW-bm-Ipp" firstAttribute="top" secondItem="UPx-Qf-YIh" secondAttribute="bottom" constant="15" id="wo2-am-11f"/>
+                            <constraint firstItem="OHe-yZ-Umo" firstAttribute="top" secondItem="d3N-ET-2X3" secondAttribute="bottom" constant="26" id="wzK-KX-ZxP"/>
                             <constraint firstAttribute="trailing" secondItem="k46-xQ-GhM" secondAttribute="trailing" constant="280" id="xWW-Ty-Gxm"/>
+                            <constraint firstAttribute="trailing" secondItem="OHe-yZ-Umo" secondAttribute="trailing" constant="44" id="yZz-83-XFU"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="delaySlider" destination="OHe-yZ-Umo" id="HOS-qa-tZy"/>
+                        <outlet property="pitchSlider" destination="d3N-ET-2X3" id="qaj-mo-Eaz"/>
+                        <outlet property="reverbSlider" destination="UPx-Qf-YIh" id="42z-zd-ZeB"/>
+                        <outlet property="roomSlider" destination="8ic-t5-Lck" id="cR8-aL-pg3"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="177" y="110"/>
+            <point key="canvasLocation" x="176.80000000000001" y="109.29535232383809"/>
         </scene>
     </scenes>
 </document>

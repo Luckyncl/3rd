@@ -12,6 +12,13 @@
 
 @property (nonatomic, strong) AEAudioFilePlayerModule *player;
 
+@property (weak, nonatomic) IBOutlet UISlider *reverbSlider;
+
+@property (weak, nonatomic) IBOutlet UISlider *pitchSlider;
+
+@property (weak, nonatomic) IBOutlet UISlider *delaySlider;
+@property (weak, nonatomic) IBOutlet UISlider *roomSlider;
+
 @end
 
 @implementation ViewController
@@ -24,13 +31,25 @@ static const NSTimeInterval kTestFileLength = 4;
     
     [self.audio start:nil];
     self.view.backgroundColor = [UIColor redColor];
+    
+    
+    self.reverbSlider.maximumValue = 100;
+    self.reverbSlider.minimumValue = 0;
+    
+    self.pitchSlider.minimumValue = -2400;
+    self.pitchSlider.maximumValue = 2400;
+    
+    self.delaySlider.minimumValue = 0;
+    self.delaySlider.maximumValue = 2;
+    
+    self.roomSlider.minimumValue = 1;
+    self.roomSlider.maximumValue = 1000;
 }
 
 
 
 - (IBAction)record:(UIButton *)sender {
     sender.selected = !sender.selected;
-    
     if (sender.selected) {
        [self.audio setInputEnabled:YES];
         [self.audio beginRecordingAtTime: 0 error:nil];
@@ -40,48 +59,51 @@ static const NSTimeInterval kTestFileLength = 4;
         }];
         [self.audio setInputEnabled:NO];
     }
-    
 }
 
 
 - (IBAction)play:(UIButton *)sender {
     
+
     sender.selected = !sender.selected;
     if (sender.selected) {
+        
+//        [self.audio.sample1 playAtTime:AETimeStampNone];
         [self.audio playRecordingWithCompletionBlock:^{
-            NSLog(@"播放完成");
+//            NSLog(@"播放录音文件结束");
+            sender.selected = NO;
         }];
     }else{
-//        [self.audio playRecordingWithCompletionBlock:^{
-//            NSLog(@"停止播放");
-//        }];
         [self.audio stopPlayingRecording];
+//        [self.audio.sample1 stop];
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    
-
-//    [self.audio.sample1 playAtTime:AETimeStampNone beginBlock:^{
-//        NSLog(@"     开始播放了     ");
-//    }];
-////
-//    [self createTestFile];
-    
-    
+- (IBAction)reverb:(UISlider *)sender {
+    [self.audio setReverbValue:sender.value];
 }
+
+- (IBAction)pitch:(UISlider *)sender {
+    [self.audio setPitchValue:sender.value];
+}
+
+- (IBAction)delay:(UISlider *)sender {
+    [self.audio setDelayValue:sender.value];
+}
+
+- (IBAction)room:(UISlider *)sender {
+    [self.audio setReverbRoom:sender.value];
+}
+
+- (IBAction)export:(UIButton *)sender {
+}
+
+- (IBAction)playExport:(UIButton *)sender {
+    
+    [self createTestFile];
+}
+
+
 
 
 - (NSURL *)fileURL {
@@ -104,17 +126,8 @@ static const NSTimeInterval kTestFileLength = 4;
     if ( !output ) {
         return error;
     }
-//    AEMixerModule * mixer = [[AEMixerModule alloc] initWithRenderer:renderer];
-//    
-//
-//    AEDelayModule * micDelay = [[AEDelayModule alloc] initWithRenderer:renderer];
-//    micDelay.delayTime = 0.5;
-//    renderer.block = ^(const AERenderContext * context) {
-//        AEModuleProcess(micDelay, context);
-////        AEModuleProcess(mixer, context);
-//        AERenderContextOutput(context, 1);
-//    };
-//
+
+    
     __block BOOL done = NO;
     [output runForDuration:40 completionBlock:^(NSError * e){
         done = YES;

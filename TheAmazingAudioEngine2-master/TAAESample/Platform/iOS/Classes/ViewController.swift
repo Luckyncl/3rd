@@ -204,6 +204,7 @@ class ViewController: UIViewController {
                                 selector: #selector(speedSliderRestoreTimeout), userInfo: nil, repeats: true);
     }
     
+    // 开始录音
     @IBAction func recordTap() {
         if let audio = audio {
             if audio.recording {

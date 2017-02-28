@@ -130,7 +130,7 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     // rules apply: No holding locks, no memory allocation, no Objective-C/Swift code.
     AEVarispeedModule * varispeed = [[AEVarispeedModule alloc] initWithRenderer:renderer subrenderer:subrenderer];
     subrenderer.block = ^(const AERenderContext * _Nonnull context) {
-        // Run all the players, though the mixer
+//        // Run all the players, though the mixer
         AEModuleProcess(mixer, context);
         
         // Put the resulting buffer on the output
