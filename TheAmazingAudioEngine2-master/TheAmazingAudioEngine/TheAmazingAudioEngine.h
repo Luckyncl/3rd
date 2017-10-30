@@ -89,6 +89,10 @@ extern "C" {
  tasks of generating and working with audio, without spending time writing boilerplate code and
  reinventing the wheel. Most of the common tasks are taken care of, so you can get straight to the good stuff:
  no friction.
+     taae包括基础设施和各种公用设施，使它更容易专注于核心
+     任务的生成和音频工作，没有花时间写的样板代码和
+     重新发明轮子。大多数常见的任务都要处理，这样你就可以直接找到好东西。
+ 
  
  If you're writing code that directly generates or processes audio on the audio thread - and you know what the 
  audio thread is, and what it does - TAAE may be for you.
@@ -97,6 +101,10 @@ extern "C" {
  
  TAAE *is not* a comprehensive audio processing library where all the work is already done for you, and it's not
  necessarily a suitable choice for those just starting out with audio, or for those with very simple needs.
+ 
+ 对于刚接触音频的人来说这个库并不是一个好的选择
+ 
+ 
  
  With TAAE, you're going to write code that runs on the audio thread; it gives you great power, but that comes 
  with [certain important responsibilities](http://atastypixel.com/blog/four-common-mistakes-in-audio-development/).
@@ -260,8 +268,12 @@ extern "C" {
  </table>
  
  When you're ready to output a stack item, use AERenderContextOutput() to send the buffer to the output;
+ 
+         当你准备输出一堆项目，使用aerendercontextoutput()发送缓冲区的输出
  it will be mixed with whatever's already on the output. Then optionally use AEBufferStackPop() to throw
  the buffer away.
+         它将与已经存在的输出相混合。然后选择使用aebufferstackpop()扔
+         缓冲了
  
  Most interaction with the stack is done through [modules](@ref AEModule), individual units of processing
  which can do anything from processing audio (i.e. pushing new buffers on the stack), adding effects

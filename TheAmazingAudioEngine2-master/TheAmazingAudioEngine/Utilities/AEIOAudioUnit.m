@@ -102,6 +102,7 @@ NSString * const AEIOAudioUnitDidSetupNotification = @"AEIOAudioUnitDidSetupNoti
 #endif
     
     // Get an instance of the output audio unit
+    //   获取一个输出音频单元的实例
     AudioComponentDescription acd = {};
 #if TARGET_OS_IPHONE
     acd = AEAudioComponentDescriptionMake(kAudioUnitManufacturer_Apple, kAudioUnitType_Output, kAudioUnitSubType_RemoteIO);

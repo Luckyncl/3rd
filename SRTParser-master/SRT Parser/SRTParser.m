@@ -52,10 +52,35 @@
                                 options:kNilOptions range:NSMakeRange(0, srtString.length)
                              usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
         SRTSubtitle *subtitle = [[SRTSubtitle alloc] initWithString:[srtString substringWithRange:result.range]];
-        NSLog(@"%@",subtitle.subtitle);
+//        NSLog(@"%@",subtitle.text);
                                  
         [_srtArray addObject:subtitle.subtitle];
-        if (flags == NSMatchingCompleted) {
+//
+             switch (flags) {
+                 case NSMatchingProgress:
+                 {
+                     NSLog(@"---解析中---");
+                 }
+                     break;
+                     
+                 case NSMatchingCompleted:
+                    NSLog(@"---完成中---");
+                     break;
+                 case NSMatchingHitEnd:
+                     NSLog(@"---热点结束---");
+                     break;
+
+                 case NSMatchingRequiredEnd:
+                     NSLog(@"---需要结束---");
+                     break;
+
+                 case NSMatchingInternalError:
+                     NSLog(@"---发生错误---");
+                     break;
+                 default:
+                     break;
+             }
+        if (stop) {
             [self.delegate parsingFinishedWithSubs:[_srtArray copy]];
         }
     }];

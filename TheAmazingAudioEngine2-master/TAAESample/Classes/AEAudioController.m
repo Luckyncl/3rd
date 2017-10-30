@@ -218,11 +218,14 @@ static const double kMicBandpassCenterFrequency = 2000.0;
         
         // Play recorded file, if playing
         if ( player ) {
+           
             // Play
             AEModuleProcess(player, context);
             
             // Put on output
             AERenderContextOutput(context, 1);
+            
+           
         }
     };
     
