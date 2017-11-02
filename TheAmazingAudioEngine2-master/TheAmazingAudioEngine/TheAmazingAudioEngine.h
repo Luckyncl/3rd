@@ -120,7 +120,8 @@ extern "C" {
  
  TAAE 2's design philosophy leans towards the simple and modular: to provide a set of small and simple
  building blocks that you can use together, or alone.
- 
+     taae 2的设计理念倾向于简单化提供了一套简单的小
+     可以一起使用或单独使用的构建块
  TAAE 2 is made up of:
  
  <img src="Block Diagram.png" width="570" height="272" alt="Block Diagram">
@@ -131,7 +132,13 @@ extern "C" {
     <td>The pool of buffers used for storing and manipulating audio. This is the main component you'll be working
         with, as it forms the backbone of the audio pipeline. You'll push buffers to generate audio; get existing
         buffers to apply effects, analysis and to record; mix buffers to combine multpile sources; output buffers
-        to the renderer, and pop buffers when you're done with them.</td>
+        to the renderer, and pop buffers when you're done with them.
+             用于存储和操作音频的缓冲池。这是您将要工作的主要组件。
+             随着它形成音频管道的主干。您将推动缓冲区生成音频；获得现有的
+             缓冲区的应用效果，分析和记录；混合缓冲区将multpile源；输出缓冲器
+             到渲染器，和流行的缓冲区，当你完成他们
+ 
+ </td>
  </tr>
   <tr>
     <th>AERenderer</th>
@@ -139,16 +146,26 @@ extern "C" {
  </tr>
   <tr>
     <th>AEAudioUnitOutput</th>
-    <td>The system output interface, for playing generated audio.</td>
+    <td>The system output interface, for playing generated audio
+ 
+         系统输出接口，用于播放生成的音频
+ .</td>
  </tr>
  <tr>
     <th>AEAudioFileOutput</th>  离线渲染
-    <td>An offline render target, for rendering out to an audio file.</td>
+    <td>An offline render target, for rendering out to an audio file 脱机呈现目标，用于呈现到音频文件中.</td>
  </tr>
  <tr>
     <th>AEModule</th>     // 处理模块
     <td>A unit of processing, which interact with the buffer stack to generate audio, filter it, monitor or
         analyze, etc. Modules are driven by calling AEModuleProcess(). Some important modules:
+ 
+ 
+ 
+         A unit of processing, which interact with the buffer stack to generate audio, filter it, monitor or
+         analyze, etc. Modules are driven by calling AEModuleProcess(). Some important modules
+         一种处理单元，它与缓冲区堆栈交互以生成音频、过滤、监视或
+         分析等模块，通过调用aemoduleprocess()驱动。一些重要的模块
  - AEAudioFilePlayerModule: Play files.     // 播放文件
  - AEAudioUnitInputModule: Get system input.    // 获得系统的输入
  - AEAudioFileRecorderModule: Record files.  // 录音模块
@@ -159,24 +176,39 @@ extern "C" {
  <tr>
     <th>AEManagedValue</th>
     <td>Manage a reference to an object or pointer in a thread-safe way. Use this to hold references to modules
-        that can be swapped out, removed or inserted at any time, for example.</td>
+        that can be swapped out, removed or inserted at any time, for example.
+     以线程安全的方式管理对对象或指针的引用。使用这个来保存对模块的引用
+     可以在任何时候交换、删除或插入，例如
+ </td>
  </tr>
  <tr>
     <th>AEArray</th>
     <td>Manage a list of objects or pointers in a thread-safe way. Use this to manage lists of modules that can
         be manipulated at any time, or use it to map between model objects in your app and C structures that you use
-        for rendering or analysis tasks.</td>
+        for rendering or analysis tasks.
+ 
+         以线程安全的方式管理对象或指针的列表。使用这个来管理可以使用的模块列表
+         在任何时候都可以被操纵，或者用它来映射应用程序中的模型对象和您使用的C结构。
+         用于呈现或分析任务
+ </td>
  </tr>
   <tr>
     <th>[AEAudioBufferListUtilities](@ref AEAudioBufferListUtilities.h)</th>
     <td>Utilities for working with AudioBufferLists: create mutable copies on the stack, offset, copy, silence,
         and isolate certain channel combinations.
+ 
+     工作audiobufferlists工具：创建可变的份上叠加、偏移，复制，沉默，
+     隔离某些频道组合
     </td>
  </tr>
  <tr>
     <th>[AEDSPUtilties](@ref AEDSPUtilities.h)</th>
     <td>Digital signal processing utilities: apply gain adjustments, linear and equal-power ramps, apply gain or
         volume and balance adjustments with automatic smoothing; mix buffers together, and generate oscillators.
+ 
+
+         数字信号处理实用程序：应用增益调整，线性和相等功率坡道，应用增益或
+         自动调整音量和平衡调整；混合缓冲区，产生振荡器
     </td>
  </tr>
  <tr>
@@ -184,6 +216,11 @@ extern "C" {
     <td>A powerful cross-thread synchronization facility. Use it to safely send messages back and forth between
         the main thread and the audio thread, to update state, trigger notifications from the audio thread, exchange
         data and more. The message queue is built from:
+ 
+ 
+     强大的跨线程同步机制。使用它来安全地来回发送消息。
+     主线程和音频线程，要更新状态，从音频线程触发通知，交换
+     数据和更多
  - AEMainThreadEndpoint: A simple facility for sending messages to the main thread from the audio thread.
  - AEAudioThreadEndpoint: A simple facility for sending messages to the audio thread from the main thread.
     </td>
@@ -209,14 +246,23 @@ extern "C" {
  The central component of TAAE 2 is the [buffer stack](@ref AEBufferStack), a utility that manages a pool of
  AudioBufferList structures, which in turn store audio for the current render cycle.
  
+     taae 2的中央部分是[缓冲栈]（@参考aebufferstack），一种实用工具，管理一个池
+     audiobufferlist结构，从而存储音频当前渲染周期
+ 
+ 
  The buffer stack is a production line. At the beginning of each render cycle, the buffer stack starts 
  empty; at the end of the render cycle, the buffer stack is reset to this empty state. In between, your 
  code will manipulate the stack to produce, manipulate, analyse, record and ultimately output audio.
+ 
+         缓冲堆栈是一条生产线。在每个呈现周期的开始时，缓冲区堆栈开始为空；在呈现周期结束时，缓冲区堆栈被重置为空状态。在中间，您的代码将操作堆栈来生成、操作、分析、记录并最终输出音频。
  
  Think of the stack as a stacked collection of buffers, one on top of the other, with the oldest at the
  bottom, and the newest at the top. You can push buffers on top of the stack, and pop them off, and you
  can inspect any buffer within the stack:
  
+ 
+         把堆栈看作一堆缓冲区，一个放在另一个上面，最老的在
+         底部，最新的顶部。您可以在栈顶上推缓冲区，并将它们弹出，您可以检查堆栈中的任何缓冲区
  <img src="Stack.png" width="570" height="272" alt="Stack">
  
  @section The-Buffer-Stack-Operations Operations
@@ -225,32 +271,43 @@ extern "C" {
  apply effects, analyse, or record audio. Mix buffers on the stack to combine multiple audio sources.
  Output buffers to the current output to play their audio out loud. Pop buffers off the stack when you're
  done with them.
- 
+     将缓冲区推到堆栈上生成新的音频。从堆栈中获取现有的缓冲区并将其编辑到
+     应用效果、分析或记录音频。混合堆栈上的缓冲区组合多个音频源。
+     输出缓冲区到当前输出播放他们的声音大声。弹出缓冲区堆栈时，你
+     他们做
  Each buffer on the stack can be mono, stereo, or multi-channel audio, and every buffer has the same number
  of frames of audio: that is, the number of frames requested by the output for the current render cycle.
- 
+     将缓冲区推到堆栈上生成新的音频。g堆栈上的每个缓冲区可以是单声道、立体声或多声道音频，并且每个缓冲区都具有相同数量的音频帧：即当前呈现周期的输出请求的帧数。
  <table class="definition-list">
  <tr>
     <th>AEBufferStackPush()</th>
-    <td>Push one or more stereo buffers onto the stack.
+    <td>Push one or more stereo buffers onto the stack.  将一个或多个立体缓冲区推入堆栈
         - Use AEBufferStackPushWithChannels() to push a buffer with the given number of channels.
-        - Use AEBufferStackPushExternal() to push your own pre-allocated buffer onto the stack.
+        - Use AEBufferStackPushExternal() to push your own pre-allocated buffer onto the stack.  使用aebufferstackpushexternal()推自己的预分配的缓冲区到堆栈
         - Use AEBufferStackDuplicate() to push a copy of the top stack item.
+             使用aebufferstackduplicate()推复制栈顶元素。
     </td>
  </tr>
  <tr>
     <th>AEBufferStackPop()</th>
     <td>Remove one or more buffers from the top of the stack.
+         从堆栈顶部移除一个或多个缓冲区。
         - Use AEBufferStackRemove() to remove a buffer from the middle of the stack.
+         使用aebufferstackremove()从堆栈中删除缓冲区
     </td>
  </tr>
  <tr>
     <th>AEBufferStackMix()</th>
     <td>Push a buffer that consists of the mixed audio from the top two or more buffers, and pop the original buffers.
+ 
+         从包含两个或多个缓冲区的混合音频中推送缓冲区，并弹出原始缓冲区
+ 
+ 
         - Use AEBufferStackMixWithGain() to use individual mix factors for each buffer.
         - Use AEBufferStackMixToBufferList() to mix two or more buffers to a target audio buffer list.
         - Use AEBufferStackMixToBufferListChannels() to mix two or more buffers to a subset of the target buffer 
           list's channels.
+         使用aebufferstackmixtobufferlistchannels()混合两种或两种以上的缓冲区的目标缓冲区的通道列表的一个子集
     </td>
  </tr>
  <tr>
@@ -263,7 +320,9 @@ extern "C" {
  </tr>
  <tr>
     <th>AEBufferStackSwap()</th>
-    <td>Swap the top two stack items.</td>
+    <td>     Swap the top two stack items.
+                 交换前两个堆栈项目
+ </td>
  </tr>
  </table>
  
@@ -272,8 +331,7 @@ extern "C" {
          当你准备输出一堆项目，使用aerendercontextoutput()发送缓冲区的输出
  it will be mixed with whatever's already on the output. Then optionally use AEBufferStackPop() to throw
  the buffer away.
-         它将与已经存在的输出相混合。然后选择使用aebufferstackpop()扔
-         缓冲了
+         它将与已经存在的输出相混合。然后选择使用aebufferstackpop()扔缓冲了
  
  Most interaction with the stack is done through [modules](@ref AEModule), individual units of processing
  which can do anything from processing audio (i.e. pushing new buffers on the stack), adding effects
@@ -283,6 +341,10 @@ extern "C" {
  state, and then process them from within your [render loop](@ref AERenderLoopBlock) using
  AEModuleProcess().
  The modules, in turn, interact with the stack; pushing, getting and popping buffers.
+ 
+     你的主线程创建时初始化您的音频引擎模块，或者改变状态时，然后处理它们在你内在的[渲染]（@参考aerenderloopblock）循环使用
+     aemoduleprocess()。
+     这些模块依次与堆栈交互；推送、获取和弹出缓冲区
  
  @section The-Buffer-Stack-Example An Example
  
