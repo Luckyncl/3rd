@@ -9,7 +9,9 @@
 #import "ViewController.h"
 #import "SRTSubtitle.h"
 @interface ViewController ()
-
+{
+    SRTParser *srt;
+}
 @end
 
 @implementation ViewController
@@ -22,15 +24,15 @@
     [super viewDidLoad];
     
     NSString *srtPath = [[NSBundle mainBundle] pathForResource:@"sample" ofType:@"srt"];
-    SRTParser *srt = [[SRTParser alloc] initWithSRTFile:srtPath];
+    srt = [[SRTParser alloc] initWithSRTFile:srtPath];
     srt.delegate = self;
     [srt parse];
 }
 
 - (void)parsingFinishedWithSubs:(NSArray *)subs
 {
-    SRTSubtitle *srt = [subs firstObject];
-    NSLog(@"%@",srt.text);
+    NSArray *arr = [subs firstObject];
+//    NSLog(@"ss%@",srts.text);
 }
 
 - (void)didReceiveMemoryWarning

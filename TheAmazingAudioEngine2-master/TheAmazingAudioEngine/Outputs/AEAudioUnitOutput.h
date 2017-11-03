@@ -43,14 +43,14 @@ extern NSString * const _Nonnull AEAudioUnitOutputDidChangeNumberOfOutputChannel
 
 /*!
  * Audio unit output
- *
+ *      音频文件输出
  *  Renders audio to the system output via an audio unit.
  */
 @interface AEAudioUnitOutput : NSObject
 
 /*!
  * Initialize with a renderer
- *
+ *      通过一个渲染来实例化
  * @param renderer Renderer to use to drive processing
  */
 - (instancetype _Nullable)initWithRenderer:(AERenderer * _Nonnull)renderer;
