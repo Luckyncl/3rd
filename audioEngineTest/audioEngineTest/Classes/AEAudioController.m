@@ -37,6 +37,8 @@ static const double kMicBandpassCenterFrequency = 2000.0;
 @property (nonatomic) BOOL playingThroughSpeaker;
 @property (nonatomic, strong) id routeChangeObserverToken;
 @property (nonatomic, strong) id audioInterruptionObserverToken;
+
+
 @end
 
 @implementation AEAudioController
@@ -49,7 +51,7 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     if ( !(self = [super init]) ) return nil;
     
     AERenderer * renderer = [AERenderer new];
-
+   AERenderer * subrenderer = [AERenderer new];
     // 设置输出节点
     self.output = [[AEAudioUnitOutput alloc] initWithRenderer:renderer];
     
@@ -58,25 +60,45 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     self.input = input;
     
     
+    NSURL *mp3url = [[NSBundle mainBundle] URLForResource:@"Recording" withExtension:@"m4a"];
+    // Start player
+    AEAudioFilePlayerModule * players =
+    [[AEAudioFilePlayerModule alloc] initWithRenderer:self.output.renderer URL:mp3url error:NULL];
+;
+    self.sample1 = players;
+
+    
+    
     // ****************   设置音效模块    *********************
     /*      延迟模块        */
     AEDelayModule * micDelay = [[AEDelayModule alloc] initWithRenderer:renderer];
-    micDelay.delayTime = 0.5f;
+    micDelay.delayTime = 0.f;
     self.delay = micDelay;
     
+    /*    混响       */
     AEReverbModule *micReverb = [[AEReverbModule alloc] initWithRenderer:renderer];
     self.reverb = micReverb;
     
+  
+    //混音
+    AEMixerModule *mixer = [[AEMixerModule alloc] initWithRenderer:subrenderer];
     
-    AERenderer * subrenderer = [AERenderer new];
-    AENewTimePitchModule *pitch = [[AENewTimePitchModule alloc] initWithRenderer:renderer subrenderer:subrenderer];
+    self.mixer = mixer;
+    
+//    self.mixer.modules = @[players];
     
     subrenderer.block = ^(const AERenderContext * _Nonnull context) {
+        
+        AEModuleProcess(mixer, context);
         AERenderContextOutput(context, 1);
     };
-    pitch.pitch = 1200;
-    self.pitch = pitch;
+
     
+    AENewTimePitchModule *pitch = [[AENewTimePitchModule alloc] initWithRenderer:renderer subrenderer:subrenderer];
+    pitch.enablePeakLocking = NO;
+//    pitch.pitch = 1200;
+    self.pitch = pitch;
+
     
     // Setup recorder placeholder
     AEManagedValue * recorderValue = [AEManagedValue new];
@@ -86,13 +108,6 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     AEManagedValue * playerValue = [AEManagedValue new];
     self.playerValue = playerValue;
     
-    
-//    AEAudioFilePlayerModule *samp = [[AEAudioFilePlayerModule alloc] initWithRenderer:self.output.renderer URL:self.recordingPath error:NULL];
-//    self.sample1 = samp;
-//    
-//    self.playerValue.objectValue = samp;
-    
-
     
     // Setup top-level renderer. This is all performed on the audio thread, so the usual
     // rules apply: No holding locks, no memory allocation, no Objective-C/Swift code.
@@ -107,17 +122,18 @@ static const double kMicBandpassCenterFrequency = 2000.0;
         __unsafe_unretained AEAudioFilePlayerModule * player
         = (__bridge AEAudioFilePlayerModule *)AEManagedValueGetValue(playerValue);
         
-       
 
         if ( player ) {
             // If we're playing a recording, duck other output
 //            AEDSPApplyGain(AEBufferStackGet(context->stack, 0), 0.1, context->frames);
-//             AEModuleProcess(micDelay, context);
-//            AEModuleProcess(pitch, context);
-//            AEModuleProcess(micReverb, context);
+            AEModuleProcess(micDelay, context);
+            AEModuleProcess(pitch, context);
+            AEModuleProcess(micReverb, context);
+            // Put on output
+            AERenderContextOutput(context, 1);
         }
         
-        // Put on output
+        AEModuleProcess(self.sample1, context);
         AERenderContextOutput(context, 1);
         
         if ( THIS->_inputEnabled ) {
@@ -126,16 +142,15 @@ static const double kMicBandpassCenterFrequency = 2000.0;
             
             // Add effects to input, and amplify by a factor of 2x to recover lost gain from bandpass
 
-            
             // If it's safe to do so, put this on the output
-            if ( !THIS->_playingThroughSpeaker ) {
-                if ( player ) {
-                    // If we're playing a recording, duck first
-                    AEDSPApplyGain(AEBufferStackGet(context->stack, 0), 0.1, context->frames);
-                }
-//
-//                AERenderContextOutput(context, 1);
-            }
+//            if ( !THIS->_playingThroughSpeaker ) {
+//                if ( player ) {
+//                    // If we're playing a recording, duck first
+//                    AEDSPApplyGain(AEBufferStackGet(context->stack, 0), 0.1, context->frames);
+//                }
+////                      这里是用于输出硬件的 暂时先注释了，以后再说吧
+////                AERenderContextOutput(context, 1);
+//            }
         }
         
         // Run through recorder, if it's there
@@ -151,14 +166,10 @@ static const double kMicBandpassCenterFrequency = 2000.0;
         // Play recorded file, if playing
         if ( player ) {
             // Play
-            AEModuleProcess(player, context);
-            
-            
-            AEModuleProcess(micDelay, context);
-//            AEModuleProcess(pitch, context);
-            AEModuleProcess(micReverb, context);;
-            // Put on output
-            AERenderContextOutput(context, 1);
+//            AEModuleProcess(player, context);
+//
+////            // Put on output
+//            AERenderContextOutput(context, 1);
         }
     };
     return self;
@@ -199,6 +210,7 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     
     // Start the output and input
     return [self.output start:error] && (!self.inputEnabled || [self.input start:error]);
+//    return YES;
     
 }
 
@@ -263,11 +275,14 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     
     if ( [[NSFileManager defaultManager] fileExistsAtPath:url.path] ) {
         
-//        AERenderer * subrenderer = [AERenderer new];
+        NSURL *mp3url = [[NSBundle mainBundle] URLForResource:@"凤凰传奇 - 最炫民族风(Live)" withExtension:@"mp3"];
         // Start player
+//        AEAudioFilePlayerModule * player =
+//        [[AEAudioFilePlayerModule alloc] initWithRenderer:self.output.renderer URL:url error:NULL];
+        
         AEAudioFilePlayerModule * player =
-        [[AEAudioFilePlayerModule alloc] initWithRenderer:self.output.renderer URL:url error:NULL];
-      
+                [[AEAudioFilePlayerModule alloc] initWithRenderer:self.output.renderer URL:mp3url error:NULL];
+        self.mixer.modules = @[player];
       
         
         

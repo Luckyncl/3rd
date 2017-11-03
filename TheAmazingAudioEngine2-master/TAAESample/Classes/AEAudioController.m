@@ -38,6 +38,10 @@ static const double kMicBandpassCenterFrequency = 2000.0;
 @property (nonatomic) BOOL playingThroughSpeaker;
 @property (nonatomic, strong) id routeChangeObserverToken;
 @property (nonatomic, strong) id audioInterruptionObserverToken;
+
+
+@property (nonatomic, strong) AENewTimePitchModule *pitch;        // 变声模块
+
 @end
 
 @implementation AEAudioController
@@ -71,9 +75,10 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     [players addObject:bass];
     
     url = [[NSBundle mainBundle] URLForResource:@"piano" withExtension:@"m4a"];
+    url =  [[NSBundle mainBundle] URLForResource:@"凤凰传奇 - 最炫民族风(Live)" withExtension:@"mp3"];
     AEAudioFilePlayerModule * piano = [[AEAudioFilePlayerModule alloc] initWithRenderer:subrenderer URL:url error:NULL];
-    piano.loop = YES;
-    piano.microfadeFrames = 32;
+//    piano.loop = YES;
+//    piano.microfadeFrames = 32;
     self.piano = piano;
     [players addObject:piano];
     
@@ -129,6 +134,15 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     // Setup varispeed renderer. This is all performed on the audio thread, so the usual
     // rules apply: No holding locks, no memory allocation, no Objective-C/Swift code.
     AEVarispeedModule * varispeed = [[AEVarispeedModule alloc] initWithRenderer:renderer subrenderer:subrenderer];
+    
+
+    AENewTimePitchModule *pitch = [[AENewTimePitchModule alloc] initWithRenderer:renderer subrenderer:subrenderer];
+    pitch.enablePeakLocking = NO;
+    pitch.pitch = 1200;
+    self.pitch = pitch;
+    
+    
+    
     subrenderer.block = ^(const AERenderContext * _Nonnull context) {
 //        // Run all the players, though the mixer
         AEModuleProcess(mixer, context);
@@ -159,13 +173,15 @@ static const double kMicBandpassCenterFrequency = 2000.0;
         __unsafe_unretained AEAudioFilePlayerModule * player
          = (__bridge AEAudioFilePlayerModule *)AEManagedValueGetValue(playerValue);
         
-        // Run varispeed unit, which will run its own render loop, above
-        AEModuleProcess(varispeed, context);
+//        // Run varispeed unit, which will run its own render loop, above
+//        AEModuleProcess(varispeed, context);
+//        
+//        // Run through bandpass effect
+//        AEModuleProcess(bandpass, context);
+//        
+//         AEModuleProcess(micDelay, context);
         
-        // Run through bandpass effect
-        AEModuleProcess(bandpass, context);
-        
-         AEModuleProcess(micDelay, context);
+        AEModuleProcess(pitch, context);
         
         // Sweep balance
         float bal = 0.0;
@@ -175,11 +191,11 @@ static const double kMicBandpassCenterFrequency = 2000.0;
         } else {
             balanceLfo = 0.5;
         }
-        AEBufferStackApplyFaders(context->stack, 1, NULL, bal, &currentBalalance);
+//        AEBufferStackApplyFaders(context->stack, 1, NULL, bal, &currentBalalance);
         
         if ( player ) {
             // If we're playing a recording, duck other output
-            AEDSPApplyGain(AEBufferStackGet(context->stack, 0), 0.1, context->frames);
+//            AEDSPApplyGain(AEBufferStackGet(context->stack, 0), 0.1, context->frames);
         }
         
         // Put on output
@@ -219,10 +235,10 @@ static const double kMicBandpassCenterFrequency = 2000.0;
         // Play recorded file, if playing
         if ( player ) {
             // Play
-            AEModuleProcess(player, context);
+//            AEModuleProcess(player, context);
             
             // Put on output
-            AERenderContextOutput(context, 1);
+//            AERenderContextOutput(context, 1);
         }
     };
     

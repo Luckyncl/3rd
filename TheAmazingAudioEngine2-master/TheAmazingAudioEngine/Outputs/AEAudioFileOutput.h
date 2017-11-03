@@ -122,7 +122,7 @@ typedef BOOL (^AEAudioFileOutputConditionBlock)();
 //! The URL of the output file
 @property (nonatomic, strong, readonly) NSURL * _Nonnull fileURL;
 
-//! The number of frames recorded so far
+//! The number of frames recorded so far  一共记录了多少帧
 @property (nonatomic, readonly) UInt64 numberOfFramesRecorded;
 
 @end

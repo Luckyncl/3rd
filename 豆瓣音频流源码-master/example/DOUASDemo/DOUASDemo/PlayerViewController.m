@@ -188,6 +188,8 @@ static void *kBufferingRatioKVOKey = &kBufferingRatioKVOKey;    // 音频帧的�
         // 播放
         [_streamer play];
         
+        
+        
         // 更新缓存状态
         [self _updateBufferingStatus];
         
