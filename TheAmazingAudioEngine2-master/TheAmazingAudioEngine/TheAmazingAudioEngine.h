@@ -350,15 +350,28 @@ extern "C" {
  
  The following example takes three audio files, mixes and applies effects (we apply one effect to one player, and
  a second effect to the other two), then records and outputs the result.
+ 
+     下面的示例使用三个音频文件，混合并应用效果（我们对一个播放器应用一个效果，然后
+     对第二个结果的第二个效果，然后记录并输出结果
+ 
  This perfoms the equivalent of the following graph:
  
  <img src="Graph Equivalent.png" width="570" height="192" alt="Graph Equivalent">
  
  First, some setup. We'll create an instance of AERenderer, which will drive our main render loop. Then
- we create an instance of AEAudioUnitOutput, which is our interface to the system audio output. Finally,
- we'll create a number of modules that we shall use. Note that each module maintains a reference to its
+ we create an instance of AEAudioUnitOutput, which is our interface to the system audio output.
+         首先，一些设置。我们创建了aerenderer实例，这将推动我们的主要渲染循环。然后我们创建aeaudiounitoutput实例，这是我们对系统的音频输出接口
+ 
+ 
+ Finally,
+ we'll create a number of modules that we shall use.
+         最后，我们将创建一些我们将使用的模块
+ 
+ Note that each module maintains a reference to its
  controlling renderer, so it can track important changes such as sample rate.
  
+         请注意，每个模块都维护其引用。
+         控制渲染器，所以它可以跟踪重要的变化，如采样率
  @code
  // Create our renderer and output
  AERenderer * renderer = [AERenderer new];
@@ -379,7 +392,7 @@ extern "C" {
  
  Now, we can provide a render block, which contains the implementation for the audio pipeline. We run each module
  in turn, in the order that will provide the desired result:
- 
+         现在，我们可以提供一个渲染块，它包含音频管道的实现。
  <img src="Rendering Example.png" width="570" height="251" alt="Rendering Example">
  
  @code
@@ -400,9 +413,12 @@ extern "C" {
  
  Note that we interact with the rendering environment via the AERenderContext; this provides us with a variety
  of important state information for the current render, as well as access to the buffer stack.
+         请注意，我们与环境渲染通过aerendercontext互动；这为我们提供了目前提供的各种重要的状态信息，以及访问缓冲栈
  
  Finally, when we're initialized, we start the output, and the players:
  
+ 
+         最后，当我们初始化时，我们启动输出，然后播放。
  @code
  [self.output start:NULL];
  
@@ -413,9 +429,10 @@ extern "C" {
  
  We should hear all three audio file players, with a bandpass effect on the first, and a delay effect on the
  other two. We'll also get a recorded file which contains what we heard.
- 
+         我们应该听到所有三个音频文件播放器，对第一个带通效应，并对延迟的影响。
+             其他两。我们也会得到一个录音文件，里面包含我们听到的内容。
  For a more sophisticated example, take a look at the sample app that comes with TAAE 2.
- 
+ 一个更复杂的例子，看看是taae 2示例应用程序一看
  <hr>
  
  More documentation coming soon.

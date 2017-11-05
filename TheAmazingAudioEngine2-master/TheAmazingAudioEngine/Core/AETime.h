@@ -43,17 +43,19 @@ void AETimeInit();
 
 /*!
  * Get current global timestamp, in host ticks
+      获取全局的时间戳，使用主机 tick
  */
 AEHostTicks AECurrentTimeInHostTicks(void);
 
 /*!
  * Get current global timestamp, in seconds
+      获取全局的时间戳，使用秒
  */
 AESeconds AECurrentTimeInSeconds(void);
 
 /*!
  * Convert time in seconds to host ticks
- *
+ *     转换 秒 到主机ticks
  * @param seconds The time in seconds
  * @return The time in host ticks
  */
@@ -69,7 +71,7 @@ AESeconds AESecondsFromHostTicks(AEHostTicks ticks);
     
 /*!
  * Create an AudioTimeStamps with a host ticks value
- *
+ *   创建一个时间戳用采样率
  *  If a zero value is provided, then AETimeStampNone will be returned.
  *
  * @param ticks The time in host ticks
@@ -79,7 +81,7 @@ AudioTimeStamp AETimeStampWithHostTicks(AEHostTicks ticks);
 
 /*!
  * Create an AudioTimeStamps with a sample time value
- *
+ *     创建一个时间戳使用采样率
  * @param samples The time in samples
  * @return The timestamp
  */
