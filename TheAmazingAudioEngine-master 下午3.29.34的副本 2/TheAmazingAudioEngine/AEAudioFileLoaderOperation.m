@@ -134,15 +134,12 @@ static const int kMaxAudioFileReadSize = 16384;
         // More channels in target format than file format - set up a map to duplicate channel
         SInt32 channelMap[_targetAudioDescription.mChannelsPerFrame];
         AudioConverterRef converter;
-        // 检测 是否初始化了转码器
         AECheckOSStatus(ExtAudioFileGetProperty(audioFile, kExtAudioFileProperty_AudioConverter, &size, &converter),
                     "ExtAudioFileGetProperty(kExtAudioFileProperty_AudioConverter)");
         for ( int outChannel=0, inChannel=0; outChannel < _targetAudioDescription.mChannelsPerFrame; outChannel++ ) {
             channelMap[outChannel] = inChannel;
             if ( inChannel+1 < fileAudioDescription.mChannelsPerFrame ) inChannel++;
         }
-        
-        /// 修改转码器
         AECheckOSStatus(AudioConverterSetProperty(converter, kAudioConverterChannelMap, sizeof(SInt32)*_targetAudioDescription.mChannelsPerFrame, channelMap),
                     "AudioConverterSetProperty(kAudioConverterChannelMap)");
         CFArrayRef config = NULL;
