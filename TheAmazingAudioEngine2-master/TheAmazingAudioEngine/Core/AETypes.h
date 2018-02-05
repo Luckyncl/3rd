@@ -35,12 +35,14 @@ extern "C" {
  * The audio description used throughout TAAE
  *
  *  This is 32-bit floating-point, non-interleaved stereo PCM.
+         这是32位浮点型，非交错立体声PCM。
  */
 extern const AudioStreamBasicDescription AEAudioDescription;
 
 /*!
  * Get the TAAE audio description at a given sample rate
- *
+     得到的taae音频描述在一个给定的采样率
+ 
  * @param channels Number of channels
  * @param rate The sample rate
  * @return The audio description
@@ -48,7 +50,7 @@ extern const AudioStreamBasicDescription AEAudioDescription;
 AudioStreamBasicDescription AEAudioDescriptionWithChannelsAndRate(int channels, double rate);
 
 /*!
- * File types
+ * File types  文件类型
  */
 typedef NS_ENUM(NSInteger, AEAudioFileType) {
     AEAudioFileTypeAIFFFloat32, //!< 32-bit floating point AIFF (AIFC)
@@ -59,6 +61,7 @@ typedef NS_ENUM(NSInteger, AEAudioFileType) {
 
 /*!
  * Channel set
+     通道设置
  */
 typedef struct {
     int firstChannel; //!< The index of the first channel of the set
@@ -80,7 +83,8 @@ static inline AEChannelSet AEChannelSetMake(int firstChannel, int lastChannel) {
     
 /*!
  * Determine number of channels in an AEChannelSet
- *
+     确定一个aechannelset通道数
+ 
  * @param channelSet The channel set
  * @return The number of channels
  */
