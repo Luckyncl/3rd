@@ -36,9 +36,12 @@ extern "C" {
 
 /*!
  * Allocate an audio buffer list and the associated mData pointers.
+        分配音频缓冲区列表和关联的mData指针
  *
  *  Note: Do not use this utility from within the Core Audio thread (such as inside a render
  *  callback). It may cause the thread to block, inducing audio stutters.
+       注意不要在核心音频线程中使用 例如 渲染线程   他很可能造成阻塞
+
  *
  * @param audioFormat       Audio format describing audio to be stored in buffer list
  * @param frameCount        The number of frames to allocate space for (or 0 to just allocate the list structure itself)
