@@ -197,7 +197,7 @@ UInt32 AEAudioFilePlayerGetPlayhead(__unsafe_unretained AEAudioFilePlayer * THIS
         return NO;
     }
     
-    // Get the file data format
+    // Get the file data format  获取音频格式 首先获取音频格式
     UInt32 size = sizeof(_fileDescription);
     result = AudioFileGetProperty(_audioFile, kAudioFilePropertyDataFormat, &size, &_fileDescription);
     if ( !AECheckOSStatus(result, "AudioFileGetProperty(kAudioFilePropertyDataFormat)") ) {
@@ -208,9 +208,19 @@ UInt32 AEAudioFilePlayerGetPlayhead(__unsafe_unretained AEAudioFilePlayer * THIS
         return NO;
     }
     
-    // Determine length in frames (in original file's sample rate)
+    // Determine length in frames (in original file's sample rate) 计算帧的长度
     AudioFilePacketTableInfo packetInfo;
-    size = sizeof(packetInfo);
+     // AudioFilePacketTableInfo  包含了音频有效帧的数据，包括启动帧和结尾帧的数据
+    // Contains information about the number of valid frames in a file and where they begin and end
+    //    mNumberValidFrames    文件中的有效帧数
+    //    The number of valid frames in the file.
+    //    mPrimingFrames
+    //    The number of invalid frames at the beginning of the file. 文件开始处的无效帧数
+    //    mRemainderFrames  文件末尾的无效帧数
+    //    The number of invalid frames at the end of the file.
+
+
+    size = sizeof(packetInfo); // 数据包的大小
     result = AudioFileGetProperty(_audioFile, kAudioFilePropertyPacketTableInfo, &size, &packetInfo);
     if ( result != noErr ) {
         size = 0;
@@ -218,8 +228,9 @@ UInt32 AEAudioFilePlayerGetPlayhead(__unsafe_unretained AEAudioFilePlayer * THIS
     
     UInt64 fileLengthInFrames;
     if ( size > 0 ) {
-        fileLengthInFrames = packetInfo.mNumberValidFrames;
+        fileLengthInFrames = packetInfo.mNumberValidFrames;  // 如果有有效帧的话  注意这里是使用了有效帧
     } else {
+        //
         UInt64 packetCount;
         size = sizeof(packetCount);
         result = AudioFileGetProperty(_audioFile, kAudioFilePropertyAudioDataPacketCount, &size, &packetCount);
@@ -240,7 +251,6 @@ UInt32 AEAudioFilePlayerGetPlayhead(__unsafe_unretained AEAudioFilePlayer * THIS
         _audioFile = NULL;
         return NO;
     }
-    
     _lengthInFrames = (UInt32)fileLengthInFrames;  // 文件的长度
     _regionStartTime = 0;
     _regionDuration = (double)_lengthInFrames / _fileDescription.mSampleRate;

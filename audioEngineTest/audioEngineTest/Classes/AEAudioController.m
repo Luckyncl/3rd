@@ -51,7 +51,7 @@ static const double kMicBandpassCenterFrequency = 2000.0;
     if ( !(self = [super init]) ) return nil;
     
     AERenderer * renderer = [AERenderer new];
-   AERenderer * subrenderer = [AERenderer new];
+    AERenderer * subrenderer = [AERenderer new];
     // 设置输出节点
     self.output = [[AEAudioUnitOutput alloc] initWithRenderer:renderer];
     

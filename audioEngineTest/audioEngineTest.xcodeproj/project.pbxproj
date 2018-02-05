@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		183D7F871E5EA4AF006EAEBC /* 男声.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 183D7F861E5EA4AF006EAEBC /* 男声.mp3 */; };
-		187069FB1E66956C00769F83 /* 凤凰传奇 - 最炫民族风(Live).mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 187069FA1E66956C00769F83 /* 凤凰传奇 - 最炫民族风(Live).mp3 */; };
 		1876FA891E514CE800048210 /* amen.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 1876FA801E514CE800048210 /* amen.m4a */; };
 		1876FA8A1E514CE800048210 /* bass.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 1876FA811E514CE800048210 /* bass.m4a */; };
 		1876FA8B1E514CE800048210 /* piano.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 1876FA821E514CE800048210 /* piano.m4a */; };
@@ -76,7 +75,6 @@
 
 /* Begin PBXFileReference section */
 		183D7F861E5EA4AF006EAEBC /* 男声.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "男声.mp3"; sourceTree = "<group>"; };
-		187069FA1E66956C00769F83 /* 凤凰传奇 - 最炫民族风(Live).mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "凤凰传奇 - 最炫民族风(Live).mp3"; sourceTree = SOURCE_ROOT; };
 		1876FA801E514CE800048210 /* amen.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = amen.m4a; sourceTree = "<group>"; };
 		1876FA811E514CE800048210 /* bass.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = bass.m4a; sourceTree = "<group>"; };
 		1876FA821E514CE800048210 /* piano.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = piano.m4a; sourceTree = "<group>"; };
@@ -151,7 +149,6 @@
 			children = (
 				1876FA871E514CE800048210 /* AEAudioController.h */,
 				1876FA881E514CE800048210 /* AEAudioController.m */,
-				187069FA1E66956C00769F83 /* 凤凰传奇 - 最炫民族风(Live).mp3 */,
 				189A226A1E68205E00EE988B /* Recording.m4a */,
 			);
 			path = Classes;
@@ -380,7 +377,6 @@
 			files = (
 				1876FA8B1E514CE800048210 /* piano.m4a in Resources */,
 				1876FA8D1E514CE800048210 /* sample2.m4a in Resources */,
-				187069FB1E66956C00769F83 /* 凤凰传奇 - 最炫民族风(Live).mp3 in Resources */,
 				C79D50F51E50CAF7002D83A3 /* Info.plist in Resources */,
 				1876FA891E514CE800048210 /* amen.m4a in Resources */,
 				183D7F871E5EA4AF006EAEBC /* 男声.mp3 in Resources */,
@@ -568,6 +564,7 @@
 				DEVELOPMENT_TEAM = 5836W9K38T;
 				HEADER_SEARCH_PATHS = "\"$(BUILT_PRODUCTS_DIR)\"";
 				INFOPLIST_FILE = audioEngineTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.luckyncl.audioEngineTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -584,6 +581,7 @@
 					"\"$(TEMP_ROOT)/UninstalledProducts/$(PLATFORM_NAME)\"",
 				);
 				INFOPLIST_FILE = audioEngineTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.luckyncl.audioEngineTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";

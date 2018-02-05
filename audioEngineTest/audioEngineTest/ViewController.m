@@ -187,24 +187,31 @@ static const NSTimeInterval kTestFileLength = 4;
         return error;
     }
 
-    
+
     __block BOOL done = NO;
     [output runForDuration:player.duration completionBlock:^(NSError * e){
         done = YES;
 //        [self.audio.piano stop];
         NSLog(@" 已经完成了");
-     
         error = e;
     }];
-    
+
+    // 这里开始写入文件
     while ( !done ) {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+        NSLog(@"-===-=  %@",    [NSRunLoop currentRunLoop].currentMode);
+        //
+        NSLog(@"ssssssssssssss");
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+        NSLog(@"执行了");
     }
     
     [output finishWriting];
     
     return error;
 }
+
+
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
