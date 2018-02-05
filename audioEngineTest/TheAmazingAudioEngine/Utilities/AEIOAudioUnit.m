@@ -140,7 +140,7 @@ NSString * const AEIOAudioUnitDidSetupNotification = @"AEIOAudioUnitDidSetupNoti
         return NO;
     }
     
-    // Set the render callback
+    // Set the render callback       设置这个渲染回调
     AURenderCallbackStruct rcbs = { .inputProc = AEIOAudioUnitRenderCallback, .inputProcRefCon = (__bridge void *)(self) };
     result = AudioUnitSetProperty(_audioUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0,
                                   &rcbs, sizeof(rcbs));
@@ -150,7 +150,7 @@ NSString * const AEIOAudioUnitDidSetupNotification = @"AEIOAudioUnitDidSetupNoti
         return NO;
     }
 
-    // Set the input callback
+    // Set the input callback       设置这个输入回调
     AURenderCallbackStruct inRenderProc;
     inRenderProc.inputProc = &AEIOAudioUnitInputCallback;
     inRenderProc.inputProcRefCon = (__bridge void *)self;

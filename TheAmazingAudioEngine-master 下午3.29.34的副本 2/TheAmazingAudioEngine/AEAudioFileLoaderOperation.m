@@ -142,12 +142,17 @@ static const int kMaxAudioFileReadSize = 16384;
         }
         AECheckOSStatus(AudioConverterSetProperty(converter, kAudioConverterChannelMap, sizeof(SInt32)*_targetAudioDescription.mChannelsPerFrame, channelMap),
                     "AudioConverterSetProperty(kAudioConverterChannelMap)");
+
+
+
+        //        Set this property’s value to NULL to force resynchronization of the converter’s output format with the file’s data format.
+        //       将此属性的值设置为NULL，强制转换器输出格式与文件数据格式重新同步。
         CFArrayRef config = NULL;
         AECheckOSStatus(ExtAudioFileSetProperty(audioFile, kExtAudioFileProperty_ConverterConfig, sizeof(CFArrayRef), &config),
                     "ExtAudioFileSetProperty(kExtAudioFileProperty_ConverterConfig)");
     }
     
-    // Determine length in frames (in original file's sample rate)    计算所有的大小
+    // Determine length in frames (in original file's sample rate)    计算文件的大小
     UInt64 fileLengthInFrames;
     size = sizeof(fileLengthInFrames);
     status = ExtAudioFileGetProperty(audioFile, kExtAudioFileProperty_FileLengthFrames, &size, &fileLengthInFrames);
@@ -158,7 +163,7 @@ static const int kMaxAudioFileReadSize = 16384;
         return;
     }
     
-    // Calculate the true length in frames, given the original and target sample rates      计算真实的帧长度
+    // Calculate the true length in frames, given the original and target sample rates     计算转换以后的音频的帧数
     fileLengthInFrames = ceil(fileLengthInFrames * (_targetAudioDescription.mSampleRate / fileAudioDescription.mSampleRate));
     
     // Prepare buffers       准备缓冲区  2 个

@@ -114,6 +114,8 @@ extern "C" {
  of pre-built pieces you can just fit together, then I strongly recommend checking out
  [AudioKit](http://audiokit.io/), a powerful audio synthesis, processing, and analysis library without the 
  steep learning curve.
+         如果你不知道或不热衷于寻找音频线是什么，什么‘实时’的意思，是一个` audiobufferlist `是如何无锁的并发处理，或者如果你想有一个图书馆，包括你可以组装在一起的预制件，然后我强烈建议退房。[ audiokit ]（HTTP：/ / audiokit。IO /），一个强大的音频合成、加工、分析图书馆没有陡峭学习曲线。
+ 
  
  @section Design TAAE's Design
  

@@ -204,6 +204,7 @@ class ViewController: UIViewController {
                                 selector: #selector(speedSliderRestoreTimeout), userInfo: nil, repeats: true);
     }
     
+    // 开始录音
     @IBAction func recordTap() {
         if let audio = audio {
             if audio.recording {
@@ -234,6 +235,7 @@ class ViewController: UIViewController {
         }
     }
     
+    // 播放音频
     @IBAction func playTap() {
         if let audio = audio {
             if audio.playingRecording {
@@ -278,6 +280,7 @@ class ViewController: UIViewController {
         audio!.recordingPlaybackPosition = Double(sender.value)
     }
     
+    // 分享
     @IBAction func exportTap() {
         if let audio = audio {
             // Show the share controller
@@ -295,6 +298,7 @@ class ViewController: UIViewController {
         }
     }
     
+   // 设置是否 能够接受输入
     @IBAction func micTap() {
         if let audio = audio {
             // Toggle mic

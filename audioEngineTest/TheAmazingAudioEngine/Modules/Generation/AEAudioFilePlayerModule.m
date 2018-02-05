@@ -276,7 +276,7 @@ BOOL AEAudioFilePlayerModuleGetPlaying(__unsafe_unretained AEAudioFilePlayerModu
         return NO;
     }
     
-    // Determine length in frames (in original file's sample rate)
+    // Determine length in frames (in original file's sample rate)  确定文件的长度
     AudioFilePacketTableInfo packetInfo;
     size = sizeof(packetInfo);
     result = AudioFileGetProperty(_audioFile, kAudioFilePropertyPacketTableInfo, &size, &packetInfo);

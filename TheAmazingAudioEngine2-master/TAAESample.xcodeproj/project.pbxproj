@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		18706A011E6696ED00769F83 /* 凤凰传奇 - 最炫民族风(Live).mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 18706A001E6696ED00769F83 /* 凤凰传奇 - 最炫民族风(Live).mp3 */; };
 		4C1027921D640B960029D0D5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1027871D640B960029D0D5 /* AppDelegate.swift */; };
 		4C1027931D640B960029D0D5 /* PlayerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1027881D640B960029D0D5 /* PlayerButton.swift */; };
 		4C1027941D640B960029D0D5 /* TriggerGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1027891D640B960029D0D5 /* TriggerGestureRecognizer.swift */; };
@@ -39,6 +40,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		18706A001E6696ED00769F83 /* 凤凰传奇 - 最炫民族风(Live).mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "凤凰传奇 - 最炫民族风(Live).mp3"; sourceTree = "<group>"; };
 		4C1027681D640ABD0029D0D5 /* TAAESample macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TAAESample macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C1027871D640B960029D0D5 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4C1027881D640B960029D0D5 /* PlayerButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerButton.swift; sourceTree = "<group>"; };
@@ -160,6 +162,7 @@
 		4C94E2AB1CAF7129006EB497 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
+				18706A001E6696ED00769F83 /* 凤凰传奇 - 最炫民族风(Live).mp3 */,
 				4C94E2CB1CAF9E9C006EB497 /* amen.m4a */,
 				4C94E2CD1CAF9F17006EB497 /* bass.m4a */,
 				4C94E2CE1CAF9F17006EB497 /* piano.m4a */,
@@ -271,7 +274,7 @@
 					};
 					4CDCACBB1CA25AA8008AAEF1 = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = X925S83LF5;
+						DevelopmentTeam = 5836W9K38T;
 						LastSwiftMigration = 0800;
 					};
 				};
@@ -319,6 +322,7 @@
 				4C94E2BC1CAF7129006EB497 /* sample1.m4a in Resources */,
 				4C94E2CC1CAF9E9C006EB497 /* amen.m4a in Resources */,
 				4C1027981D640B960029D0D5 /* Main.storyboard in Resources */,
+				18706A011E6696ED00769F83 /* 凤凰传奇 - 最炫民族风(Live).mp3 in Resources */,
 				4C94E2CF1CAF9F17006EB497 /* bass.m4a in Resources */,
 				4C1027B21D6410880029D0D5 /* Common Assets.xcassets in Resources */,
 				4C1027961D640B960029D0D5 /* iOS Assets.xcassets in Resources */,
@@ -516,9 +520,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 5836W9K38T;
 				INFOPLIST_FILE = TAAESample/Platform/iOS/Support/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.atastypixel.TAAESample;
+				PRODUCT_BUNDLE_IDENTIFIER = kkk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -530,9 +535,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 5836W9K38T;
 				INFOPLIST_FILE = TAAESample/Platform/iOS/Support/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.atastypixel.TAAESample;
+				PRODUCT_BUNDLE_IDENTIFIER = kkk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

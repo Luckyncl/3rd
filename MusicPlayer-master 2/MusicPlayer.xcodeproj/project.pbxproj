@@ -301,6 +301,9 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = CainiaoLiu;
 				TargetAttributes = {
+					0F9B9CA118FC0E210005D734 = {
+						DevelopmentTeam = 5836W9K38T;
+					};
 					0F9B9CBC18FC0E220005D734 = {
 						TestTargetID = 0F9B9CA118FC0E210005D734;
 					};
@@ -487,6 +490,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				DEVELOPMENT_TEAM = 5836W9K38T;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/ibokan/Desktop/MusicPlayer,
@@ -505,6 +509,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				DEVELOPMENT_TEAM = 5836W9K38T;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/ibokan/Desktop/MusicPlayer,

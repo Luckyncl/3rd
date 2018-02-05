@@ -17,17 +17,17 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+//    
+//    self.audio = [[AEAudioController alloc] init];
+//    
+//    [self.audio start:nil];
+//    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     
-    self.audio = [[AEAudioController alloc] init];
-    
-    [self.audio start:nil];
-    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    
-    ViewController *vc = [[ViewController alloc] init];
-    vc.audio = self.audio;
-    self.window.rootViewController = vc;
-    self.window.backgroundColor = [UIColor whiteColor];
-    [self.window makeKeyAndVisible];
+//    ViewController *vc = [[ViewController alloc] init];
+//    vc.audio = self.audio;
+//    self.window.rootViewController = vc;
+//    self.window.backgroundColor = [UIColor whiteColor];
+//    [self.window makeKeyAndVisible];
     return YES;
 }
 

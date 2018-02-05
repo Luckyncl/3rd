@@ -142,7 +142,7 @@
 //    first.alignment = NSTextAlignmentCenter;
     
     
-    // pysearch
+    // 这里使用了按钮的frame 用于确定位置
     [KxMenu showMenuInView:self.view
                   fromRect:sender.frame
                  menuItems:menuItems];
@@ -150,6 +150,9 @@
 
 - (void) pushMenuItem:(id)sender
 {
+
+
+
     NSLog(@"%@", sender);
 }
 

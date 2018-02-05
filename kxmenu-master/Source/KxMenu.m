@@ -6,11 +6,11 @@ const CGFloat kArrowSize = 12.f;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-
 @interface KxMenuView : UIView
 @end
 
-@interface KxMenuOverlay : UIView
+
+@interface KxMenuOverlay : UIView   //蒙版view
 @end
 
 /*   菜单的遮罩图层      */
@@ -25,8 +25,7 @@ const CGFloat kArrowSize = 12.f;
         // 设置 为透明
         self.backgroundColor = [UIColor clearColor];
         self.opaque = NO;
-        
-        // 添加点击手势
+        // 添加点击手势，响应 菜单小时的方法
         UITapGestureRecognizer *gestureRecognizer;
         gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                     action:@selector(singleTap:)];
@@ -90,16 +89,15 @@ const CGFloat kArrowSize = 12.f;
     return _target != nil && _action != NULL;
 }
 
-
 /**
         执行存储的那个方法
  */
 - (void) performAction
 {
+    // 内部强引用
     __strong id target = self.target;
-    
+
     if (target && [target respondsToSelector:_action]) {
-        
         // 在主线程里面 执行UI  直到执行完毕以后 如果比较耗时的话，可能会影响 主线程
         [target performSelectorOnMainThread:_action withObject:self waitUntilDone:YES];
     }
@@ -130,7 +128,8 @@ typedef enum {
     
 } KxMenuViewArrowDirection;
 
-@implementation KxMenuView{
+@implementation KxMenuView
+{
     KxMenuViewArrowDirection    _arrowDirection;            // 箭头的方向
     CGFloat                     _arrowPosition;         // 箭头的位置
     UIView                      *_contentView;          // 内容视图
@@ -145,7 +144,8 @@ typedef enum {
         self.backgroundColor = [UIColor clearColor];
         self.opaque = YES;
         self.alpha = 0;
-        
+
+        //
         self.layer.shadowOpacity = 0.5;
         self.layer.shadowOffset = CGSizeMake(2, 2);
         self.layer.shadowRadius = 2;
@@ -303,7 +303,6 @@ typedef enum {
 {
     //
     _menuItems = menuItems;
-    
     _contentView = [self mkContentView];
     [self addSubview:_contentView];
     
@@ -312,13 +311,15 @@ typedef enum {
     
     // 遮罩view
     KxMenuOverlay *overlay = [[KxMenuOverlay alloc] initWithFrame:view.bounds];
+
+    //注意这里 使用遮罩添加了 menuView自己本身
     [overlay addSubview:self];
     [view addSubview:overlay];
     
     _contentView.hidden = YES;
     const CGRect toFrame = self.frame;
     self.frame = (CGRect){self.arrowPoint, 1, 1};
-    
+    // 注意这里添加什么东西
     [UIView animateWithDuration:0.2
                      animations:^(void) {
                          
@@ -389,7 +390,7 @@ typedef enum {
     // 设置间距值
     const CGFloat kMinMenuItemHeight = 32.f;
     const CGFloat kMinMenuItemWidth = 32.f;
-    const CGFloat kMarginX = 10.f;
+    const CGFloat kMarginX = 10.f;  // 距离左侧 10
     const CGFloat kMarginY = 5.f; // Y 方向的最大值
     
     // 设置字体
@@ -403,7 +404,7 @@ typedef enum {
     // 遍历 数据
     for (KxMenuItem *menuItem in _menuItems) {
         // 获取图片的大小
-        const CGSize imageSize = menuItem.image.size;        
+        const CGSize imageSize = menuItem.image.size;
         if (imageSize.width > maxImageWidth)
             maxImageWidth = imageSize.width;        
     }
@@ -414,8 +415,9 @@ typedef enum {
     }
     
     for (KxMenuItem *menuItem in _menuItems) {
+        // 获取文字的大小
+        const CGSize titleSize = [self sizeWithFont:titleFont string:menuItem.title];
 
-        const CGSize titleSize = [menuItem.title sizeWithFont:titleFont];
         const CGSize imageSize = menuItem.image.size;
 
         const CGFloat itemHeight = MAX(titleSize.height, imageSize.height) + kMarginY * 2;
@@ -428,7 +430,7 @@ typedef enum {
             maxItemWidth = itemWidth;
     }
     
-    // 取两个的最大值
+    // 取两个的最大值  每一个栏目的标签
     maxItemWidth  = MAX(maxItemWidth, kMinMenuItemWidth);
     maxItemHeight = MAX(maxItemHeight, kMinMenuItemHeight);
 
@@ -453,14 +455,18 @@ typedef enum {
         const CGRect itemFrame = (CGRect){0, itemY, maxItemWidth, maxItemHeight};
         
         UIView *itemView = [[UIView alloc] initWithFrame:itemFrame];
+
+        // 为每一个 item 创建一个视图
+
+        // 不自动调整 view视图的间距以及宽高
         itemView.autoresizingMask = UIViewAutoresizingNone;
         itemView.backgroundColor = [UIColor clearColor];        
         itemView.opaque = NO;
                 
         [contentView addSubview:itemView];
-        
+
         if (menuItem.enabled) {
-        
+            // 如果可以点击的话
             UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
             button.tag = itemNum;
             button.frame = itemView.bounds;
@@ -468,7 +474,6 @@ typedef enum {
             button.backgroundColor = [UIColor clearColor];
             button.opaque = NO;
             button.autoresizingMask = UIViewAutoresizingNone;
-            
             [button addTarget:self
                        action:@selector(performAction:)
              forControlEvents:UIControlEventTouchUpInside];
@@ -636,6 +641,22 @@ typedef enum {
 }
 
 
+- (CGSize)sizeWithFont:(UIFont *)font  string:(NSString *)string
+{
+    NSMutableDictionary *attr = [NSMutableDictionary new];
+    attr[NSFontAttributeName] = font;
+    //    if (lineBreakMode != NSLineBreakByWordWrapping) {
+    //        NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
+    //        paragraphStyle.lineBreakMode = lineBreakMode;
+    //        attr[NSParagraphStyleAttributeName] = paragraphStyle;
+    //    }
+    CGRect rect = [string?:@"" boundingRectWithSize:CGSizeMake(HUGE, HUGE)
+                                            options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                         attributes:attr context:nil];
+    return rect.size;
+}
+
+
 - (void)drawBackground:(CGRect)frame
              inContext:(CGContextRef) context
 {
@@ -660,9 +681,11 @@ typedef enum {
     
     // fix the issue with gap of arrow's base if on the edge
     const CGFloat kEmbedFix = 3.f;
-    
+
+    // 开始画箭头
+
     if (_arrowDirection == KxMenuViewArrowDirectionUp) {
-        
+
         const CGFloat arrowXM = _arrowPosition;
         const CGFloat arrowX0 = arrowXM - kArrowSize;
         const CGFloat arrowX1 = arrowXM + kArrowSize;
@@ -733,7 +756,7 @@ typedef enum {
     [arrowPath fill];
 
     // render body
-    
+    // 渲染 内容 绘制渐变色
     const CGRect bodyFrame = {X0, Y0, X1 - X0, Y1 - Y0};
     
     UIBezierPath *borderPath = [UIBezierPath bezierPathWithRoundedRect:bodyFrame
@@ -744,33 +767,33 @@ typedef enum {
         R0, G0, B0, 1,
         R1, G1, B1, 1,
     };
-    
+
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGGradientRef gradient = CGGradientCreateWithColorComponents(colorSpace,
                                                                  components,
                                                                  locations,
                                                                  sizeof(locations)/sizeof(locations[0]));
     CGColorSpaceRelease(colorSpace);
-    
-    
+
+
     [borderPath addClip];
     
     CGPoint start, end;
-    
+
     if (_arrowDirection == KxMenuViewArrowDirectionLeft ||
         _arrowDirection == KxMenuViewArrowDirectionRight) {
-                
+
         start = (CGPoint){X0, Y0};
         end = (CGPoint){X1, Y0};
-        
+
     } else {
-        
+
         start = (CGPoint){X0, Y0};
         end = (CGPoint){X0, Y1};
     }
-    
+
     CGContextDrawLinearGradient(context, gradient, start, end, 0);
-    CGGradientRelease(gradient);    
+    CGGradientRelease(gradient);
 }
 
 @end
@@ -782,12 +805,15 @@ static KxMenu *gMenu;
 static UIColor *gTintColor;
 static UIFont *gTitleFont;
 
-@implementation KxMenu {
+@implementation KxMenu
+{
     
     KxMenuView *_menuView;
     BOOL        _observing;
 }
 
+
+// 这里使用单例
 + (instancetype) sharedMenu
 {
     static dispatch_once_t onceToken;
@@ -795,6 +821,7 @@ static UIFont *gTitleFont;
         
         gMenu = [[KxMenu alloc] init];
     });
+
     return gMenu;
 }
 
@@ -808,6 +835,8 @@ static UIFont *gTitleFont;
     return self;
 }
 
+
+/*   删除通知  */
 - (void) dealloc
 {
     if (_observing) {        
@@ -824,22 +853,21 @@ static UIFont *gTitleFont;
     
     // 删掉菜单view
     if (_menuView) {
-        
+        /*  首先删掉菜单view */
         [_menuView dismissMenu:NO];
         _menuView = nil;
     }
 
     if (!_observing) {
-    
+        // 添加监听的通知
         _observing = YES;
-        
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(orientationWillChange:)
                                                      name:UIApplicationWillChangeStatusBarOrientationNotification
                                                    object:nil];
     }
 
-    
+    // 创建菜单 View
     _menuView = [[KxMenuView alloc] init];
     [_menuView showMenuInView:view fromRect:rect menuItems:menuItems];    
 }
@@ -899,5 +927,13 @@ static UIFont *gTitleFont;
         gTitleFont = titleFont;
     }
 }
+
+
+
+
+
+
+
+
 
 @end

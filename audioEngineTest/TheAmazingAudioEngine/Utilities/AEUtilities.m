@@ -100,7 +100,7 @@ ExtAudioFileRef AEExtAudioFileCreate(NSURL * url, AEAudioFileType fileType, doub
         fileTypeID = kAudioFileAIFCType;
         
     } else {
-        // 16-bit signed integer
+        // 16-bit signed integer  wav格式 实际上也就是 pcm 的格式
         asbd.mFormatID = kAudioFormatLinearPCM;
         asbd.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked |
                             (fileType == AEAudioFileTypeAIFFInt16 ? kAudioFormatFlagIsBigEndian : 0);

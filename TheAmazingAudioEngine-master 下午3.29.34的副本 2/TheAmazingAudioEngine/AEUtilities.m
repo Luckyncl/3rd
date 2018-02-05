@@ -29,9 +29,18 @@
 static double __hostTicksToSeconds = 0.0;
 static double __secondsToHostTicks = 0.0;
 
+
 AudioBufferList *AEAudioBufferListCreate(AudioStreamBasicDescription audioFormat, int frameCount) {
+    
     int numberOfBuffers = audioFormat.mFormatFlags & kAudioFormatFlagIsNonInterleaved ? audioFormat.mChannelsPerFrame : 1;
+
+    /*
+        每个缓冲区 通道数
+     */
     int channelsPerBuffer = audioFormat.mFormatFlags & kAudioFormatFlagIsNonInterleaved ? 1 : audioFormat.mChannelsPerFrame;
+    /*
+        生成的每个缓冲区的大小 为 音频流 每帧多少字节  乘以帧数
+     */
     int bytesPerBuffer = audioFormat.mBytesPerFrame * frameCount;
     
     AudioBufferList *audio = malloc(sizeof(AudioBufferList) + (numberOfBuffers-1)*sizeof(AudioBuffer));
