@@ -32,12 +32,13 @@ extern "C" {
 
 /*!
  * Splitter module
- *
+ *      分流模块
  *  This generator module wraps another generator, and allows you to safely run
  *  it multiple times in the same render cycle by buffering the first run, and
  *  returning the buffered audio for the first and subsequent runs. This is useful 
  *  for situations where you are drawing input from the same module at multiple
  *  points throughout your audio renderer.
+     此生成器模块包装另一个生成器，并允许您在同一个呈现周期中多次运行，通过缓冲第一个运行，并为第一个和后续的运行返回缓冲的音频。这是有用的情况下，你是绘图输入来自同一模块在多个点在你的音频渲染器
  */
 @interface AESplitterModule : AEModule
 

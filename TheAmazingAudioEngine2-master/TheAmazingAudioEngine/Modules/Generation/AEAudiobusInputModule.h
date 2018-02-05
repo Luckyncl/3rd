@@ -18,7 +18,7 @@
  *
  * @param renderer The renderer
  * @param port The Audiobus audio receiver port
- * @param input If not NULL, the Remote IO audio unit input to use when the Audiobus port is not in use
+ * @param input If not NULL, the Remote IO audio unit input to use when the Audiobus port is not in use    、、、 port 接口
  */
 - (instancetype)initWithRenderer:(AERenderer *)renderer
                audioReceiverPort:(ABAudioReceiverPort *)port

@@ -33,11 +33,14 @@ extern "C" {
 
 /*!
  * Audio unit module
- *
+ *      音频单元模块
  *  This module provides an interface to Audio Units, both generator and effect types.
- *
+ *      这个模块提供了音频单元的接口，包括生成器和效果类型。
  *  For generator Audio Units, this module will push one buffer onto the stack during
  *  processing. For effect units, it will pop and and push one (i.e. process in place).
+ 
+      音频发生器units for this module will，推到一个缓冲区栈during the
+        加工。units for效应，它会弹出一个和推
  */
 @interface AEAudioUnitModule : AEModule
 
@@ -46,9 +49,11 @@ extern "C" {
  *
  *  Use this initializer for all audio unit types beside format converters (such as the varispeed
  *  and time/pitch units).
- *
+ *     使用这个初始化所有的音频单元类型在格式转换器（如调速和时间/距单位）。
  * @param renderer The renderer
  * @param audioComponentDescription The structure identifying the audio unit to instantiate
+     标识音频单元以实例化的结构。
+
  */
 - (instancetype _Nullable)initWithRenderer:(AERenderer * _Nullable)renderer
                       componentDescription:(AudioComponentDescription)audioComponentDescription;
@@ -56,7 +61,7 @@ extern "C" {
 
 /*!
  * Sub-renderer initializer
- *
+ *    自渲染实例化
  *  Use this initializer for format converter audio units, such as the varispeed and time/pitch
  *  units. As these audio units draw input at a different rate to output production, you must provide
  *  a sub-renderer which will be used to produce input frames as needed.
@@ -71,7 +76,7 @@ extern "C" {
 
 /*!
  * Get an audio unit parameter
- *
+ *      获取音频单元的参数
  * @param parameterId The audio unit parameter identifier
  * @return The value of the parameter
  */
@@ -79,7 +84,7 @@ extern "C" {
 
 /*!
  * Set an audio unit parameter
- *
+ *      设置音频参数
  *  Note: Parameters set via this method will be automatically assigned again if the
  *  audio unit is recreated due to removal from the audio controller, an audio controller
  *  reload, or a media server error.
@@ -91,7 +96,7 @@ extern "C" {
 
 /*!
  * Setup audio unit
- *
+ *    启动音频单元
  *  This method is for use by subclasses only
  */
 - (BOOL)setup;

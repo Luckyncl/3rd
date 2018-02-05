@@ -33,7 +33,7 @@ extern "C" {
 
 /*!
  * Audio input module
- *
+ *      音频输入模块
  *  This module receives audio input from the system audio hardware, and pushes
  *  a buffer onto the stack containing the received audio. The pushed buffer has
  *  the same channel count as the currently-attached audio hardware, accessible
@@ -43,6 +43,9 @@ extern "C" {
  *  use the instance returned from AEAudioUnitOutput's 
  *  @link AEAudioUnitOutput::inputModule inputModule @endlink property, which uses the
  *  same underlying audio unit instance as the output.
+ 
+       建议您不要创建和使用实例从aeaudiounitoutput的返回
+       “链接aeaudiounitoutput：：输入输入@末端链环的财产，它使用相同的底层音频单元实例作为输出。
  */
 @interface AEAudioUnitInputModule : AEModule
 
@@ -62,7 +65,7 @@ extern "C" {
 
 /*!
  * Start the audio unit
- *
+ *      开启音频单元
  *  You need to start the audio unit to be able to begin getting audio input.
  *
  * @param error If an error occured and this is not nil, it will be set to the error on output
@@ -87,7 +90,7 @@ AudioUnit _Nullable AEAudioUnitInputModuleGetAudioUnit(__unsafe_unretained AEAud
 
 /*!
  * Get the last received input timestamp
- *
+ *    获取最新收到的输入时间戳
  *  This gives access to the most recent AudioTimeStamp associated with input audio. Use this to perform synchronization.
  *
  * @param module The module instance
@@ -99,7 +102,7 @@ AudioTimeStamp AEAudioUnitInputModuleGetInputTimestamp(__unsafe_unretained AEAud
 
 /*!
  * Get the input latency
- *
+ *   获取输入延迟
  *  This function returns the hardware input latency, in seconds. If you have disabled latency compensation,
  *  and timing is important in your app, then you should factor this value into your timing calculations.
  *

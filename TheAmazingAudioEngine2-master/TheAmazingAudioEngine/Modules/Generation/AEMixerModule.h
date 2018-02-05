@@ -35,9 +35,13 @@ extern "C" {
  *
  *  This module provides a convenient way to aggregate multiple generator modules
  *  together, with facilities for applying volume and balance per-generator module.
+ 
+     此模块提供了一种方便的方法来集成多个生成器模块，并提供了用于生成每个模块的体积和平衡的设备
  *
  *  You should use this with generator modules only - that is, modules that push
  *  a buffer onto the stack when they are processed.
+ 
+     您应该只使用生成器模块，也就是说，模块在处理时将缓冲区推到堆栈上。
  */
 @interface AEMixerModule : AEModule
 

@@ -72,7 +72,7 @@ extern AEChannelSet AEChannelSetDefault; //!< A default, stereo channel set
 
 /*!
  * Create an AEChannelSet
- *
+ *   创建一个通道设置结构体
  * @param firstChannel The first channel
  * @param lastChannel The last channel
  * @returns An initialized AEChannelSet structure

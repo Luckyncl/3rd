@@ -35,8 +35,12 @@ extern "C" {
  *
  *  This module allows you to run a separate renderer. This can be useful for encapsulating
  *  complex rendering behaviour.
+ 
+       这个模块允许你运行一个单独的渲染器。这对于封装复杂的渲染行为是有用的
  *
  *  The subrenderer's sample rate will track the owning renderer's sample rate, and
+      subrenderer的采样率将追踪拥有渲染的采样率，和
+
  */
 @interface AESubrendererModule : AEModule
 
@@ -45,6 +49,9 @@ extern "C" {
  *
  * @param renderer Owning renderer
  * @param subrenderer Sub-renderer to use to provide input
+ 
+    子类渲染器提供输入
+
  */
 - (instancetype _Nullable)initWithRenderer:(AERenderer * _Nullable)renderer
                                subrenderer:(AERenderer * _Nullable)subrenderer;

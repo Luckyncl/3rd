@@ -24,28 +24,32 @@
 //  3. This notice may not be removed or altered from any source distribution.
 //
 
+/*     线程安全的数组       */
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
     
 #import <Foundation/Foundation.h>
 
-typedef const void * AEArrayToken; //!< Token for real-thread use
+typedef const void * AEArrayToken; //!< Token for real-thread use  用于实际线程使用的令牌
 
 /*!
  * Block for mapping between objects and opaque pointer values
- *
+           对象和不透明指针值之间映射的块
+
  *  Pass a block matching this type to AEArray's initializer in order to map
  *  between objects in the array and an arbitrary data block; this can be a pointer
  *  to an allocated C structure, for example, or any other collection of bytes.
- *
+         通过匹配该类型aearray的初始化为图中的对象之间的数组和一个任意的数据块的块；这可以是一个指针的分配结构，，或任何其他的字节集合
  *  The block is invoked on the main thread whenever a new item is added to the array
  *  during an update. You should allocate the memory you need, set the contents, and
  *  return a pointer to this memory. It will be freed automatically once the item is 
  *  removed from the array, unless you provide a custom @link AEArray::releaseBlock releaseBlock @endlink.
- *
+      每当更新时向数组中添加一个新项时，就在主线程上调用该块。你应该分配你需要的内存，设置内容，并返回一个指向这个内存的指针。它会自动释放该项目一旦从数组中删除，除非你提供自定义”链接aearray：：releaseblock releaseblock @末端链环。
  * @param item The original object
- * @return Pointer to an allocated memory region
+ * @return Pointer to an allocated memory region  实例化开辟的内存区域的指针
  */
 typedef void * _Nullable (^AEArrayCustomMappingBlock)(id _Nonnull item);
 
@@ -63,7 +67,7 @@ typedef void * _Nullable (^AEArrayIndexedCustomMappingBlock)(id _Nonnull item, i
 
 /*!
  * Block for releasing allocated values
- *
+ *      释放生成的值
  *  Assign a block matching this type to AEArray's releaseBlock property to provide
  *  a custom release implementation. Use this if you are using a custom mapping block
  *  and need to perform extra cleanup tasks beyond simply freeing the returned pointer.
@@ -79,12 +83,15 @@ typedef void (^AEArrayReleaseBlock)(id _Nonnull item, void * _Nonnull bytes);
 
 /*!
  * Real-time safe array
- *
+ *       实时安全的数组
  *  Use this class to manage access to an array of items from the audio thread. Accesses
  *  are both thread-safe and realtime-safe.
- *
+ *       使用此类管理从音频线程访问项目的数组。访问既线程安全又实时安全。
+ 
  *  Using the default initializer results in an instance that manages an array of object
  *  references. You can cast the items returned directly to an __unsafe_unretained Objective-C type.
+ 
+        使用默认初始值设定项会导致管理一个对象引用数组的实例。你可以把物品直接返回一个__unsafe_unretained Objective-C类
  *
  *  Alternatively, you can use the custom initializer to provide a block that maps between
  *  objects and any collection of bytes, such as a C structure.
@@ -93,10 +100,13 @@ typedef void (^AEArrayReleaseBlock)(id _Nonnull item, void * _Nonnull bytes);
  *  the array using @link AEArrayGetToken @endlink. This token remains valid until the next time
  *  AEArrayGetToken is called. Pass the token to @link AEArrayGetCount @endlink and 
  *  @link AEArrayGetItem @endlink to access array items.
- *
+     访问的实时音频线阵列时，你必须首先获得一个令牌来访问使用“链接aearraygettoken @末端链环的阵列。这个令牌仍然有效，直到下一次aearraygettoken叫做。通过令牌”链接aearraygetcount @末端链环和@链接aearraygetitem @末端链环访问数组项
+ 
+ 
  *  Remember to use the __unsafe_unretained directive to avoid ARC-triggered retains on the
  *  audio thread if using this class to manage Objective-C objects, and only interact with such objects
  *  via C functions they provide, not via Objective-C methods.
+      得使用__unsafe_unretained指令，避免电弧触发保留在音频线如果使用这个类来管理Objective-C的对象，只有对象通过C所提供的功能的相互作用，而不是通过Objective-C方法
  */
 @interface AEArray : NSObject <NSFastEnumeration>
 
@@ -105,6 +115,8 @@ typedef void (^AEArrayReleaseBlock)(id _Nonnull item, void * _Nonnull bytes);
  *
  *  This configures the instance to manage an array of object references. You can cast the items 
  *  returned directly to an __unsafe_unretained Objective-C type.
+ 
+         这将配置实例来管理对象引用数组。你可以把物品直接返回一个__unsafe_unretained Objective-C类
  */
 - (instancetype _Nonnull)init;
 
@@ -227,7 +239,7 @@ AEArrayToken _Nonnull AEArrayGetToken(__unsafe_unretained AEArray * _Nonnull arr
 
 /*!
  * Get the number of items in the array
- *
+ *    获取数组中的数量
  * @param token The array token, as returned from AEArrayGetToken
  * @return Item count
  */
@@ -235,7 +247,7 @@ int AEArrayGetCount(AEArrayToken _Nonnull token);
 
 /*!
  * Get the item at a given index
- *
+ *  获取某位置下的item
  * @param token The array token, as returned from AEArrayGetToken
  * @param index The item index
  * @return Item at the given index
@@ -304,7 +316,7 @@ void * _Nullable AEArrayGetItem(AEArrayToken _Nonnull token, int index);
             (type)AEArrayGetItem(__AEArrayVar(token, __LINE__), __AEArrayVar(i, __LINE__)) : NULL )
 
 
-//! Number of values in array
+//! Number of values in array  
 @property (nonatomic, readonly) int count;
 
 //! Current object values

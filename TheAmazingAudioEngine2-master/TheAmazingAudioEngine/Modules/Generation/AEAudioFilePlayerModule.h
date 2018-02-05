@@ -42,6 +42,8 @@ typedef void (^AEAudioFilePlayerModuleBlock)();
  *
  *  This class allows you to play audio files, either as one-off samples, or looped.
  *  It will play any audio file format supported by iOS.
+ 
+     这个类允许你播放音频文件，或者作为一次性样本，或者循环。它将播放任何由iOS支持的音频文件格式。
  *
  *  When processing, it will push a buffer onto the stack containing audio from the
  *  playing file, or silence if not playing. The number of channels in the pushed buffer
@@ -80,6 +82,8 @@ typedef void (^AEAudioFilePlayerModuleBlock)();
  *  Begins playback at the given time; this version allows you to provide a 
  *  block which will be called on the main thread shortly after playback starts.
  *
+     开始播放
+     在指定的时间开始播放；此版本允许您提供一个块，在播放开始后不久将在主线程上调用该块
  * @param time The timestamp at which to begin playback
  * @param block Block to call on main thread when the time is reached and playback starts
  */
@@ -92,7 +96,7 @@ typedef void (^AEAudioFilePlayerModuleBlock)();
 
 /*!
  * Get playhead position, in frames, for a given time
- *
+ *     获取当前播放的时间
  *  For use on the realtime thread.
  *
  * @param filePlayer The player
@@ -104,7 +108,7 @@ AESeconds AEAudioFilePlayerModuleGetPlayhead(__unsafe_unretained AEAudioFilePlay
 
 /*!
  * Determine if playing
- *
+ *     确保是否正在播放
  * @param filePlayer The player
  * @return Whether currently playing
  */
@@ -135,7 +139,7 @@ BOOL AEAudioFilePlayerModuleGetPlaying(__unsafe_unretained AEAudioFilePlayerModu
 //! discontinuities - clicks - at start and end)
 @property (nonatomic) UInt32 microfadeFrames;
 
-//! A block to be called when non-looped playback finishes
+//! A block to be called when non-looped playback finishes   当播放完成的时候
 @property (nonatomic, copy) AEAudioFilePlayerModuleBlock _Nullable completionBlock;
 
 @end

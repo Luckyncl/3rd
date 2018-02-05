@@ -51,6 +51,7 @@
 //        [operation setAudioReceiverBlock:^(AudioBufferList *audio, UInt32 lengthInFrames) {
 //            NSLog(@"接收到音频了，，，，接收到音频了  %d",lengthInFrames);
 //        }];
+    
         [operation start];
         
         if ( operation.error ) {

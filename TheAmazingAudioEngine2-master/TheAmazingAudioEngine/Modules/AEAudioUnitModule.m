@@ -59,6 +59,7 @@
     
     if ( !(self = [super initWithRenderer:renderer]) ) return nil;
     
+    // 合成的描述
     _componentDescription = audioComponentDescription;
     
     if ( _componentDescription.componentType == kAudioUnitType_FormatConverter ) {

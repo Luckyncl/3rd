@@ -30,6 +30,7 @@ extern "C" {
 
 #import "AEModule.h"
 
+// 振荡器
 @interface AEOscillatorModule : AEModule
 @property (nonatomic) double frequency;
 @end

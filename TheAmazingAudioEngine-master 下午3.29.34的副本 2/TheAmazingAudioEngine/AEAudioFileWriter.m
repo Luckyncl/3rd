@@ -122,6 +122,7 @@ NSString * const AEAudioFileWriterErrorDomain = @"com.theamazingaudioengine.AEAu
         
         // Get the output audio description 获得输出音频文件的描述
         AudioStreamBasicDescription destinationFormat;
+        // void *memset(void *b, int c, size_t len)  设置 b 的 前 len 字节  为 c
         memset(&destinationFormat, 0, sizeof(destinationFormat));
         destinationFormat.mChannelsPerFrame = channels;
         destinationFormat.mSampleRate = _audioDescription.mSampleRate;
