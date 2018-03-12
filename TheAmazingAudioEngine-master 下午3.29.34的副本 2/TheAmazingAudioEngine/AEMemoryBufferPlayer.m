@@ -148,6 +148,12 @@ static OSStatus renderCallback(__unsafe_unretained AEMemoryBufferPlayer *THIS, _
     AEAudioBufferListCopyOnStack(scratchAudioBufferList, audio, silentFrames * THIS->_audioDescription.mBytesPerFrame);
     
     if ( silentFrames > 0 ) {
+#warning mark- 非常重要
+/*
+
+    处理  静音帧
+ */
+        
         // Start time is offset into this buffer - silence beginning of buffer
         for ( int i=0; i<audio->mNumberBuffers; i++) {
             memset(audio->mBuffers[i].mData, 0, silentFrames * THIS->_audioDescription.mBytesPerFrame);
