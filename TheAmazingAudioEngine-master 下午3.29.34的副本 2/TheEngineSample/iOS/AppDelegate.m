@@ -20,7 +20,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
+
+    // 因为这个音频引擎 整个app内只能创建一次
     // Create an instance of the audio controller, set it up and start it running
     self.audioController = [[AEAudioController alloc] initWithAudioDescription:AEAudioStreamBasicDescriptionNonInterleavedFloatStereo inputEnabled:YES];
     
@@ -36,5 +37,6 @@
     
     return YES;
 }
+
 
 @end
