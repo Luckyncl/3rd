@@ -31,7 +31,14 @@ static double __secondsToHostTicks = 0.0;
 
 
 AudioBufferList *AEAudioBufferListCreate(AudioStreamBasicDescription audioFormat, int frameCount) {
-    
+
+    /*
+
+     如果每个通道的采样位置连续，则设置
+     通道首尾排列，如果每个帧的样本都是清晰的
+     连续地排列，并且框架首尾相连
+
+     */
     int numberOfBuffers = audioFormat.mFormatFlags & kAudioFormatFlagIsNonInterleaved ? audioFormat.mChannelsPerFrame : 1;
 //     why numberOfBuffer  这样确定  是由于 kAudioFormatFlagIsNonInterleaved 这个字段所代表的的意义不同 非交叉
 
@@ -303,4 +310,6 @@ BOOL AERateLimit(void) {
     }
     return YES;
 }
+
+
 

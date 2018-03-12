@@ -166,7 +166,6 @@ static const int kInputChannelsChangedContext;
 
 -(void)dealloc {
     self.audioController = nil;
-    
 }
 
 -(void)viewDidLoad {
