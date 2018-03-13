@@ -6,7 +6,7 @@
 }
 
 /** The threshold sensitivity controls how similar pixels need to be colored to be replaced
- 
+    平滑程度控制图像中逐渐相似的颜色被替换的程度
  The default value is 0.3
  */
 @property(readwrite, nonatomic) CGFloat thresholdSensitivity;
