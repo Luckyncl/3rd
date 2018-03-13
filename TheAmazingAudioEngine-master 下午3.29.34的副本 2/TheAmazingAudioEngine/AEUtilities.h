@@ -110,7 +110,7 @@ AudioBufferList *AEAudioBufferListCopy(const AudioBufferList *original);
 
 /*!
  * Free a buffer list and associated mData buffers
- *
+ *    释放缓冲区列表
  *  Note: Do not use this utility from within the Core Audio thread (such as inside a render
  *  callback). It may cause the thread to block, inducing audio stutters.
  */

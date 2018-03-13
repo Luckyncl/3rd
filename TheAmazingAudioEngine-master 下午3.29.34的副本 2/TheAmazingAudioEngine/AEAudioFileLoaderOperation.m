@@ -171,7 +171,8 @@ static const int kMaxAudioFileReadSize = 16384;
     // channelsPerBuffer  == 1
     int channelsPerBuffer = (_targetAudioDescription.mFormatFlags & kAudioFormatFlagIsNonInterleaved) ? 1 : _targetAudioDescription.mChannelsPerFrame;
     // 创建一个缓冲区列表
-    // 注意有接收 音频数据block的时候， 生成的缓冲区 是 4096 大小
+    // 注意有接收 音频数据block的时候， 生成的缓冲区 是 4096 大小  为什么这样处理呢？
+    //
     AudioBufferList *bufferList = AEAudioBufferListCreate(_targetAudioDescription, _audioReceiverBlock ? kIncrementalLoadBufferSize : (UInt32)fileLengthInFrames);
     if ( !bufferList ) {
         ExtAudioFileDispose(audioFile);
@@ -180,10 +181,15 @@ static const int kMaxAudioFileReadSize = 16384;
         return;
     }
     
+    /*
+        创建了一个空的 音频换城区列表
+     */
     AudioBufferList *scratchBufferList = AEAudioBufferListCreate(_targetAudioDescription, 0);
     
     // Perform read in multiple small chunks (otherwise ExtAudioFileRead crashes when performing sample rate conversion)
     UInt64 readFrames = 0;
+    
+    // 使用一个while循环进行处理
     while ( readFrames < fileLengthInFrames && ![self isCancelled] ) {
         
         if ( _audioReceiverBlock ) {    // 如果有接收函数

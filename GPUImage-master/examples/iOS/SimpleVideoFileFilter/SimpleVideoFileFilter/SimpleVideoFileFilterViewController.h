@@ -7,6 +7,7 @@
     GPUImageOutput<GPUImageInput> *filter;
     GPUImageMovieWriter *movieWriter;
     NSTimer * timer;
+    GPUImagePicture *sourcePicture;
 }
 
 @property (retain, nonatomic) IBOutlet UILabel *progressLabel;

@@ -1,6 +1,8 @@
 #import "GPUImageTwoInputFilter.h"
 
 /** Selectively replaces a color in the first image with the second image
+ 
+        用第二张图像有选择地替换第一张图像中的颜色
  */
 @interface GPUImageChromaKeyBlendFilter : GPUImageTwoInputFilter
 {
@@ -8,13 +10,13 @@
 }
 
 /** The threshold sensitivity controls how similar pixels need to be colored to be replaced
- 
+        阈值灵敏度控制相似像素需要如何着色才能被替换
  The default value is 0.3
  */
 @property(readwrite, nonatomic) CGFloat thresholdSensitivity;
 
 /** The degree of smoothing controls how gradually similar colors are replaced in the image
- 
+        平滑程度控制图像中逐渐相似的颜色被替换的程度
  The default value is 0.1
  */
 @property(readwrite, nonatomic) CGFloat smoothing;

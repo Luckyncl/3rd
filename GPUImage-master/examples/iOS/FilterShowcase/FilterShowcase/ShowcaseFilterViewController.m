@@ -1463,8 +1463,10 @@
             blendFilter.mix = 1.0;
             [sourcePicture addTarget:blendFilter];
             [filter addTarget:blendFilter];
-            
+
             [blendFilter addTarget:filterView];
+            
+
         }
         else if ( (filterType == GPUIMAGE_SPHEREREFRACTION) || (filterType == GPUIMAGE_GLASSSPHERE) )
         {
