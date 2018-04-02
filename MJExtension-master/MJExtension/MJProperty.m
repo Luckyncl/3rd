@@ -12,8 +12,10 @@
 #import <objc/message.h>
 
 @interface MJProperty()
+
 @property (strong, nonatomic) NSMutableDictionary *propertyKeysDict;         //
 @property (strong, nonatomic) NSMutableDictionary *objectClassInArrayDict;   //
+
 @end
 
 @implementation MJProperty

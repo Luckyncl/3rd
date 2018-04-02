@@ -87,11 +87,11 @@ extern NSString *const MJPropertyTypeBOOL1;
 extern NSString *const MJPropertyTypeBOOL2;
 extern NSString *const MJPropertyTypePointer;
 
-extern NSString *const MJPropertyTypeIvar;
+extern NSString *const MJPropertyTypeIvar;     //  成员变量
 extern NSString *const MJPropertyTypeMethod;   // 方法
-extern NSString *const MJPropertyTypeBlock;  // block 属性
-extern NSString *const MJPropertyTypeClass;
-extern NSString *const MJPropertyTypeSEL;
-extern NSString *const MJPropertyTypeId;
+extern NSString *const MJPropertyTypeBlock;    // block 属性
+extern NSString *const MJPropertyTypeClass;    // 类
+extern NSString *const MJPropertyTypeSEL;      // 方法
+extern NSString *const MJPropertyTypeId;       // id 属性
 
 #endif
