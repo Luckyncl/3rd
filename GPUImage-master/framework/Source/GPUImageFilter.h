@@ -44,6 +44,9 @@ typedef struct GPUMatrix3x3 GPUMatrix3x3;
 /** GPUImage's base filter class
  
  Filters and other subsequent elements in the chain conform to the GPUImageInput protocol, which lets them take in the supplied or processed texture from the previous link in the chain and do something with it. Objects one step further down the chain are considered targets, and processing can be branched by adding multiple targets to a single output or filter.
+ 
+ GPUImageFilter和响应链的其他元素实现了GPUImageInput协议，他们都可以提供纹理参与响应链，或者从响应链的前面接收并处理纹理。响应链的下一个对象是target，响应链可能有多个分支（添加多个targets）
+ 
  */
 @interface GPUImageFilter : GPUImageOutput <GPUImageInput>
 {
@@ -103,9 +106,13 @@ typedef struct GPUMatrix3x3 GPUMatrix3x3;
 - (CGSize)sizeOfFBO;
 
 /// @name Rendering
+
+/*   获取纹理坐标    */
 + (const GLfloat *)textureCoordinatesForRotation:(GPUImageRotationMode)rotationMode;
 - (void)renderToTextureWithVertices:(const GLfloat *)vertices textureCoordinates:(const GLfloat *)textureCoordinates;
 - (void)informTargetsAboutNewFrameAtTime:(CMTime)frameTime;
+
+/*   获取输出帧的大小    */
 - (CGSize)outputFrameSize;
 
 /// @name Input parameters

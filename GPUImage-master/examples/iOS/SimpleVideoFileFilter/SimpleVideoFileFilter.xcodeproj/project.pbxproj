@@ -10,6 +10,7 @@
 		185A32DC20576D54008CD021 /* demo1.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 185A32D920576D54008CD021 /* demo1.mp4 */; };
 		185A32E0205772F3008CD021 /* IMG_0242.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 185A32DF205772F3008CD021 /* IMG_0242.JPG */; };
 		185A32E3205779DD008CD021 /* ShowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 185A32E2205779DD008CD021 /* ShowView.m */; };
+		18A132582058C01C0063ECB4 /* WeChatSight4.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 18A132552058C01B0063ECB4 /* WeChatSight4.mp4 */; };
 		466AE00B14F2A196004FE0E5 /* sample_iPod.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 466AE00A14F2A196004FE0E5 /* sample_iPod.m4v */; };
 		BC11C28315BCBE2300E5BEC7 /* WID-small.jpg in Resources */ = {isa = PBXBuildFile; fileRef = BC11C28215BCBE2300E5BEC7 /* WID-small.jpg */; };
 		BCB3C43A16BCA871003D26B0 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = BCB3C43516BCA871003D26B0 /* Icon-72.png */; };
@@ -65,6 +66,7 @@
 		185A32DF205772F3008CD021 /* IMG_0242.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = IMG_0242.JPG; path = ../../../../../../../Downloads/IMG_0242.JPG; sourceTree = "<group>"; };
 		185A32E1205779DD008CD021 /* ShowView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShowView.h; sourceTree = "<group>"; };
 		185A32E2205779DD008CD021 /* ShowView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShowView.m; sourceTree = "<group>"; };
+		18A132552058C01B0063ECB4 /* WeChatSight4.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = WeChatSight4.mp4; sourceTree = "<group>"; };
 		466AE00A14F2A196004FE0E5 /* sample_iPod.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = sample_iPod.m4v; sourceTree = "<group>"; };
 		BC11C28215BCBE2300E5BEC7 /* WID-small.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "WID-small.jpg"; sourceTree = "<group>"; };
 		BCB3C43516BCA871003D26B0 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "../../SharedIcons/Icon-72.png"; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 				BCB3C43916BCA871003D26B0 /* iTunesArtwork.png */,
 				BC11C28215BCBE2300E5BEC7 /* WID-small.jpg */,
 				185A32DF205772F3008CD021 /* IMG_0242.JPG */,
+				18A132552058C01B0063ECB4 /* WeChatSight4.mp4 */,
 				185A32D920576D54008CD021 /* demo1.mp4 */,
 				C7DB30552056BD5B006FC171 /* demo.mp4 */,
 				466AE00A14F2A196004FE0E5 /* sample_iPod.m4v */,
@@ -279,6 +282,7 @@
 				C7DB30642056CE14006FC171 /* u=1905472040,363557435&fm=27&gp=0.jpg in Resources */,
 				BCB5DDD914E86899000AF3C2 /* InfoPlist.strings in Resources */,
 				BCB5DDE914E868C0000AF3C2 /* SimpleVideoFileFilterViewController.xib in Resources */,
+				18A132582058C01C0063ECB4 /* WeChatSight4.mp4 in Resources */,
 				185A32E0205772F3008CD021 /* IMG_0242.JPG in Resources */,
 				466AE00B14F2A196004FE0E5 /* sample_iPod.m4v in Resources */,
 				E5066F5C1855AC55008C7682 /* Default-568h@2x.png in Resources */,

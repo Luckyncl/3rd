@@ -39,7 +39,7 @@
     [self.view addSubview:view4];
     
     GPUImageFilter *filter1 = [[[GPUImageFilter alloc] initWithFragmentShaderFromFile:@"Shader1"] autorelease];
-    GPUImageFilter *filter2 = [[[GPUImageFilter alloc] initWithFragmentShaderFromFile:@"Shader2"] autorelease];
+//    GPUImageFilter *filter2 = [[[GPUImageFilter alloc] initWithFragmentShaderFromFile:@"Shader2"] autorelease];
     GPUImageSepiaFilter *filter3 = [[[GPUImageSepiaFilter alloc] init] autorelease];
 
 //    GPUImageBrightnessFilter *filter1 = [[GPUImageBrightnessFilter alloc] init];
@@ -57,13 +57,19 @@
 //    [filter3 setTexelWidth:(1.0 / 400.0)];
     
 //    GPUImageTransformFilter *filter1 = [[GPUImageTransformFilter alloc] init];
-//    GPUImageTransformFilter *filter2 = [[GPUImageTransformFilter alloc] init];
-//    CATransform3D perspectiveTransform = CATransform3DIdentity;
-//    perspectiveTransform.m34 = 0.4;
-//    perspectiveTransform.m33 = 0.4;
-//    perspectiveTransform = CATransform3DScale(perspectiveTransform, 0.75, 0.75, 0.75);
-//    perspectiveTransform = CATransform3DRotate(perspectiveTransform, 0.5, 0.0, 1.0, 0.0);
+    GPUImageTransformFilter *filter2 = [[GPUImageTransformFilter alloc] init];
+    CATransform3D perspectiveTransform = CATransform3DIdentity;
+    perspectiveTransform.m34 = 0.4;
+    perspectiveTransform.m33 = 0.4;
+    perspectiveTransform = CATransform3DScale(perspectiveTransform, 0.75, 0.75, 0.75);
+    perspectiveTransform = CATransform3DRotate(perspectiveTransform, 0.5, 0.0, 1.0, 0.0);
+    
+    
+    
 //    [filter2 setTransform3D:perspectiveTransform];
+    
+    CGAffineTransform transform = CGAffineTransformMakeScale(0.5, 0.5);
+    [filter2 setAffineTransform:transform];
 //    GPUImageTransformFilter *filter3 = [[GPUImageTransformFilter alloc] init];
 //    [filter3 setAffineTransform:CGAffineTransformMakeRotation(1.0)];
     

@@ -168,11 +168,13 @@ NSString *const kGPUImagePassthroughFragmentShaderString = SHADER_STRING
 #pragma mark -
 #pragma mark Still image processing
 
+// 输出结果会被获取图像
 - (void)useNextFrameForImageCapture;
 {
     usingNextFrameForImageCapture = YES;
 
     // Set the semaphore high, if it isn't already
+    //     如果信号量不是很高，请将它设置为高
     if (dispatch_semaphore_wait(imageCaptureSemaphore, DISPATCH_TIME_NOW) != 0)
     {
         return;
@@ -301,6 +303,8 @@ NSString *const kGPUImagePassthroughFragmentShaderString = SHADER_STRING
 
     outputFramebuffer = [[GPUImageContext sharedFramebufferCache] fetchFramebufferForSize:[self sizeOfFBO] textureOptions:self.outputTextureOptions onlyTexture:NO];
     [outputFramebuffer activateFramebuffer];
+    
+    // 代表着输出的结果会被用于获取图像，所以在绘制之前要加锁
     if (usingNextFrameForImageCapture)
     {
         [outputFramebuffer lock];
@@ -372,6 +376,7 @@ NSString *const kGPUImagePassthroughFragmentShaderString = SHADER_STRING
         }
     }
 }
+
 
 - (CGSize)outputFrameSize;
 {

@@ -205,6 +205,11 @@
 			attributes = {
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Cell Phone";
+				TargetAttributes = {
+					BC01CA8014E7620600967264 = {
+						DevelopmentTeam = 5836W9K38T;
+					};
+				};
 			};
 			buildConfigurationList = BC01CA7B14E7620600967264 /* Build configuration list for PBXProject "MultiViewFilterExample" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -375,10 +380,11 @@
 		BC01CA9A14E7620600967264 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 5836W9K38T;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MultiViewFilterExample/MultiViewFilterExample-Prefix.pch";
 				INFOPLIST_FILE = "MultiViewFilterExample/MultiViewFilterExample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -387,10 +393,11 @@
 		BC01CA9B14E7620600967264 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 5836W9K38T;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MultiViewFilterExample/MultiViewFilterExample-Prefix.pch";
 				INFOPLIST_FILE = "MultiViewFilterExample/MultiViewFilterExample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

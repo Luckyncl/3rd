@@ -79,7 +79,7 @@
 
 - (void)commonInit;
 {
-    // Set scaling to account for Retina display	
+    // Set scaling to account for Retina display	设置缩放以说明视网膜显示
     if ([self respondsToSelector:@selector(setContentScaleFactor:)])
     {
         self.contentScaleFactor = [[UIScreen mainScreen] scale];
@@ -422,6 +422,7 @@
         
         if (!CGSizeEqualToSize(inputImageSize, rotatedSize))
         {
+            // 不相等的时候 设置
             inputImageSize = rotatedSize;
             [self recalculateViewGeometry];
         }

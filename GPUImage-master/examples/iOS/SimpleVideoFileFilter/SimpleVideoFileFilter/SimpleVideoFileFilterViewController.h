@@ -8,6 +8,13 @@
     GPUImageMovieWriter *movieWriter;
     NSTimer * timer;
     GPUImagePicture *sourcePicture;
+    
+    GPUImageAlphaBlendFilter *blendFilter;
+    
+    GPUImageView *imageView;
+    
+    GPUImageTransformFilter *filter1;
+    GPUImageTransformFilter *filter2;
 }
 
 @property (retain, nonatomic) IBOutlet UILabel *progressLabel;

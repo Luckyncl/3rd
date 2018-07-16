@@ -23,12 +23,17 @@
 
 // Image rendering
 - (void)processImage;
+
+
 - (CGSize)outputImageSize;
 
 /**
  * Process image with all targets and filters asynchronously
+        异步处理包含所有目标和过滤器的图像
  * The completion handler is called after processing finished in the
+        完成处理程序在处理完成后调用
  * GPU's dispatch queue - and only if this method did not return NO.
+        GPU的调度队列 - 只有当这个方法没有返回NO
  *
  * @returns NO if resource is blocked and processing is discarded, YES otherwise
  */

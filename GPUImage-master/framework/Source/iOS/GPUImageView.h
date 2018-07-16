@@ -11,6 +11,8 @@ typedef NS_ENUM(NSUInteger, GPUImageFillModeType) {
 
 /**
  UIView subclass to use as an endpoint for displaying GPUImage outputs
+ 
+    UIView子类用作显示GPUImage输出的端点
  */
 @interface GPUImageView : UIView <GPUImageInput>
 {
@@ -22,6 +24,8 @@ typedef NS_ENUM(NSUInteger, GPUImageFillModeType) {
 @property(readwrite, nonatomic) GPUImageFillModeType fillMode;
 
 /** This calculates the current display size, in pixels, taking into account Retina scaling factors
+ 
+    这将计算当前的显示大小（以像素为单位），并考虑视网膜比例因子
  */
 @property(readonly, nonatomic) CGSize sizeInPixels;
 

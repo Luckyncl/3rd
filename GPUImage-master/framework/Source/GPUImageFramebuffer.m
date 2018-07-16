@@ -239,7 +239,7 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
 
 #pragma mark -
 #pragma mark Usage
-
+//先绑定自己的帧缓存，再调整视口大小。
 - (void)activateFramebuffer;
 {
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
