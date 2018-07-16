@@ -4,7 +4,6 @@
 //
 //  Created by MJ Lee on 15/4/17.
 //
-//  包装一个成员属性
 
 #import <Foundation/Foundation.h>
 
@@ -19,7 +18,7 @@
  */
 @interface MJProperty : NSObject
 
-/** 成员属性 */  // why 这里使用assign  ？？
+/** 成员属性 */  // why 这里使用assign  ？？   指针引用，简单赋值，弱引用
 @property (nonatomic, assign) objc_property_t property;
 
 /** 成员属性的名字 */

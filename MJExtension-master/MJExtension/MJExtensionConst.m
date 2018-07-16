@@ -14,7 +14,7 @@ NSString *const MJPropertyTypeLong = @"l";
 NSString *const MJPropertyTypeLongLong = @"q";
 NSString *const MJPropertyTypeChar = @"c";               // 字符类型
 NSString *const MJPropertyTypeBOOL1 = @"c";              // 字符类型的bool
-NSString *const MJPropertyTypeBOOL2 = @"b";
+NSString *const MJPropertyTypeBOOL2 = @"b";              // 数字类型
 NSString *const MJPropertyTypePointer = @"*";            // 指针类型属性
 
 

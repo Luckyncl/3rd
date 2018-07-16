@@ -7,12 +7,10 @@
 //
 
 #import "MJFoundation.h"
-
 #import "MJExtensionConst.h"
-
 #import <CoreData/CoreData.h>
 
-static NSSet *foundationClasses_;       // 集合
+static NSSet *foundationClasses_;       // 集合 无序 数值 唯一性
 
 @implementation MJFoundation
 
