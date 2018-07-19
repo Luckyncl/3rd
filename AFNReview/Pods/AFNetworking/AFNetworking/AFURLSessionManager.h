@@ -186,11 +186,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)initWithSessionConfiguration:(nullable NSURLSessionConfiguration *)configuration NS_DESIGNATED_INITIALIZER;
 
+
+
 /**
+ /////////////////////////////////////////////////
  Invalidates the managed session, optionally canceling pending tasks.
     使托管会话无效，可选择取消挂起的任务。
  @param cancelPendingTasks Whether or not to cancel pending tasks.
  */
+
 - (void)invalidateSessionCancelingTasks:(BOOL)cancelPendingTasks;
 
 ///-------------------------
@@ -310,7 +314,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Returns the download progress of the specified task.
-
+  -> 返回一个确定任务的下载进度
  @param task The session task. Must not be `nil`.
 
  @return An `NSProgress` object reporting the download progress of a task, or `nil` if the progress is unavailable.
@@ -318,122 +322,122 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSProgress *)downloadProgressForTask:(NSURLSessionTask *)task;
 
 ///-----------------------------------------
-/// @name Setting Session Delegate Callbacks
+/// @name Setting Session Delegate Callbacks  设置会话的代理回调
 ///-----------------------------------------
 
 /**
  Sets a block to be executed when the managed session becomes invalid, as handled by the `NSURLSessionDelegate` method `URLSession:didBecomeInvalidWithError:`.
-
+   ->设置当托管会话变为无效时要执行的块，由`NSURLSessionDelegate`方法`URLSession：didBecomeInvalidWithError：`处理。
  @param block A block object to be executed when the managed session becomes invalid. The block has no return value, and takes two arguments: the session, and the error related to the cause of invalidation.
  */
 - (void)setSessionDidBecomeInvalidBlock:(nullable void (^)(NSURLSession *session, NSError *error))block;
 
 /**
  Sets a block to be executed when a connection level authentication challenge has occurred, as handled by the `NSURLSessionDelegate` method `URLSession:didReceiveChallenge:completionHandler:`.
-
+  ->设置在发生连接级别身份验证质询时要执行的块，由`NSURLSessionDelegate`方法`URLSession：didReceiveChallenge：completionHandler：`处理。
  @param block A block object to be executed when a connection level authentication challenge has occurred. The block returns the disposition of the authentication challenge, and takes three arguments: the session, the authentication challenge, and a pointer to the credential that should be used to resolve the challenge.
  */
 - (void)setSessionDidReceiveAuthenticationChallengeBlock:(nullable NSURLSessionAuthChallengeDisposition (^)(NSURLSession *session, NSURLAuthenticationChallenge *challenge, NSURLCredential * _Nullable __autoreleasing * _Nullable credential))block;
 
 ///--------------------------------------
-/// @name Setting Task Delegate Callbacks
+/// @name Setting Task Delegate Callbacks  设置任务委托回调
 ///--------------------------------------
 
 /**
  Sets a block to be executed when a task requires a new request body stream to send to the remote server, as handled by the `NSURLSessionTaskDelegate` method `URLSession:task:needNewBodyStream:`.
-
+  -> 设置当任务需要新的请求正文流发送到远程服务器时要执行的块，由`NSURLSessionTaskDelegate`方法`URLSession：task：needNewBodyStream：`处理。
  @param block A block object to be executed when a task requires a new request body stream.
  */
 - (void)setTaskNeedNewBodyStreamBlock:(nullable NSInputStream * (^)(NSURLSession *session, NSURLSessionTask *task))block;
 
 /**
  Sets a block to be executed when an HTTP request is attempting to perform a redirection to a different URL, as handled by the `NSURLSessionTaskDelegate` method `URLSession:willPerformHTTPRedirection:newRequest:completionHandler:`.
-
+  -> 设置当HTTP请求尝试执行重定向到不同URL时要执行的块，由`NSURLSessionTaskDelegate`方法`URLSession：willPerformHTTPRedirection：newRequest：completionHandler：`处理。
  @param block A block object to be executed when an HTTP request is attempting to perform a redirection to a different URL. The block returns the request to be made for the redirection, and takes four arguments: the session, the task, the redirection response, and the request corresponding to the redirection response.
  */
 - (void)setTaskWillPerformHTTPRedirectionBlock:(nullable NSURLRequest * _Nullable (^)(NSURLSession *session, NSURLSessionTask *task, NSURLResponse *response, NSURLRequest *request))block;
 
 /**
  Sets a block to be executed when a session task has received a request specific authentication challenge, as handled by the `NSURLSessionTaskDelegate` method `URLSession:task:didReceiveChallenge:completionHandler:`.
-
+ -> 设置当会话任务收到请求特定的身份验证质询时要执行的块，由`NSURLSessionTaskDelegate`方法`URLSession：task：didReceiveChallenge：completionHandler：`处理。
  @param block A block object to be executed when a session task has received a request specific authentication challenge. The block returns the disposition of the authentication challenge, and takes four arguments: the session, the task, the authentication challenge, and a pointer to the credential that should be used to resolve the challenge.
  */
 - (void)setTaskDidReceiveAuthenticationChallengeBlock:(nullable NSURLSessionAuthChallengeDisposition (^)(NSURLSession *session, NSURLSessionTask *task, NSURLAuthenticationChallenge *challenge, NSURLCredential * _Nullable __autoreleasing * _Nullable credential))block;
 
 /**
- Sets a block to be executed periodically to track upload progress, as handled by the `NSURLSessionTaskDelegate` method `URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:`.
-
+ Sets a block to be executed(执行) periodically to track upload progress, as handled by the `NSURLSessionTaskDelegate` method `URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:`.
+ -> 设置一个定期执行的块来跟踪上传进度，由`NSURLSessionTaskDelegate`方法`URLSession：task：didSendBodyData：totalBytesSent：totalBytesExpectedToSend：`处理。
  @param block A block object to be called when an undetermined number of bytes have been uploaded to the server. This block has no return value and takes five arguments: the session, the task, the number of bytes written since the last time the upload progress block was called, the total bytes written, and the total bytes expected to be written during the request, as initially determined by the length of the HTTP body. This block may be called multiple times, and will execute on the main thread.
  */
 - (void)setTaskDidSendBodyDataBlock:(nullable void (^)(NSURLSession *session, NSURLSessionTask *task, int64_t bytesSent, int64_t totalBytesSent, int64_t totalBytesExpectedToSend))block;
 
 /**
  Sets a block to be executed as the last message related to a specific task, as handled by the `NSURLSessionTaskDelegate` method `URLSession:task:didCompleteWithError:`.
-
+ -> 将要执行的块设置为与特定任务相关的最后一条消息，由`NSURLSessionTaskDelegate`方法`URLSession：task：didCompleteWithError：`处理。
  @param block A block object to be executed when a session task is completed. The block has no return value, and takes three arguments: the session, the task, and any error that occurred in the process of executing the task.
  */
 - (void)setTaskDidCompleteBlock:(nullable void (^)(NSURLSession *session, NSURLSessionTask *task, NSError * _Nullable error))block;
 
 ///-------------------------------------------
-/// @name Setting Data Task Delegate Callbacks
+/// @name Setting Data Task Delegate Callbacks  设置数据任务代表回调
 ///-------------------------------------------
 
 /**
  Sets a block to be executed when a data task has received a response, as handled by the `NSURLSessionDataDelegate` method `URLSession:dataTask:didReceiveResponse:completionHandler:`.
-
+ -> 设置当数据任务收到响应时要执行的块，由`NSURLSessionDataDelegate`方法`URLSession：dataTask：didReceiveResponse：completionHandler：`处理。
  @param block A block object to be executed when a data task has received a response. The block returns the disposition of the session response, and takes three arguments: the session, the data task, and the received response.
  */
 - (void)setDataTaskDidReceiveResponseBlock:(nullable NSURLSessionResponseDisposition (^)(NSURLSession *session, NSURLSessionDataTask *dataTask, NSURLResponse *response))block;
 
 /**
  Sets a block to be executed when a data task has become a download task, as handled by the `NSURLSessionDataDelegate` method `URLSession:dataTask:didBecomeDownloadTask:`.
-
+ -> 设置当数据任务成为下载任务时要执行的块，由`NSURLSessionDataDelegate`方法`URLSession：dataTask：didBecomeDownloadTask：`处理。
  @param block A block object to be executed when a data task has become a download task. The block has no return value, and takes three arguments: the session, the data task, and the download task it has become.
  */
 - (void)setDataTaskDidBecomeDownloadTaskBlock:(nullable void (^)(NSURLSession *session, NSURLSessionDataTask *dataTask, NSURLSessionDownloadTask *downloadTask))block;
 
 /**
  Sets a block to be executed when a data task receives data, as handled by the `NSURLSessionDataDelegate` method `URLSession:dataTask:didReceiveData:`.
-
+-> 设置数据任务接收数据时要执行的块，由`NSURLSessionDataDelegate`方法`URLSession：dataTask：didReceiveData：`处理。
  @param block A block object to be called when an undetermined number of bytes have been downloaded from the server. This block has no return value and takes three arguments: the session, the data task, and the data received. This block may be called multiple times, and will execute on the session manager operation queue.
  */
 - (void)setDataTaskDidReceiveDataBlock:(nullable void (^)(NSURLSession *session, NSURLSessionDataTask *dataTask, NSData *data))block;
 
 /**
  Sets a block to be executed to determine the caching behavior of a data task, as handled by the `NSURLSessionDataDelegate` method `URLSession:dataTask:willCacheResponse:completionHandler:`.
-
+ -> 设置要执行的块以确定数据任务的缓存行为，由`NSURLSessionDataDelegate`方法`URLSession：dataTask：willCacheResponse：completionHandler：`处理。
  @param block A block object to be executed to determine the caching behavior of a data task. The block returns the response to cache, and takes three arguments: the session, the data task, and the proposed cached URL response.
  */
 - (void)setDataTaskWillCacheResponseBlock:(nullable NSCachedURLResponse * (^)(NSURLSession *session, NSURLSessionDataTask *dataTask, NSCachedURLResponse *proposedResponse))block;
 
 /**
  Sets a block to be executed once all messages enqueued for a session have been delivered, as handled by the `NSURLSessionDataDelegate` method `URLSessionDidFinishEventsForBackgroundURLSession:`.
-
+ -> 设置一个为会话排队的所有消息都要执行的块，由`NSURLSessionDataDelegate`方法`URLSessionDidFinishEventsForBackgroundURLSession：`处理。
  @param block A block object to be executed once all messages enqueued for a session have been delivered. The block has no return value and takes a single argument: the session.
  */
 - (void)setDidFinishEventsForBackgroundURLSessionBlock:(nullable void (^)(NSURLSession *session))block;
 
 ///-----------------------------------------------
-/// @name Setting Download Task Delegate Callbacks
+/// @name Setting Download Task Delegate Callbacks  下载任务的代理回调
 ///-----------------------------------------------
 
 /**
  Sets a block to be executed when a download task has completed a download, as handled by the `NSURLSessionDownloadDelegate` method `URLSession:downloadTask:didFinishDownloadingToURL:`.
-
+ -> 设置下载任务完成下载时要执行的块，由`NSURLSessionDownloadDelegate`方法`URLSession：downloadTask：didFinishDownloadingToURL：`处理。
  @param block A block object to be executed when a download task has completed. The block returns the URL the download should be moved to, and takes three arguments: the session, the download task, and the temporary location of the downloaded file. If the file manager encounters an error while attempting to move the temporary file to the destination, an `AFURLSessionDownloadTaskDidFailToMoveFileNotification` will be posted, with the download task as its object, and the user info of the error.
  */
 - (void)setDownloadTaskDidFinishDownloadingBlock:(nullable NSURL * _Nullable  (^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, NSURL *location))block;
 
 /**
  Sets a block to be executed periodically to track download progress, as handled by the `NSURLSessionDownloadDelegate` method `URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesWritten:totalBytesExpectedToWrite:`.
-
+ -> 设置一个定期执行的块来跟踪下载进度，由`NSURLSessionDownloadDelegate`方法`URLSession：downloadTask：didWriteData：totalBytesWritten：totalBytesWritten：totalBytesExpectedToWrite：`处理。
  @param block A block object to be called when an undetermined number of bytes have been downloaded from the server. This block has no return value and takes five arguments: the session, the download task, the number of bytes read since the last time the download progress block was called, the total bytes read, and the total bytes expected to be read during the request, as initially determined by the expected content size of the `NSHTTPURLResponse` object. This block may be called multiple times, and will execute on the session manager operation queue.
  */
 - (void)setDownloadTaskDidWriteDataBlock:(nullable void (^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite))block;
 
 /**
  Sets a block to be executed when a download task has been resumed, as handled by the `NSURLSessionDownloadDelegate` method `URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:`.
-
+ -> 设置下载任务恢复时要执行的块，由`NSURLSessionDownloadDelegate`方法`URLSession：downloadTask：didResumeAtOffset：expectedTotalBytes：`处理。
  @param block A block object to be executed when a download task has been resumed. The block has no return value and takes four arguments: the session, the download task, the file offset of the resumed download, and the total number of bytes expected to be downloaded.
  */
 - (void)setDownloadTaskDidResumeBlock:(nullable void (^)(NSURLSession *session, NSURLSessionDownloadTask *downloadTask, int64_t fileOffset, int64_t expectedTotalBytes))block;
@@ -441,7 +445,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 ///--------------------
-/// @name Notifications
+/// @name Notifications 通知
 ///--------------------
 
 /**
@@ -456,21 +460,25 @@ FOUNDATION_EXPORT NSString * const AFNetworkingTaskDidCompleteNotification;
 
 /**
  Posted when a task suspends its execution.
+ ->在任务暂停执行时发布。
  */
 FOUNDATION_EXPORT NSString * const AFNetworkingTaskDidSuspendNotification;
 
 /**
  Posted when a session is invalidated.
+ -> 当会话 无效的时候
  */
 FOUNDATION_EXPORT NSString * const AFURLSessionDidInvalidateNotification;
 
 /**
  Posted when a session download task encountered an error when moving the temporary download file to a specified destination.
+ ->在将临时下载文件移动到指定目标时，会话下载任务遇到错误时发布。
  */
 FOUNDATION_EXPORT NSString * const AFURLSessionDownloadTaskDidFailToMoveFileNotification;
 
 /**
  The raw response data of the task. Included in the userInfo dictionary of the `AFNetworkingTaskDidCompleteNotification` if response data exists for the task.
+ 任务的原始响应数据。 如果任务的响应数据存在，则包含在`AFNetworkingTaskDidCompleteNotification`的userInfo字典中。
  */
 FOUNDATION_EXPORT NSString * const AFNetworkingTaskDidCompleteResponseDataKey;
 

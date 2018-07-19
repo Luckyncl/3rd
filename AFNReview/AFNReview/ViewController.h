@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface ViewController : UIViewController
-
+//static inline 的具体用法
 
 @end
 

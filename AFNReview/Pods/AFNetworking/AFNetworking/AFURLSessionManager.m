@@ -1,23 +1,4 @@
-// AFURLSessionManager.m
-// Copyright (c) 2011–2016 Alamofire Software Foundation ( http://alamofire.org/ )
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
+
 
 #import "AFURLSessionManager.h"
 #import <objc/runtime.h>
@@ -28,27 +9,42 @@
 #define NSFoundationVersionNumber_With_Fixed_5871104061079552_bug NSFoundationVersionNumber_iOS_8_0
 #endif
 
+
+/**
+    创建串行队列的方法
+ */
 static dispatch_queue_t url_session_manager_creation_queue() {
     static dispatch_queue_t af_url_session_manager_creation_queue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        af_url_session_manager_creation_queue = dispatch_queue_create("com.alamofire.networking.session.manager.creation", DISPATCH_QUEUE_SERIAL);
+        af_url_session_manager_creation_queue = dispatch_queue_create("com.alamofire.networking.session.manager.creation", DISPATCH_QUEUE_SERIAL);  // 创建了一个串行队列
+        
     });
 
     return af_url_session_manager_creation_queue;
 }
 
+
+/**
+    安全的执行 一个操作
+ */
 static void url_session_manager_create_task_safely(dispatch_block_t block) {
     if (NSFoundationVersionNumber < NSFoundationVersionNumber_With_Fixed_5871104061079552_bug) {
         // Fix of bug
         // Open Radar:http://openradar.appspot.com/radar?id=5871104061079552 (status: Fixed in iOS8)
         // Issue about:https://github.com/AFNetworking/AFNetworking/issues/2093
         dispatch_sync(url_session_manager_creation_queue(), block);
+        // 同步的到串行队列中执行
     } else {
+        // 直接执行
         block();
     }
 }
 
+
+/**
+    创建一个并行的 处理队列
+ */
 static dispatch_queue_t url_session_manager_processing_queue() {
     static dispatch_queue_t af_url_session_manager_processing_queue;
     static dispatch_once_t onceToken;
@@ -59,13 +55,16 @@ static dispatch_queue_t url_session_manager_processing_queue() {
     return af_url_session_manager_processing_queue;
 }
 
+
+/**
+    创建一个线程组 完成的线程组
+ */
 static dispatch_group_t url_session_manager_completion_group() {
     static dispatch_group_t af_url_session_manager_completion_group;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         af_url_session_manager_completion_group = dispatch_group_create();
     });
-
     return af_url_session_manager_completion_group;
 }
 
@@ -83,6 +82,7 @@ NSString * const AFNetworkingTaskDidCompleteAssetPathKey = @"com.alamofire.netwo
 
 static NSString * const AFURLSessionManagerLockName = @"com.alamofire.networking.session.manager.lock";
 
+// 最大
 static NSUInteger const AFMaximumNumberOfAttemptsToRecreateBackgroundSessionUploadTask = 3;
 
 typedef void (^AFURLSessionDidBecomeInvalidBlock)(NSURLSession *session, NSError *error);
@@ -113,11 +113,11 @@ typedef void (^AFURLSessionTaskCompletionHandler)(NSURLResponse *response, id re
 
 @interface AFURLSessionManagerTaskDelegate : NSObject <NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate>
 - (instancetype)initWithTask:(NSURLSessionTask *)task;
-@property (nonatomic, weak) AFURLSessionManager *manager;
-@property (nonatomic, strong) NSMutableData *mutableData;
-@property (nonatomic, strong) NSProgress *uploadProgress;
-@property (nonatomic, strong) NSProgress *downloadProgress;
-@property (nonatomic, copy) NSURL *downloadFileURL;
+@property (nonatomic, weak) AFURLSessionManager *manager;        // 管理类  注意这里是弱引用
+@property (nonatomic, strong) NSMutableData *mutableData;        //
+@property (nonatomic, strong) NSProgress *uploadProgress;        // 上传进度，
+@property (nonatomic, strong) NSProgress *downloadProgress;      // 下载进度
+@property (nonatomic, copy) NSURL *downloadFileURL;              // 下载文件地址
 @property (nonatomic, copy) AFURLSessionDownloadTaskDidFinishDownloadingBlock downloadTaskDidFinishDownloading;
 @property (nonatomic, copy) AFURLSessionTaskProgressBlock uploadProgressBlock;
 @property (nonatomic, copy) AFURLSessionTaskProgressBlock downloadProgressBlock;
@@ -136,17 +136,18 @@ typedef void (^AFURLSessionTaskCompletionHandler)(NSURLResponse *response, id re
     _uploadProgress = [[NSProgress alloc] initWithParent:nil userInfo:nil];
     _downloadProgress = [[NSProgress alloc] initWithParent:nil userInfo:nil];
     
+    // 将task 弱引用
     __weak __typeof__(task) weakTask = task;
     for (NSProgress *progress in @[ _uploadProgress, _downloadProgress ])
     {
         progress.totalUnitCount = NSURLSessionTransferSizeUnknown;
         progress.cancellable = YES;
         progress.cancellationHandler = ^{
-            [weakTask cancel];
+            [weakTask cancel];  // 取消
         };
         progress.pausable = YES;
         progress.pausingHandler = ^{
-            [weakTask suspend];
+            [weakTask suspend]; // 挂起
         };
 #if __has_warning("-Wunguarded-availability-new")
         if (@available(iOS 9, macOS 10.11, *)) {
@@ -154,9 +155,11 @@ typedef void (^AFURLSessionTaskCompletionHandler)(NSURLResponse *response, id re
         if ([progress respondsToSelector:@selector(setResumingHandler:)]) {
 #endif
             progress.resumingHandler = ^{
-                [weakTask resume];
+                [weakTask resume];  // 恢复
             };
         }
+            
+        // 添加kvo
         [progress addObserver:self
                    forKeyPath:NSStringFromSelector(@selector(fractionCompleted))
                       options:NSKeyValueObservingOptionNew
@@ -203,7 +206,7 @@ didCompleteWithError:(NSError *)error
     if (self.mutableData) {
         data = [self.mutableData copy];
         //We no longer need the reference, so nil it out to gain back some memory.
-        self.mutableData = nil;
+        self.mutableData = nil;  // 不需要一直持有，所以copy完成以后，就置nil释放掉了
     }
 
     if (self.downloadFileURL) {
@@ -214,17 +217,21 @@ didCompleteWithError:(NSError *)error
 
     if (error) {
         userInfo[AFNetworkingTaskDidCompleteErrorKey] = error;
-
+        
+        // 从线程组里面异步的跳出来，然后回到 完成的队列中
         dispatch_group_async(manager.completionGroup ?: url_session_manager_completion_group(), manager.completionQueue ?: dispatch_get_main_queue(), ^{
             if (self.completionHandler) {
                 self.completionHandler(task.response, responseObject, error);
             }
 
+#pragma mark: 注意点1
+            // 异步的回到主线程中发布通知，  因为这里的manager.completionQueue 有可能不是主线程，
             dispatch_async(dispatch_get_main_queue(), ^{
                 [[NSNotificationCenter defaultCenter] postNotificationName:AFNetworkingTaskDidCompleteNotification object:task userInfo:userInfo];
             });
         });
     } else {
+        // 如果没有错误就进入到一个并行的队列中去序列化
         dispatch_async(url_session_manager_processing_queue(), ^{
             NSError *serializationError = nil;
             responseObject = [manager.responseSerializer responseObjectForResponse:task.response data:data error:&serializationError];
@@ -245,7 +252,8 @@ didCompleteWithError:(NSError *)error
                 if (self.completionHandler) {
                     self.completionHandler(task.response, responseObject, serializationError);
                 }
-
+                
+                // 发送任务已经完成的通知
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [[NSNotificationCenter defaultCenter] postNotificationName:AFNetworkingTaskDidCompleteNotification object:task userInfo:userInfo];
                 });
@@ -262,7 +270,8 @@ didCompleteWithError:(NSError *)error
 {
     self.downloadProgress.totalUnitCount = dataTask.countOfBytesExpectedToReceive;
     self.downloadProgress.completedUnitCount = dataTask.countOfBytesReceived;
-
+    
+    // 累积 数据
     [self.mutableData appendData:data];
 }
 
@@ -291,6 +300,8 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite{
 expectedTotalBytes:(int64_t)expectedTotalBytes{
     
     self.downloadProgress.totalUnitCount = expectedTotalBytes;
+    
+    // fileOffset 偏移量
     self.downloadProgress.completedUnitCount = fileOffset;
 }
 
@@ -301,11 +312,13 @@ didFinishDownloadingToURL:(NSURL *)location
     self.downloadFileURL = nil;
 
     if (self.downloadTaskDidFinishDownloading) {
+        // 由block获取下载地址
         self.downloadFileURL = self.downloadTaskDidFinishDownloading(session, downloadTask, location);
         if (self.downloadFileURL) {
             NSError *fileManagerError = nil;
 
             if (![[NSFileManager defaultManager] moveItemAtURL:location toURL:self.downloadFileURL error:&fileManagerError]) {
+                // 移动文件失败的通知
                 [[NSNotificationCenter defaultCenter] postNotificationName:AFURLSessionDownloadTaskDidFailToMoveFileNotification object:downloadTask userInfo:fileManagerError.userInfo];
             }
         }
@@ -325,12 +338,14 @@ didFinishDownloadingToURL:(NSURL *)location
  *  - https://github.com/AFNetworking/AFNetworking/pull/2702
  */
 
+/* 交换方法 */
 static inline void af_swizzleSelector(Class theClass, SEL originalSelector, SEL swizzledSelector) {
     Method originalMethod = class_getInstanceMethod(theClass, originalSelector);
     Method swizzledMethod = class_getInstanceMethod(theClass, swizzledSelector);
     method_exchangeImplementations(originalMethod, swizzledMethod);
 }
 
+/* 增加方法 */
 static inline BOOL af_addMethod(Class theClass, SEL selector, Method method) {
     return class_addMethod(theClass, selector,  method_getImplementation(method),  method_getTypeEncoding(method));
 }
@@ -339,7 +354,7 @@ static NSString * const AFNSURLSessionTaskDidResumeNotification  = @"com.alamofi
 static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofire.networking.nsurlsessiontask.suspend";
 
 @interface _AFURLSessionTaskSwizzling : NSObject
-
+// 主要是用来 为方法交换分模块的
 @end
 
 @implementation _AFURLSessionTaskSwizzling
@@ -402,6 +417,10 @@ static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofi
     }
 }
 
+    
+/**
+   交换恢复和暂停的方法
+ */
 + (void)swizzleResumeAndSuspendMethodForClass:(Class)theClass {
     Method afResumeMethod = class_getInstanceMethod(self, @selector(af_resume));
     Method afSuspendMethod = class_getInstanceMethod(self, @selector(af_suspend));
@@ -441,14 +460,14 @@ static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofi
 }
 @end
 
-#pragma mark -
+#pragma mark - AFURLSessionManager  正式开始类
 
 @interface AFURLSessionManager ()
 @property (readwrite, nonatomic, strong) NSURLSessionConfiguration *sessionConfiguration;
 @property (readwrite, nonatomic, strong) NSOperationQueue *operationQueue;
 @property (readwrite, nonatomic, strong) NSURLSession *session;
 @property (readwrite, nonatomic, strong) NSMutableDictionary *mutableTaskDelegatesKeyedByTaskIdentifier;
-@property (readonly, nonatomic, copy) NSString *taskDescriptionForSessionTasks;
+@property (readonly, nonatomic, copy) NSString *taskDescriptionForSessionTasks;       //只读属性
 @property (readwrite, nonatomic, strong) NSLock *lock;
 @property (readwrite, nonatomic, copy) AFURLSessionDidBecomeInvalidBlock sessionDidBecomeInvalid;
 @property (readwrite, nonatomic, copy) AFURLSessionDidReceiveAuthenticationChallengeBlock sessionDidReceiveAuthenticationChallenge;
