@@ -148,7 +148,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  The dispatch queue for `completionBlock`. If `NULL` (default), the main queue is used.
-   -> `completionBlock`的调度队列。 如果为“NULL”（默认值），则使用主队列。
+   -> `completionBlock`的调度队列。 如果为“NULL”（默认值），则使用主队列。  默认回到主线程队列
  */
 @property (nonatomic, strong, nullable) dispatch_queue_t completionQueue;  // 回调队列
 
