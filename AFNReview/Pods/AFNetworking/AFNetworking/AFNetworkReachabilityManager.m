@@ -1,5 +1,4 @@
 
-
 #import "AFNetworkReachabilityManager.h"
 #if !TARGET_OS_WATCH
 
@@ -53,6 +52,7 @@ static AFNetworkReachabilityStatus AFNetworkReachabilityStatusForFlags(SCNetwork
 
 /**
  * Queue a status change notification for the main thread.
+     在主线程 发送状态改变的的通知
  *
  * This is done to ensure that the notifications are received in the same order
  * as they are sent. If notifications are sent directly, it is possible that
@@ -200,6 +200,7 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
 
     SCNetworkReachabilityContext context = {0, (__bridge void *)callback, AFNetworkReachabilityRetainCallback, AFNetworkReachabilityReleaseCallback, NULL};
     SCNetworkReachabilitySetCallback(self.networkReachability, AFNetworkReachabilityCallback, &context);
+    // 开启监听
     SCNetworkReachabilityScheduleWithRunLoop(self.networkReachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),^{

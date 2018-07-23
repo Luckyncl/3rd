@@ -47,7 +47,7 @@ FOUNDATION_EXPORT NSString * AFQueryStringFromParameters(NSDictionary *parameter
 
 /**
  Returns a request with the specified parameters encoded into a copy of the original request.
-
+ -> 返回将指定参数编码为原始请求副本的请求。
  @param request The original request.
  @param parameters The parameters to be encoded.
  @param error The error that occurred while attempting to encode the request parameters.
@@ -85,14 +85,14 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestQueryStringSerializationStyle) {
 
 /**
  Whether created requests can use the device’s cellular radio (if present). `YES` by default.
-
+    是否可以访问蜂窝网
  @see NSMutableURLRequest -setAllowsCellularAccess:
  */
 @property (nonatomic, assign) BOOL allowsCellularAccess;
 
 /**
  The cache policy of created requests. `NSURLRequestUseProtocolCachePolicy` by default.
-
+ -> 已创建请求的缓存策略。 默认情况下为“NSURLRequestUseProtocolCachePolicy”。
  @see NSMutableURLRequest -setCachePolicy:
  */
 @property (nonatomic, assign) NSURLRequestCachePolicy cachePolicy;
@@ -106,7 +106,7 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestQueryStringSerializationStyle) {
 
 /**
  Whether created requests can continue transmitting data before receiving a response from an earlier transmission. `NO` by default
-
+ -> 创建的请求是否应使用默认的cookie处理。 默认为“是”。
  @see NSMutableURLRequest -setHTTPShouldUsePipelining:
  */
 @property (nonatomic, assign) BOOL HTTPShouldUsePipelining;
@@ -120,7 +120,7 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestQueryStringSerializationStyle) {
 
 /**
  The timeout interval, in seconds, for created requests. The default timeout interval is 60 seconds.
-
+ -> 网络请求的超时时间
  @see NSMutableURLRequest -setTimeoutInterval:
  */
 @property (nonatomic, assign) NSTimeInterval timeoutInterval;
@@ -131,7 +131,7 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestQueryStringSerializationStyle) {
 
 /**
  Default HTTP header field values to be applied to serialized requests. By default, these include the following:
-
+ -> 要应用于序列化请求的默认HTTP标头字段值。 默认情况下，这些包括以下内容：
  - `Accept-Language` with the contents of `NSLocale +preferredLanguages`
  - `User-Agent` with the contents of various bundle identifiers and OS designations
 
@@ -164,7 +164,7 @@ forHTTPHeaderField:(NSString *)field;
 
 /**
  Sets the "Authorization" HTTP header set in request objects made by the HTTP client to a basic authentication value with Base64-encoded username and password. This overwrites any existing value for this header.
-
+ -> 将HTTP客户端发出的请求对象中的“授权”HTTP标头集设置为使用Base64编码的用户名和密码的基本认证值。 这会覆盖此标头的任何现有值。
  @param username The HTTP basic auth username
  @param password The HTTP basic auth password
  */
@@ -173,6 +173,7 @@ forHTTPHeaderField:(NSString *)field;
 
 /**
  Clears any existing value for the "Authorization" HTTP header.
+ -> 清除“授权”HTTP标头的任何现有值。
  */
 - (void)clearAuthorizationHeader;
 
@@ -182,12 +183,13 @@ forHTTPHeaderField:(NSString *)field;
 
 /**
  HTTP methods for which serialized requests will encode parameters as a query string. `GET`, `HEAD`, and `DELETE` by default.
+ -> 序列化请求将参数编码为查询字符串的HTTP方法。 默认情况下，“GET”，“HEAD”和“DELETE”。
  */
 @property (nonatomic, strong) NSSet <NSString *> *HTTPMethodsEncodingParametersInURI;
 
 /**
  Set the method of query string serialization according to one of the pre-defined styles.
-
+ -> 根据预定义的样式之一设置查询字符串序列化的方法。
  @param style The serialization style.
 
  @see AFHTTPRequestQueryStringSerializationStyle
@@ -196,7 +198,7 @@ forHTTPHeaderField:(NSString *)field;
 
 /**
  Set the a custom method of query string serialization according to the specified block.
-
+ -> 根据指定的块设置查询字符串序列化的自定义方法。
  @param block A block that defines a process of encoding parameters into a query string. This block returns the query string and takes three arguments: the request, the parameters to encode, and the error that occurred when attempting to encode parameters for the given request.
  */
 - (void)setQueryStringSerializationWithBlock:(nullable NSString * (^)(NSURLRequest *request, id parameters, NSError * __autoreleasing *error))block;
@@ -209,10 +211,11 @@ forHTTPHeaderField:(NSString *)field;
  Creates an `NSMutableURLRequest` object with the specified HTTP method and URL string.
 
  If the HTTP method is `GET`, `HEAD`, or `DELETE`, the parameters will be used to construct a url-encoded query string that is appended to the request's URL. Otherwise, the parameters will be encoded according to the value of the `parameterEncoding` property, and set as the request body.
-
+ -> 如果HTTP方法是`GET`，`HEAD`或`DELETE`，则参数将用于构造附加到请求URL的URL编码查询字符串。 否则，参数将根据`parameterEncoding`属性的值进行编码，并设置为请求体。
  @param method The HTTP method for the request, such as `GET`, `POST`, `PUT`, or `DELETE`. This parameter must not be `nil`.
  @param URLString The URL string used to create the request URL.
  @param parameters The parameters to be either set as a query string for `GET` requests, or the request HTTP body.
+    要设置为“GET”请求的查询字符串或请求HTTP正文的参数。
  @param error The error that occurred while constructing the request.
 
  @return An `NSMutableURLRequest` object.
@@ -224,9 +227,10 @@ forHTTPHeaderField:(NSString *)field;
 
 /**
  Creates an `NSMutableURLRequest` object with the specified HTTP method and URLString, and constructs a `multipart/form-data` HTTP body, using the specified parameters and multipart form data block. See http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.2
-
+ -> 使用指定的HTTP方法和URLString创建一个`NSMutableURLRequest`对象，并使用指定的参数和多部分表单数据块构造一个`multipart / form-data` HTTP主体。
+ 
  Multipart form requests are automatically streamed, reading files directly from disk along with in-memory data in a single HTTP body. The resulting `NSMutableURLRequest` object has an `HTTPBodyStream` property, so refrain from setting `HTTPBodyStream` or `HTTPBody` on this request object, as it will clear out the multipart form body stream.
-
+ -> 多部分表单请求自动流式传输，直接从磁盘读取文件以及单个HTTP正文中的内存数据。 生成的`NSMutableURLRequest`对象具有`HTTPBodyStream`属性，因此不要在此请求对象上设置`HTTPBodyStream`或`HTTPBody`，因为它将清除多部分表单正文流。
  @param method The HTTP method for the request. This parameter must not be `GET` or `HEAD`, or `nil`.
  @param URLString The URL string used to create the request URL.
  @param parameters The parameters to be encoded and set in the request HTTP body.
@@ -243,7 +247,7 @@ forHTTPHeaderField:(NSString *)field;
 
 /**
  Creates an `NSMutableURLRequest` by removing the `HTTPBodyStream` from a request, and asynchronously writing its contents into the specified file, invoking the completion handler when finished.
-
+ -> 通过从请求中删除`HTTPBodyStream`并将其内容异步写入指定文件，在完成时调用完成处理程序来创建`NSMutableURLRequest`。
  @param request The multipart form request. The `HTTPBodyStream` property of `request` must not be `nil`.
  @param fileURL The file URL to write multipart form contents to.
  @param handler A handler block to execute.
@@ -267,9 +271,9 @@ forHTTPHeaderField:(NSString *)field;
 
 /**
  Appends the HTTP header `Content-Disposition: file; filename=#{generated filename}; name=#{name}"` and `Content-Type: #{generated mimeType}`, followed by the encoded file data and the multipart form boundary.
-
+ -> 追加HTTP标头`Content-Disposition：file; filename =＃{generated filename}; name =＃{name}“`和`Content-Type：＃{generated mimeType}`，后跟编码文件数据和多部分表格边界。
  The filename and MIME type for this data in the form will be automatically generated, using the last path component of the `fileURL` and system associated MIME type for the `fileURL` extension, respectively.
-
+ ->将使用`fileURL`的最后一个路径组件和`fileURL`扩展名的系统关联MIME类型，自动生成表单中此数据的文件名和MIME类型。
  @param fileURL The URL corresponding to the file whose content will be appended to the form. This parameter must not be `nil`.
  @param name The name to be associated with the specified data. This parameter must not be `nil`.
  @param error If an error occurs, upon return contains an `NSError` object that describes the problem.
@@ -383,6 +387,7 @@ forHTTPHeaderField:(NSString *)field;
 
 /**
  `AFPropertyListRequestSerializer` is a subclass of `AFHTTPRequestSerializer` that encodes parameters as JSON using `NSPropertyListSerializer`, setting the `Content-Type` of the encoded request to `application/x-plist`.
+   -> AFPropertyListRequestSerializer`是`AFHTTPRequestSerializer`的子类，它使用`NSPropertyListSerializer`将参数编码为JSON，将编码请求的`Content-Type`设置为`application / x-plist`。
  */
 @interface AFPropertyListRequestSerializer : AFHTTPRequestSerializer
 
