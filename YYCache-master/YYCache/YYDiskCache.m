@@ -79,8 +79,8 @@ static void _YYDiskCacheSetGlobal(YYDiskCache *cache) {
 
 @implementation YYDiskCache {
     YYKVStorage *_kv;
-    dispatch_semaphore_t _lock;
-    dispatch_queue_t _queue;
+    dispatch_semaphore_t _lock;    // 使用信号量来作为锁机制，控制并发的数量。
+    dispatch_queue_t _queue;       //
 }
 
 - (void)_trimRecursively {
@@ -193,6 +193,8 @@ static void _YYDiskCacheSetGlobal(YYDiskCache *cache) {
     
     _kv = kv;
     _path = path;
+    
+    // 创建一个信号量
     _lock = dispatch_semaphore_create(1);
     _queue = dispatch_queue_create("com.ibireme.cache.disk", DISPATCH_QUEUE_CONCURRENT);
     _inlineThreshold = threshold;
