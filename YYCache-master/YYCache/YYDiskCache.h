@@ -72,6 +72,9 @@ NS_ASSUME_NONNULL_BEGIN
  If this block is not nil, then the block will be used to unarchive object instead
  of NSKeyedUnarchiver. You can use this block to support the objects which do not
  conform to the `NSCoding` protocol.
+    如果不遵循 NSCoding 协议的话 怎么去从二进制 得到 对象呢
+ 
+ 这里有可能是存储的json形式的NSData
  
  The default value is nil.
  */

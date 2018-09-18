@@ -248,6 +248,7 @@ static void _YYDiskCacheSetGlobal(YYDiskCache *cache) {
         }
     }
     if (object && item.extendedData) {
+        // 将对象
         [YYDiskCache setExtendedData:item.extendedData toObject:object];
     }
     return object;

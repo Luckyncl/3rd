@@ -230,6 +230,7 @@ static UIApplication *_YYSharedApplication() {
     sqlite3_bind_text(stmt, 2, fileName.UTF8String, -1, NULL);
     sqlite3_bind_int(stmt, 3, (int)value.length);
     if (fileName.length == 0) {
+        // 存储二进制data
         sqlite3_bind_blob(stmt, 4, value.bytes, (int)value.length, 0);
     } else {
         sqlite3_bind_blob(stmt, 4, NULL, 0, 0);
