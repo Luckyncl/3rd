@@ -20,7 +20,8 @@
  
  @discussion Generally, access performance is lower than NSMutableDictionary,
  but higher than using @synchronized, NSLock, or pthread_mutex_t.
- 
+        通常，访问性能低于NSMutableDictionary，
+         但高于使用@synchronized，NSLock或pthread_mutex_t。
  @discussion It's also compatible with the custom methods in `NSDictionary(YYAdd)`
  and `NSMutableDictionary(YYAdd)`
  

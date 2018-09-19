@@ -18,17 +18,18 @@
 @interface PINOperationQueue () {
   pthread_mutex_t _lock;
   //increments with every operation to allow cancelation
+  //    每次操作都会增加以允许取消
   NSUInteger _operationReferenceCount;
   NSUInteger _maxConcurrentOperations;
   
-  dispatch_group_t _group;
+  dispatch_group_t _group;                          // 一个线程组
   
-  dispatch_queue_t _serialQueue;
+  dispatch_queue_t _serialQueue;                    // 一个串行队列
   BOOL _serialQueueBusy;
   
-  dispatch_semaphore_t _concurrentSemaphore;
-  dispatch_queue_t _concurrentQueue;
-  dispatch_queue_t _semaphoreQueue;
+  dispatch_semaphore_t _concurrentSemaphore;        //并发的信号量
+  dispatch_queue_t _concurrentQueue;                // 并发队列
+  dispatch_queue_t _semaphoreQueue;                 // 信号量串行队列，用于控制线程执行顺序的
   
   NSMutableOrderedSet<PINOperation *> *_queuedOperations;
   NSMutableOrderedSet<PINOperation *> *_lowPriorityOperations;
@@ -98,20 +99,27 @@
     _maxConcurrentOperations = maxConcurrentOperations;
     _operationReferenceCount = 0;
     
+    // 设置锁的 属性
     pthread_mutexattr_t attr;
     pthread_mutexattr_init(&attr);
     //mutex must be recursive to allow scheduling of operations from within operations
+    // 互斥必须是递归的，以允许从操作中调度操作
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&_lock, &attr);
     
+    // 创建一个线程组
     _group = dispatch_group_create();
     
+    // 创建一个串行队列
     _serialQueue = dispatch_queue_create("PINOperationQueue Serial Queue", DISPATCH_QUEUE_SERIAL);
     
+    // 传入的并发队列
     _concurrentQueue = concurrentQueue;
     
     //Create a queue with max - 1 because this plus the serial queue add up to max.
+    //      使用max - 1创建一个队列，因为这加上串行队列加起来最大值。
     _concurrentSemaphore = dispatch_semaphore_create(_maxConcurrentOperations - 1);
+   // 信号量串行队列
     _semaphoreQueue = dispatch_queue_create("PINOperationQueue Serial Semaphore Queue", DISPATCH_QUEUE_SERIAL);
     
     _queuedOperations = [[NSMutableOrderedSet alloc] init];
@@ -135,6 +143,8 @@
     static PINOperationQueue *sharedOperationQueue = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        //        NSProcessInfo 用于获取当前进程信息的类
+        //       [NSProcessInfo processInfo] activeProcessorCount] ---> 计算机上可用的活动处理核心数。
         sharedOperationQueue = [[PINOperationQueue alloc] initWithMaxConcurrentOperations:MAX([[NSProcessInfo processInfo] activeProcessorCount], 2)];
     });
     return sharedOperationQueue;
@@ -148,12 +158,15 @@
   return reference;
 }
 
-- (id <PINOperationReference>)addOperation:(dispatch_block_t)block
+
+- (id <PINOperationReference>)scheduleOperation:(dispatch_block_t)block
 {
-  return [self addOperation:block withPriority:PINOperationQueuePriorityDefault];
+  return [self scheduleOperation:block withPriority:PINOperationQueuePriorityDefault];
 }
 
-- (id <PINOperationReference>)addOperation:(dispatch_block_t)block withPriority:(PINOperationQueuePriority)priority
+
+
+- (id <PINOperationReference>)scheduleOperation:(dispatch_block_t)block withPriority:(PINOperationQueuePriority)priority
 {
   PINOperation *operation = [PINOperation operationWithBlock:^(id data) { block(); }
                                                    reference:[self nextOperationReference]
@@ -170,12 +183,14 @@
   return operation.reference;
 }
 
-- (id<PINOperationReference>)addOperation:(PINOperationBlock)block
-                             withPriority:(PINOperationQueuePriority)priority
-                               identifier:(NSString *)identifier
-                           coalescingData:(id)coalescingData
-                      dataCoalescingBlock:(PINOperationDataCoalescingBlock)dataCoalescingBlock
-                               completion:(dispatch_block_t)completion
+
+
+- (id<PINOperationReference>)scheduleOperation:(PINOperationBlock)block
+                                  withPriority:(PINOperationQueuePriority)priority
+                                    identifier:(NSString *)identifier
+                                coalescingData:(id)coalescingData
+                           dataCoalescingBlock:(PINOperationDataCoalescingBlock)dataCoalescingBlock
+                                    completion:(dispatch_block_t)completion
 {
   id<PINOperationReference> reference = nil;
   BOOL isNewOperation = NO;
@@ -184,6 +199,7 @@
     PINOperation *operation = nil;
     if (identifier != nil && (operation = [_identifierToOperations objectForKey:identifier]) != nil) {
       // There is an exisiting operation with the provided identifier, let's coalesce these operations
+     // 使用提供的标识符存在现有操作，让我们合并这些操作
       if (dataCoalescingBlock != nil) {
         operation.data = dataCoalescingBlock(operation.data, coalescingData);
       }
@@ -209,6 +225,7 @@
   return reference;
 }
 
+// MARK: 把操作添加进数组
 - (void)locked_addOperation:(PINOperation *)operation
 {
   NSMutableOrderedSet *queue = [self operationQueueWithPriority:operation.priority];
@@ -248,6 +265,10 @@
   return maxConcurrentOperations;
 }
 
+
+/**
+    设置最大并发数
+ */
 - (void)setMaxConcurrentOperations:(NSUInteger)maxConcurrentOperations
 {
   NSAssert(maxConcurrentOperations > 0, @"Max concurrent operations must be greater than 0.");
@@ -263,9 +284,11 @@
   dispatch_async(_semaphoreQueue, ^{
     while (difference != 0) {
       if (difference > 0) {
+          // 如果设置的并发数大于原并发数的话就 将信号加1
         dispatch_semaphore_signal(_concurrentSemaphore);
         difference--;
       } else {
+          // 如果设置的并发数小于原并发数的话就 将信号减一
         dispatch_semaphore_wait(_concurrentSemaphore, DISPATCH_TIME_FOREVER);
         difference++;
       }
@@ -296,11 +319,13 @@
   [self lock];
     PINOperation *operation = [_referenceToOperations objectForKey:operationReference];
     if (operation && operation.priority != priority) {
+        
+      // 由于 优先级不一样了，所以  在原优先级的set里面删除然后在新优先级里面添加
       NSMutableOrderedSet *oldQueue = [self operationQueueWithPriority:operation.priority];
       [oldQueue removeObject:operation];
-      
       operation.priority = priority;
-      
+        
+        
       NSMutableOrderedSet *queue = [self operationQueueWithPriority:priority];
       [queue addObject:operation];
     }
@@ -310,18 +335,25 @@
 /**
  Schedule next operations schedules the next operation by queue order onto the serial queue if
  it's available and one operation by priority order onto the concurrent queue.
+    调度下一个操作按队列顺序将下一个操作调度到串行队列如果
+        它可用，并按优先级顺序对并发队列进行一次操作。
  */
 - (void)scheduleNextOperations:(BOOL)onlyCheckSerial
 {
   [self lock];
   
     //get next available operation in order, ignoring priority and run it on the serial queue
+    //     按顺序获取下一个可用操作，忽略优先级并在串行队列上运行它
     if (_serialQueueBusy == NO) {
       PINOperation *operation = [self locked_nextOperationByQueue];
       if (operation) {
         _serialQueueBusy = YES;
         dispatch_async(_serialQueue, ^{
+            
+            // 执行操作
           operation.block(operation.data);
+            
+            // 执行所有的完成操作
           for (dispatch_block_t completion in operation.completions) {
             completion();
           }
@@ -330,8 +362,9 @@
           [self lock];
             _serialQueueBusy = NO;
           [self unlock];
-          
+            
           //see if there are any other operations
+          // 看看是否还有其他操作
           [self scheduleNextOperations:YES];
         });
       }
@@ -371,6 +404,10 @@
   });
 }
 
+
+/**
+     获取不同的队列数组
+ */
 - (NSMutableOrderedSet *)operationQueueWithPriority:(PINOperationQueuePriority)priority
 {
   switch (priority) {
