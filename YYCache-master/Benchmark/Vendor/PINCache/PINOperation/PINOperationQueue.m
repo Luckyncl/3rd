@@ -25,7 +25,7 @@
   dispatch_group_t _group;                          // 一个线程组
   
   dispatch_queue_t _serialQueue;                    // 一个串行队列
-  BOOL _serialQueueBusy;
+  BOOL _serialQueueBusy;                            // 串行队列是否繁忙
   
   dispatch_semaphore_t _concurrentSemaphore;        //并发的信号量
   dispatch_queue_t _concurrentQueue;                // 并发队列
@@ -177,7 +177,7 @@
   [self lock];
     [self locked_addOperation:operation];
   [self unlock];
-  
+    NSLog(@"--=== addOperation");
   [self scheduleNextOperations:NO];
   
   return operation.reference;
@@ -340,17 +340,24 @@
  */
 - (void)scheduleNextOperations:(BOOL)onlyCheckSerial
 {
+    NSLog(@"scheduleNextOperations");
   [self lock];
   
     //get next available operation in order, ignoring priority and run it on the serial queue
-    //     按顺序获取下一个可用操作，忽略优先级并在串行队列上运行它
+    //按顺序获取下一个可用操作，忽略优先级并在串行队列上运行它
+    
+    
+//    1、全局变量的形式，递归结束后必须对该变量修改，恢复原值；
+//    2、函数参数的形式，因为递归调用函数时，实际上，从内存分布上看，每一层调用都保存了该层函数的参数，因此递归返回上层时，不会影响原参数值。
+
     if (_serialQueueBusy == NO) {
       PINOperation *operation = [self locked_nextOperationByQueue];
+      NSLog(@"_serialQueueBusy");
       if (operation) {
         _serialQueueBusy = YES;
         dispatch_async(_serialQueue, ^{
+          NSLog(@"_serialQueue==  _concurrentSemaphore ===%@",_concurrentSemaphore);
             
-            // 执行操作
           operation.block(operation.data);
             
             // 执行所有的完成操作
@@ -363,6 +370,7 @@
             _serialQueueBusy = NO;
           [self unlock];
             
+            //这里为什么添加了这行代码以后 两个线程的操作会均匀了
           //see if there are any other operations
           // 看看是否还有其他操作
           [self scheduleNextOperations:YES];
@@ -385,13 +393,17 @@
   
   dispatch_async(_semaphoreQueue, ^{
     dispatch_semaphore_wait(_concurrentSemaphore, DISPATCH_TIME_FOREVER);
+
     [self lock];
       PINOperation *operation = [self locked_nextOperationByPriority];
     [self unlock];
-  
+
     if (operation) {
+        NSLog(@"_semaphoreQueue _concurrentSemaphore ===%@",_concurrentSemaphore);
+
       dispatch_async(_concurrentQueue, ^{
         operation.block(operation.data);
+          
         for (dispatch_block_t completion in operation.completions) {
           completion();
         }
@@ -402,6 +414,7 @@
       dispatch_semaphore_signal(_concurrentSemaphore);
     }
   });
+    
 }
 
 
@@ -474,6 +487,10 @@
 - (void)unlock
 {
   pthread_mutex_unlock(&_lock);
+}
+- (void)log
+{
+    NSLog(@"");
 }
 
 @end

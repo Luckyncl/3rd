@@ -11,6 +11,8 @@
 #import "PINCache.h"
 #import "YYThreadSafeDictionary.h"
 #import <QuartzCore/QuartzCore.h>
+#import "PINOperationQueue.h"
+
 
 @implementation Benchmark
 + (void)benchmark {
@@ -86,6 +88,10 @@
     PINMemoryCache *pin = [PINMemoryCache new];
     YYMemoryCache *yy = [YYMemoryCache new];
     
+    PINOperationQueue *queue = [PINOperationQueue sharedOperationQueue];
+
+    
+    
     NSMutableArray *keys = [NSMutableArray new];
     NSMutableArray *values = [NSMutableArray new];
     int count = 200000;
@@ -139,15 +145,35 @@
     
     
     begin = CACurrentMediaTime();
-    @autoreleasepool {
-        for (int i = 0; i < count; i++) {
-            [pin setObject:values[i] forKey:keys[i]];
-        }
+    const NSUInteger operationCount = 100;
+    NSPointerArray *weakOperationPointers = [NSPointerArray weakObjectsPointerArray];
+    
+    for (int i = 0; i < operationCount; i++) {
+      
+            dispatch_block_t operation = ^{
+//                usleep(1000);
+//                sleep(1);
+                for (NSInteger i = 0; i < 100000; i++) {
+                    NSString *str = [NSString stringWithFormat:@"%@%@",@"xsssww",@"xsswww"];
+                }
+            };
+            
+            [weakOperationPointers addPointer:(__bridge void * _Nullable)(operation)];
+            [queue scheduleOperation:operation withPriority:PINOperationQueuePriorityDefault];
+//        }
     }
+    
+    [queue waitUntilAllOperationsAreFinished];
+ 
+    
+    
     end = CACurrentMediaTime();
     time = end - begin;
     printf("PINMemoryCache: %8.2f\n", time * 1000);
     
+    printf("PINMemory -- finish --== %8.2f\n", time * 1000);
+    
+    return;
     
     begin = CACurrentMediaTime();
     @autoreleasepool {

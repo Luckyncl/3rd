@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  YYMemoryCache is a fast in-memory cache that stores key-value pairs.
  In contrast to NSDictionary, keys are retained and not copied.
  The API and performance is similar to `NSCache`, all methods are thread-safe.
- 
+ z
  YYMemoryCache objects differ from NSCache in a few ways:
  
  * It uses LRU (least-recently-used) to remove objects; NSCache's eviction method
