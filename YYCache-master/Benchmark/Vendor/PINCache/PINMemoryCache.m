@@ -324,7 +324,7 @@ static NSString * const PINMemoryCacheSharedName = @"PINMemoryCacheSharedName";
     });
 }
 
-#pragma mark - Public Asynchronous Methods -
+#pragma mark - Public Asynchronous Methods -  公共的异步方法
 
 - (void)containsObjectForKeyAsync:(NSString *)key completion:(PINCacheObjectContainmentBlock)block
 {
@@ -374,6 +374,7 @@ static NSString * const PINMemoryCacheSharedName = @"PINMemoryCacheSharedName";
         if (block)
             block(self, key, object);
     } withPriority:PINOperationQueuePriorityHigh];
+    
 }
 
 - (void)removeObjectForKeyAsync:(NSString *)key completion:(PINCacheObjectBlock)block
@@ -446,7 +447,7 @@ static NSString * const PINMemoryCacheSharedName = @"PINMemoryCacheSharedName";
     } withPriority:PINOperationQueuePriorityHigh];
 }
 
-#pragma mark - Public Synchronous Methods -
+#pragma mark - Public Synchronous Methods -  同步的方法
 
 - (BOOL)containsObjectForKey:(NSString *)key
 {

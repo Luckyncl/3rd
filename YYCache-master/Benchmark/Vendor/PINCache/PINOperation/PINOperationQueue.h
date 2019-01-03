@@ -107,9 +107,12 @@ PINOP_SUBCLASSING_RESTRICTED
  * @discussion When called, this method blocks the current thread and waits for the receiver’s current and queued
  * operations to finish executing. While the current thread is blocked, the receiver continues to launch already
  * queued operations and monitor those that are executing.
- *
+ *      调用时，此方法会阻塞当前线程并等待接收器的当前和排队
+    完成执行的操作。 当前线程被阻止时，接收器已经继续启动
+    排队操作并监视正在执行的操作。
  * @warning This should never be called from within an operation submitted to the PINOperationQueue as this will result
  * in a deadlock.
+    永远不应该在提交给PINOperationQueue的操作中调用它，因为这会导致死锁
  */
 - (void)waitUntilAllOperationsAreFinished;
 
