@@ -187,7 +187,8 @@ static NSString * const PINMemoryCacheSharedName = @"PINMemoryCacheSharedName";
         [_createdDates removeObjectForKey:key];
         [_accessDates removeObjectForKey:key];
         [_costs removeObjectForKey:key];
-        [_ageLimits removeObjectForKey:key];
+  
+    [_ageLimits removeObjectForKey:key];
     [self unlock];
     
     if (didRemoveObjectBlock)
@@ -208,6 +209,7 @@ static NSString * const PINMemoryCacheSharedName = @"PINMemoryCacheSharedName";
         if (!createdDate || ageLimit > 0.0)
             continue;
         
+        // 比较对象的缓存时间
         if ([createdDate compare:trimDate] == NSOrderedAscending) { // older than trim date
             [self removeObjectAndExecuteBlocksForKey:key];
         } else {

@@ -90,6 +90,7 @@
       
       if (_completion) {
         dispatch_queue_t completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        //  监听全部执行完成
         dispatch_group_notify(_group, completionQueue, ^{
           [self runCompletionIfNeeded];
         });

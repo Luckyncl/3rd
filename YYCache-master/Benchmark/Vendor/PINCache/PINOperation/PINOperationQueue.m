@@ -161,11 +161,13 @@
 
 - (id <PINOperationReference>)scheduleOperation:(dispatch_block_t)block
 {
+  // 默认的优先级是default优先级
   return [self scheduleOperation:block withPriority:PINOperationQueuePriorityDefault];
 }
 
 
 
+// 处理高优先级
 - (id <PINOperationReference>)scheduleOperation:(dispatch_block_t)block withPriority:(PINOperationQueuePriority)priority
 {
   PINOperation *operation = [PINOperation operationWithBlock:^(id data) { block(); }
@@ -174,10 +176,13 @@
                                                   identifier:nil
                                                         data:nil
                                                   completion:nil];
+    
+// 添加操作
   [self lock];
     [self locked_addOperation:operation];
   [self unlock];
   
+    // 执行操作
   [self scheduleNextOperations:NO];
   
   return operation.reference;
@@ -225,12 +230,14 @@
   return reference;
 }
 
-// MARK: 把操作添加进数组
+// MARK: 把操作添加进数组 以及
 - (void)locked_addOperation:(PINOperation *)operation
 {
   NSMutableOrderedSet *queue = [self operationQueueWithPriority:operation.priority];
   
   dispatch_group_enter(_group);
+    
+    // 这里优先级 orderSet 和 _queuedOperations 都添加了这个操作呀
   [queue addObject:operation];
   [_queuedOperations addObject:operation];
   [_referenceToOperations setObject:operation forKey:operation.reference];
@@ -298,6 +305,7 @@
 
 #pragma mark - private methods
 
+// 取消操作
 - (BOOL)locked_cancelOperation:(id <PINOperationReference>)operationReference
 {
   BOOL success = NO;
@@ -332,19 +340,23 @@
   [self unlock];
 }
 
+
+#pragma mark: - 处理任务的核心方法
 /**
  Schedule next operations schedules the next operation by queue order onto the serial queue if
  it's available and one operation by priority order onto the concurrent queue.
     调度下一个操作按队列顺序将下一个操作调度到串行队列如果
         它可用，并按优先级顺序对并发队列进行一次操作。
+ 
+        头部删除操作，
  */
 - (void)scheduleNextOperations:(BOOL)onlyCheckSerial
 {
   [self lock];
-  
     //get next available operation in order, ignoring priority and run it on the serial queue
     //     按顺序获取下一个可用操作，忽略优先级并在串行队列上运行它
     if (_serialQueueBusy == NO) {
+        // 拿到任务，并从数组中删除
       PINOperation *operation = [self locked_nextOperationByQueue];
       if (operation) {
         _serialQueueBusy = YES;
@@ -362,7 +374,7 @@
           [self lock];
             _serialQueueBusy = NO;
           [self unlock];
-            
+            NSLog(@"_serialQueue");
           //see if there are any other operations
           // 看看是否还有其他操作
           [self scheduleNextOperations:YES];
@@ -370,6 +382,7 @@
       }
     }
   
+    // 最大的并发数量
   NSInteger maxConcurrentOperations = _maxConcurrentOperations;
   
   [self unlock];
@@ -379,11 +392,13 @@
   }
 
   //if only one concurrent operation is set, let's just use the serial queue for executing it
+  //     如果只设置了一个并发操作，那么让我们只使用串行队列来执行它
   if (maxConcurrentOperations < 2) {
     return;
   }
   
   dispatch_async(_semaphoreQueue, ^{
+    // 并行队列
     dispatch_semaphore_wait(_concurrentSemaphore, DISPATCH_TIME_FOREVER);
     [self lock];
       PINOperation *operation = [self locked_nextOperationByPriority];
@@ -391,6 +406,8 @@
   
     if (operation) {
       dispatch_async(_concurrentQueue, ^{
+          NSLog(@"_concurrentQueue");
+
         operation.block(operation.data);
         for (dispatch_block_t completion in operation.completions) {
           completion();
@@ -450,9 +467,14 @@
   return operation;
 }
 
+
+/**
+   等待一直到所有的操作都执行完成
+ */
 - (void)waitUntilAllOperationsAreFinished
 {
   [self scheduleNextOperations:NO];
+    // 这个会阻塞线程
   dispatch_group_wait(_group, DISPATCH_TIME_FOREVER);
 }
 

@@ -140,8 +140,9 @@
     
     begin = CACurrentMediaTime();
     @autoreleasepool {
-        for (int i = 0; i < count; i++) {
-            [pin setObject:values[i] forKey:keys[i]];
+        for (int i = 0; i < 10; i++) {
+//            [pin setObject:values[i] forKey:keys[i]];
+            [pin setObjectAsync:values[i] forKey:keys[i] completion:nil];
         }
     }
     end = CACurrentMediaTime();
